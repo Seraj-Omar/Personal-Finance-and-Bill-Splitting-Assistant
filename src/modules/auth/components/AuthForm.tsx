@@ -8,6 +8,7 @@ import { loginSchema, registerSchema } from "../schema/auth.schema";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { loginUser, registerUser } from "../services/auth.api";
+import { HiOutlineEye, HiOutlineEyeOff } from "react-icons/hi";
 
 
 import {
@@ -32,6 +33,8 @@ const router = useRouter();
   // 🔹 schema حسب النوع
   const schema = isRegister ? registerSchema : loginSchema;
 const [loading, setLoading] = useState(false);
+const [showPassword, setShowPassword] = useState(false);
+const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const {
     register,
@@ -124,42 +127,77 @@ const onSubmit = async (data: FormData) => {
           )}
         </div>
 
-        {/* Password */}
-        <div>
-          <label className="block text-sm mb-1">Password</label>
-          <div className="relative">
-            <HiOutlineLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 text-white/70" />
-            <input
-              {...register("password")}
-              type="password"
-              placeholder="••••••••••••"
-              className="w-full rounded-xl bg-white/10 border border-white/20 pl-11 pr-4 py-3 text-sm outline-none focus:border-white/40"
-            />
-          </div>
-          {errors.password && (
-            <p className="text-red-700 text-xs mt-1">
-              {errors.password.message}
-            </p>
-          )}
-        </div>
+{/* Password */}
+<div>
+  <label className="block text-sm mb-1">Password</label>
 
-        {/* Confirm Password */}
-        {isRegister && (
-          <div>
-            <label className="block text-sm mb-1">Confirm password</label>
-            <input
-              {...register("confirmPassword")}
-              type="password"
-              placeholder="••••••••••••"
-              className="w-full rounded-xl bg-white/10 border border-white/20 px-4 py-3 text-sm outline-none focus:border-white/40"
-            />
-            {"confirmPassword" in errors && errors.confirmPassword && (
-              <p className="text-red-700 text-xs mt-1">
-                {errors.confirmPassword.message}
-              </p>
-            )}
-          </div>
+  <div className="relative">
+    <HiOutlineLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 text-white/70" />
+
+    <input
+      {...register("password")}
+      type={showPassword ? "text" : "password"}
+      placeholder="••••••••••••"
+      className="w-full rounded-xl bg-white/10 border border-white/20 pl-11 pr-11 py-3 text-sm outline-none focus:border-white/40"
+    />
+
+    {/* Eye icon */}
+    <button
+      type="button"
+      onClick={() => setShowPassword((prev) => !prev)}
+      className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white"
+    >
+      {showPassword ? (
+        <HiOutlineEyeOff size={18} />
+      ) : (
+        <HiOutlineEye size={18} />
+      )}
+    </button>
+  </div>
+
+  {errors.password && (
+    <p className="text-red-700 text-xs mt-1">
+      {errors.password.message}
+    </p>
+  )}
+</div>
+
+       {/* Confirm Password */}
+{isRegister && (
+  <div>
+    <label className="block text-sm mb-1">Confirm password</label>
+
+    <div className="relative">
+      <input
+        {...register("confirmPassword")}
+        type={showConfirmPassword ? "text" : "password"}
+        placeholder="••••••••••••"
+        className="w-full rounded-xl bg-white/10 border border-white/20 px-4 pr-11 py-3 text-sm outline-none focus:border-white/40"
+      />
+
+      <button
+        type="button"
+        onClick={() =>
+          setShowConfirmPassword((prev) => !prev)
+        }
+        className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white"
+      >
+        {showConfirmPassword ? (
+          <HiOutlineEyeOff size={18} />
+        ) : (
+          <HiOutlineEye size={18} />
         )}
+      </button>
+    </div>
+
+    {"confirmPassword" in errors && errors.confirmPassword && (
+      <p className="text-red-700 text-xs mt-1">
+        {errors.confirmPassword.message}
+      </p>
+    )}
+  </div>
+)}
+
 
         {/* Remember / Forgot */}
         {!isRegister && (
