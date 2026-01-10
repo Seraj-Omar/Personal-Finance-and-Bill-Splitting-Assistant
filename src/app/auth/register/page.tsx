@@ -1,5 +1,5 @@
-import AuthForm from "@/src/modules/auth/components/AuthForm";
+import RegisterPageUI from "@/src/modules/auth/pages/RegisterPage";
 
 export default function RegisterPage() {
-  return <AuthForm type="register" />
+  return <RegisterPageUI />
 }

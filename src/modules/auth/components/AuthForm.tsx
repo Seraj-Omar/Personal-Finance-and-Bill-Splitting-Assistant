@@ -1,7 +1,74 @@
-type AuthType = "login" | "register"
+"use client";
+
+import { FcGoogle } from "react-icons/fc";
+import { FaApple } from "react-icons/fa";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginSchema, registerSchema } from "../schema/auth.schema";
+import { z } from "zod";
+import { useRouter } from "next/navigation";
+import { loginUser, registerUser } from "../services/auth.api";
+
+
+import {
+  HiOutlineMail,
+  HiOutlineLockClosed,
+  HiOutlineUser,
+} from "react-icons/hi";
+import Link from "next/link";
+import { useState } from "react";
+
+type AuthType = "login" | "register";
+
+// 🔹 Types واضحة
+type LoginForm = z.infer<typeof loginSchema>;
+type RegisterForm = z.infer<typeof registerSchema>;
+type FormData = LoginForm | RegisterForm;
 
 export default function AuthForm({ type }: { type: AuthType }) {
-  const isRegister = type === "register"
+  const isRegister = type === "register";
+const router = useRouter();
+
+  // 🔹 schema حسب النوع
+  const schema = isRegister ? registerSchema : loginSchema;
+const [loading, setLoading] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>({
+    resolver: zodResolver(schema),
+  });
+
+const onSubmit = async (data: FormData) => {
+  try {
+    setLoading(true);
+
+    if (isRegister) {
+      const registerData = data as RegisterForm;
+
+      await registerUser({
+        name: registerData.name,
+        email: registerData.email,
+        password: registerData.password,
+      });
+    } else {
+      const loginData = data as LoginForm;
+
+      await loginUser({
+        email: loginData.email,
+        password: loginData.password,
+      });
+    }
+
+  } catch (error) {
+    console.error(error);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className="w-full max-w-md text-white">
@@ -15,48 +82,82 @@ export default function AuthForm({ type }: { type: AuthType }) {
           : "Enter your credentials to access your account"}
       </p>
 
-      <form className="space-y-4">
-        {/* Full Name (Register only) */}
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+
+        {/* Full Name */}
         {isRegister && (
           <div>
             <label className="block text-sm mb-1">Full name</label>
-            <input
-              type="text"
-              placeholder="John Doe"
-              className="w-full rounded-xl bg-white/10 border border-white/20 px-4 py-3 text-sm outline-none focus:border-white/40"
-            />
+            <div className="relative">
+              <HiOutlineUser className="absolute left-4 top-1/2 -translate-y-1/2 text-white/70" />
+              <input
+                {...register("name")}
+                type="text"
+                placeholder="John Doe"
+                className="w-full rounded-xl bg-white/10 border border-white/20 pl-11 pr-4 py-3 text-sm outline-none focus:border-white/40"
+              />
+            </div>
+            {"name" in errors && errors.name && (
+              <p className="text-red-700 text-xs mt-1">
+                {errors.name.message}
+              </p>
+            )}
           </div>
         )}
 
         {/* Email */}
         <div>
           <label className="block text-sm mb-1">Company email</label>
-          <input
-            type="email"
-            placeholder="example@email.com"
-            className="w-full rounded-xl bg-white/10 border border-white/20 px-4 py-3 text-sm outline-none focus:border-white/40"
-          />
+          <div className="relative">
+            <HiOutlineMail className="absolute left-4 top-1/2 -translate-y-1/2 text-white/70" />
+            <input
+              {...register("email")}
+              type="email"
+              placeholder="example@email.com"
+              className="w-full rounded-xl bg-white/10 border border-white/20 pl-11 pr-4 py-3 text-sm outline-none focus:border-white/40"
+            />
+          </div>
+          {errors.email && (
+            <p className="text-red-700 text-xs mt-1">
+              {errors.email.message}
+            </p>
+          )}
         </div>
 
         {/* Password */}
         <div>
           <label className="block text-sm mb-1">Password</label>
-          <input
-            type="password"
-            placeholder="••••••••••••"
-            className="w-full rounded-xl bg-white/10 border border-white/20 px-4 py-3 text-sm outline-none focus:border-white/40"
-          />
+          <div className="relative">
+            <HiOutlineLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 text-white/70" />
+            <input
+              {...register("password")}
+              type="password"
+              placeholder="••••••••••••"
+              className="w-full rounded-xl bg-white/10 border border-white/20 pl-11 pr-4 py-3 text-sm outline-none focus:border-white/40"
+            />
+          </div>
+          {errors.password && (
+            <p className="text-red-700 text-xs mt-1">
+              {errors.password.message}
+            </p>
+          )}
         </div>
 
-        {/* Confirm Password (Register only) */}
+        {/* Confirm Password */}
         {isRegister && (
           <div>
             <label className="block text-sm mb-1">Confirm password</label>
             <input
+              {...register("confirmPassword")}
               type="password"
               placeholder="••••••••••••"
               className="w-full rounded-xl bg-white/10 border border-white/20 px-4 py-3 text-sm outline-none focus:border-white/40"
             />
+            {"confirmPassword" in errors && errors.confirmPassword && (
+              <p className="text-red-700 text-xs mt-1">
+                {errors.confirmPassword.message}
+              </p>
+            )}
           </div>
         )}
 
@@ -75,6 +176,7 @@ export default function AuthForm({ type }: { type: AuthType }) {
 
         {/* Submit */}
         <button
+
           type="submit"
           className="w-full mt-2 rounded-xl main-blue-color hover:bg-indigo-700 transition py-3 text-sm font-medium"
         >
@@ -89,17 +191,20 @@ export default function AuthForm({ type }: { type: AuthType }) {
         </div>
 
         {/* Social */}
-        <div className="flex gap-3">
+        <div className="flex gap-3 flex-wrap">
           <button
             type="button"
-            className="flex-1 bg-white text-black rounded-xl py-3 text-sm font-medium"
+            className="flex flex-1 items-center justify-center gap-2 bg-white text-black rounded-xl py-3 text-sm font-medium hover:bg-gray-100 transition"
           >
+            <FcGoogle className="text-lg" />
             Log in with Google
           </button>
+
           <button
             type="button"
-            className="flex-1 bg-white text-black rounded-xl py-3 text-sm font-medium"
+            className="flex flex-1 items-center justify-center gap-2 bg-white text-black rounded-xl py-3 text-sm font-medium hover:bg-gray-100 transition"
           >
+            <FaApple className="text-lg" />
             Log in with Apple
           </button>
         </div>
@@ -109,20 +214,16 @@ export default function AuthForm({ type }: { type: AuthType }) {
           {isRegister ? (
             <>
               Already have an account?{" "}
-              <span className="font-medium  cursor-pointer">
-                Log in
-              </span>
+              <span className="font-medium cursor-pointer"><Link href="/auth/login">Log in</Link></span>
             </>
           ) : (
             <>
               Don’t have an account?{" "}
-              <span className="font-medium  cursor-pointer">
-                Sign up
-              </span>
+              <span className="font-medium cursor-pointer"><Link href="/auth/register">Sign up</Link></span>
             </>
           )}
         </p>
       </form>
     </div>
-  )
+  );
 }
