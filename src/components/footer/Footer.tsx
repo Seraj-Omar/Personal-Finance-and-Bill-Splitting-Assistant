@@ -21,8 +21,8 @@ const Footer = () => {
         {/* Logo & About */}
         <div>
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-lg">
-              💰
+            <div className="w-15 h-15   flex items-center justify-center text-lg">
+              <img src="/logo.png" alt="Smart Finance Logo" />
             </div>
             <h3 className="text-xl font-bold">Smart Finance</h3>
           </div>
