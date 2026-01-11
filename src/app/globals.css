@@ -11,11 +11,6 @@
   --foreground: #171717;
 
   /* Gradients */
-  --hero-gradient: linear-gradient(
-    135deg,
-    var(--brand-pink-alpha) 0%,
-    var(--brand-blue-alpha) 100%
-  );
 
   --main-gradient: linear-gradient(
     135deg,
@@ -48,7 +43,10 @@ body {
 .hero-gradient {
   background: linear-gradient(
     90deg,
-    var(--brand-pink-alpha) 0%,
-    var(--brand-blue-alpha) 100%
-  );
+#f39bab63 0%,
+#2c42af6e 100%  );
+}
+
+.main-text-color {
+  color:#3447aaee;
 }

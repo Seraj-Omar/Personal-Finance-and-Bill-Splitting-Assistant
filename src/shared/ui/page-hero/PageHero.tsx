@@ -5,7 +5,7 @@ type PageHeroProps = {
 
 const PageHero = ({ title, breadcrumb }: PageHeroProps) => {
   return (
-    <section className="relative overflow-hidden rounded-2xl hero-gradient p-6">
+    <section className="relative overflow-hidden rounded-2xl hero-gradient p-9">
 
       {/* Texture Image */}
 <div
@@ -21,14 +21,27 @@ const PageHero = ({ title, breadcrumb }: PageHeroProps) => {
 
       {/* Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-8 py-24 text-center">
-        <h1 className="text-4xl font-bold text-white mb-2">
+        <h1 className="text-4xl font-bold text-white mb-2 main-text-color text-6xl">
           {title}
         </h1>
-        {breadcrumb && (
-          <p className="text-sm text-white/80">
-            {breadcrumb.join(" • ")}
-          </p>
-        )}
+     {breadcrumb && (
+  <p className="text-lg mt-5 font-bold ">
+    {breadcrumb.map((item, index) => {
+      const isLast = index === breadcrumb.length - 1
+
+      return (
+        <span
+          key={index}
+          className={isLast ? "main-text-color font-medium" : "text-gray-600"}
+        >
+          {item}
+          {!isLast && " • "}
+        </span>
+      )
+    })}
+  </p>
+)}
+
       </div>
 
     </section>
