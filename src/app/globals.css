@@ -50,3 +50,27 @@ body {
 .main-text-color {
   color:#3447aaee;
 }
+.main-bg-color {
+  background-color:#3447aaee;
+}
+
+
+/* Soft cold background behind image */
+.image-soft-bg {
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(101, 109, 252, 0.11),
+      transparent 60%
+    ),
+    radial-gradient(
+      circle at bottom left,
+      rgba(246, 227, 231, 0.35),
+      transparent 65%
+    ),
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.9),
+      rgba(245, 247, 255, 0.9)
+    );
+}
