@@ -57,7 +57,7 @@ const servicesList: Service[] = [
         id: 4,
         name: "Bills",
         description:
-            "Keep track of all your bills, due dates, and payment statuses to ensure you never miss a payment.",
+            "Track of all your bills, due dates, and payment statuses to ensure you never miss a payment.",
         manage: "Invoices",
         icon: FaFileInvoiceDollar,
         iconBg: "bg-[#FFE4E6]",
@@ -74,11 +74,11 @@ export default function OurServices() {
                     Our Services
                     <Box className="h-[3px] rounded-full bg-[linear-gradient(90deg,#f39bab63_0%,#2c42af6e_100%)]" />
                 </Typography>
-                <Box className="mt-6 flex flex-row flex-wrap justify-center gap-6">
+                <Box className="mt-6 flex w-full flex-row flex-wrap justify-between gap-6">
 
                     {/* service cards */}
                     {servicesList.map((service) => (
-                        <Box key={service.id} className="group flex w-72 flex-col justify-between rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition-all duration-400 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:bg-[#3447aaee] hover:text-white hover:shadow-lg">
+                        <Box key={service.id} className="group flex w-80 flex-col justify-between rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition-all duration-400 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:bg-[#3447aaee] hover:text-white hover:shadow-lg">
                             <Typography className="!text-[18px] !mb-2 !font-semibold" variant="h6" >
                                 {service.name}
                             </Typography>
