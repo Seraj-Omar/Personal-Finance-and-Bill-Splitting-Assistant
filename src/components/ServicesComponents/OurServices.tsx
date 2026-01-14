@@ -1,7 +1,7 @@
 "use client";
 
 import { Box, Typography } from "@mui/material";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 //change icnons here use luicide react,font awesome,heroicons
 import { FaArrowRightLong, FaMoneyBillTrendUp, FaWallet, FaFileInvoiceDollar } from "react-icons/fa6";
 import { MdOutlineAttachMoney } from "react-icons/md";
@@ -67,6 +67,7 @@ const servicesList: Service[] = [
 ];
 
 export default function OurServices() {
+    const router = useRouter();
     return (
         <Box className="flex justify-center items-center">
             <Box className="flex flex-col items-start justify-between w-full">
@@ -88,13 +89,14 @@ export default function OurServices() {
                             <Typography variant="body2" className="mb-4 text-sm leading-relaxed text-gray-600 group-hover:text-white">
                                 {service.description}
                             </Typography>
-                            <Link
-                                href={service.href}
-                                className="flex pt-3 items-center text-sm font-medium text-[#3447AA] group-hover:text-white hover:cursor-pointer"
-                                >
+                            <button
+                                type="button"
+                                onClick={() => router.push(service.href)}
+                                className="flex pt-3 items-center text-sm font-medium text-[#3447AA] group-hover:text-white hover:cursor-pointer bg-transparent border-none outline-none"
+                            >
                                 <span>{`Manage ${service.manage}`}</span>
                                 <FaArrowRightLong className="ml-1 h-4 w-4" />
-                            </Link>
+                            </button>
                         </Box>
                     ))}
 
