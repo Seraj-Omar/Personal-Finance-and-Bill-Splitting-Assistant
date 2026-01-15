@@ -2,7 +2,7 @@
 
 import { Box, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
-import { ArrowRight, CircleDollarSign, TrendingUp, Wallet, FileText } from "lucide-react";
+import { MoveRight, CircleDollarSign, TrendingUp, Wallet, FileText } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import '../../app/globals.css';
 
@@ -95,7 +95,7 @@ export default function OurServices() {
 
                             <button type="button" onClick={() => router.push(service.href)}className="mt-auto flex items-center text-[13px] font-medium text-[#3447AA] group-hover:text-white hover:underline hover:cursor-pointer bg-transparent border-none outline-none">
                                 <span>{`Manage ${service.manage}`}</span>
-                                <ArrowRight className="ml-1 h-4 w-4" />
+                                <MoveRight className="ml-1 h-4 w-4" />
                             </button>
                         </Box>
                     ))}
