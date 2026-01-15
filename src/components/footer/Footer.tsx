@@ -10,7 +10,7 @@ import {
 
 const Footer = () => {
   return (
-    <footer className="relative overflow-hidden text-white main-blue-color rounded-2xl ">
+<footer className="relative overflow-hidden text-white main-blue-color rounded-t-2xl">
 
       {/* Background */}
       <FooterBackground />
@@ -21,10 +21,9 @@ const Footer = () => {
         {/* Logo & About */}
         <div>
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-15 h-15   flex items-center justify-center text-lg">
+            <div className="w-25 h-25   flex items-center justify-center text-lg">
               <img src="/logo.png" alt="Smart Finance Logo" />
             </div>
-            <h3 className="text-xl font-bold">Smart Finance</h3>
           </div>
 
           <p className="text-sm opacity-90 mb-6">

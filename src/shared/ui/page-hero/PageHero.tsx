@@ -5,7 +5,7 @@ type PageHeroProps = {
 
 const PageHero = ({ title, breadcrumb }: PageHeroProps) => {
   return (
-    <section className="relative overflow-hidden rounded-2xl hero-gradient p-9">
+    <section className="relative overflow-hidden rounded-b-2xl  hero-gradient p-9">
 
       {/* Texture Image */}
 <div
