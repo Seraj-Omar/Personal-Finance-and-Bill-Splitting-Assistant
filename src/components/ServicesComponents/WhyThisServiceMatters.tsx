@@ -36,7 +36,7 @@ export default function WhyChooseUs() {
                 <Box className="flex flex-col gap-[16px] justify-center items-start">
                     <Typography className="w-fit text-[#1C1A1A]">
                         Why This Service Matters
-                        <Box className="mt-2 h-[3px] rounded-full bg-[linear-gradient(90deg,#EFA5B6_0%,#3447AAA6_100%)]" />
+                        <Box className="mt-2 h-[3px] rounded-full hero-gradient" />
                     </Typography>
                     <Typography className="w-[568px] !text-[#1C1A1A] !font-[500] !text-[24px]">
                         Smart Financial Tracking Creates a Strong Foundation for Better Control, Clear Insights, and Long-Term Financial Stability
@@ -74,7 +74,7 @@ export default function WhyChooseUs() {
                             <Box key={index} className="mb-4">
                                 <Box className="flex flex-row justify-between mb-1">
                                     <Typography className="!text-[16px] text-[#1C1A1A] mb-1">{progress.label}</Typography>
-                                    <Typography className="!text-[16px] text-[#3447AA]">{progress.value}%</Typography>
+                                    <Typography className="!text-[16px] main-text-color">{progress.value}%</Typography>
                                 </Box>
                                 <Box className="w-full h-[7px] bg-[#E5E7EB] rounded-full">
                                     <Box
