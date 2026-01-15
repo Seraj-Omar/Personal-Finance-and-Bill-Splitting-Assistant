@@ -4,7 +4,6 @@ import { Box, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { MoveRight, CircleDollarSign, TrendingUp, Wallet, FileText } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import '../../app/globals.css';
 
 type Service = {
     id: number;
@@ -72,7 +71,7 @@ export default function OurServices() {
             <Box className="flex w-full flex-col items-start justify-between">
                 <Typography variant="h4" className="mb-3 !text-[24px] !font-[500] text-gray-900">
                     Our Service
-                    <Box className="mt-2 h-[3px] w-full rounded-full bg-[linear-gradient(90deg,#f39bab63_0%,#2c42af6e_100%)]" />
+                    <Box className="mt-2 h-[3px] w-full rounded-full hero-gradient" />
                 </Typography>
                 <Box className="mt-7 grid w-full gap-6 md:grid-cols-2 lg:grid-cols-4">
                     {/* service cards */}
@@ -93,7 +92,7 @@ export default function OurServices() {
                                 {service.description}
                             </Typography>
 
-                            <button type="button" onClick={() => router.push(service.href)}className="mt-auto flex items-center text-[13px] font-medium text-[#3447AA] group-hover:text-white hover:underline hover:cursor-pointer bg-transparent border-none outline-none">
+                            <button type="button" onClick={() => router.push(service.href)}className="mt-auto flex items-center text-[13px] font-medium group-hover:text-white hover:underline hover:cursor-pointer bg-transparent border-none outline-none main-text-color">
                                 <span>{`Manage ${service.manage}`}</span>
                                 <MoveRight className="ml-1 h-4 w-4" />
                             </button>

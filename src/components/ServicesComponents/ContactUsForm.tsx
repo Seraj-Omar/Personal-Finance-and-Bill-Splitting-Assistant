@@ -98,7 +98,7 @@ export default function ContactUsForm() {
                 </Box>
 
                 <button
-                    className="bg-[#FFFFFF] text-[#3447AA] py-[14px] px-[28px] rounded-xl font-medium transition-all duration-200 ease-out hover:bg-[#E0E0E0] hover:shadow-md hover:-translate-y-[1px]"
+                    className="bg-[#FFFFFF] py-[14px] px-[28px] rounded-xl font-medium transition-all duration-200 ease-out hover:bg-[#E0E0E0] hover:shadow-md hover:-translate-y-[1px] main-text-color"
                     type="submit"
                 >
                     Contact Us
