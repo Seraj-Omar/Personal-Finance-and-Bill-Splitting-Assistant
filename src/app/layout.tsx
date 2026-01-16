@@ -2,6 +2,8 @@ import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
 import Providers from "./providers"
+import PageHero from "../shared/ui/page-hero/PageHero"
+import Footer from "../components/footer/Footer"
 
 
 const geistSans = Geist({
@@ -26,9 +28,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        <PageHero title="Reminder" breadcrumb={["Home", "Reminder"]} />
         <Providers>{children}</Providers>
-      </body>
+        <Footer />
+        </body>
     </html>
   )
 }
