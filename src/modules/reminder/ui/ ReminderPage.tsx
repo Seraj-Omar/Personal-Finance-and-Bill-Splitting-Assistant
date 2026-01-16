@@ -1,11 +1,15 @@
+"use client"
 import BillsList from "./BillsList"
 import Image from "next/image"
 import ImportantReminder from "./ImportantReminder"
+import { useRouter } from "next/navigation"
+
 const ReminderPage = () => {
+    const router = useRouter()
   return (
     <div className="max-w-7xl mx-auto px-6 py-12 ">
 
-  <section className=" image-soft-bg mt-10 p-15 ">
+  <section className="bg-[#fff7f7] mt-10 p-13 ">
   <div className="flex flex-col lg:flex-row gap-6 items-start">
 
         {/* LEFT – Bills */}
@@ -15,7 +19,7 @@ const ReminderPage = () => {
                     <BillsList />
        <BillsList />
           {/* Create new reminder button */}
-          <button className="w-full mt-4 flex items-center justify-center gap-2 main-bg-color text-white py-4 rounded-xl font-medium hover:bg-blue-700 transition">
+          <button  onClick={() => router.push("/reminder/new")} className="w-full mt-4 flex items-center justify-center gap-2 main-bg-color text-white py-4 rounded-xl font-medium hover:bg-blue-700 transition">
             <span className="text-xl">+</span>
             Create new Reminder
           </button>
@@ -31,7 +35,7 @@ const ReminderPage = () => {
   width={400}
   height={400}
 />
-    <div className="absolute inset-0 main-bg-color opacity-20"></div>
+    <div className="absolute inset-0 main-bg-color opacity-50"></div>
 
   </div>
 </div>
