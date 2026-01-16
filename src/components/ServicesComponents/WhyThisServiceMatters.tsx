@@ -16,36 +16,34 @@ const progressList = [
 
 export default function WhyChooseUs() {
     return (
-        <Box className="flex flex-col gap-[32px] rounded-xl bg-[#FFF] p-4 sm:p-6 md:p-[24px]">
+        <Box className="flex flex-col p-[24px] bg-[cyan] rounded-xl flex-wrap gap-[48px]">
             {/* get back and add the radial gradient */}
             {/* top part */}
-            <Box className="flex flex-col gap-[24px] md:flex-row md:flex-wrap md:items-center">
+            <Box className="flex flex-row gap-[24px] flex-wrap">
 
                 {/*left side*/}
-                <Box className="w-full overflow-hidden rounded-xl md:w-[483px]">
-                    <Box
-                        component="img"
-                        src="/whyThisServiceMatters.jpg"
-                        alt="Employee showing financial graph"
-                        className="h-auto w-full object-cover"
+                <Box className="w-[483px] h-[272px] overflow-hidden rounded-xl">
+                    <Box component="img" src="/whyThisServiceMatters.jpg" alt="Employee showing financial graph"
                         sx={{
-                            borderRadius: 8,
+                            width: "100%",
+                            height: "auto",
+                            borderRadius: 2,
                         }}
                     />
                 </Box>
 
                 {/*right side*/}
-                <Box className="flex flex-1 flex-col items-start justify-center gap-[16px]">
+                <Box className="flex flex-col gap-[16px] justify-center items-start">
                     <Box className="w-fit">
                         <Typography className="w-fit text-[#1C1A1A]">
                             Why This Service Matters
                         </Typography>
                         <Box className="mt-2 h-[3px] rounded-full hero-gradient" />
                     </Box>
-                    <Typography className="w-full max-w-[568px] !text-[20px] !font-[500] !text-[#1C1A1A] sm:!text-[24px]">
+                    <Typography className="w-[568px] !text-[#1C1A1A] !font-[500] !text-[24px]">
                         Smart Financial Tracking Creates a Strong Foundation for Better Control, Clear Insights, and Long-Term Financial Stability
                     </Typography>
-                    <Typography className="max-w-[608px] !text-[14px] text-[#1C1A1AC9] sm:!text-[16px]">
+                    <Typography className="text-[#1C1A1AC9]  !text-[16px] max-w-[608px]">
                         Clear financial tracking helps you understand your money better and take control with confidence.
                     </Typography>
                 </Box>
@@ -53,14 +51,14 @@ export default function WhyChooseUs() {
 
 
             {/* bottom part */}
-            <Box className="flex flex-col gap-[32px] lg:flex-row lg:flex-wrap lg:justify-between">
+            <Box className="flex flex-row justify-between gap-[24px] flex-wrap">
                 
                 {/*left side*/}
-                <Box className="flex flex-1 flex-col items-start justify-center gap-[16px]">
-                    <Typography className="w-full max-w-[310px] !text-[20px] !font-[500] !leading-[25px] text-[#1C1A1A] sm:!text-[24px]">
+                <Box className="flex flex-col gap-[16px] justify-center items-start">
+                    <Typography className="w-fit text-[#1C1A1A] !text-[24px] !font-[500] max-w-[310px] !leading-[25px]">
                         We help you understand where your money goes.
                     </Typography>
-                    <Typography className="max-w-[449px] text-[14px] text-[#1C1A1AC9] !leading-[25px] sm:text-[16px]">
+                    <Typography className="text-[16px] text-[#1C1A1AC9] max-w-[449px] !leading-[25px]">
                         We help you understand exactly where your money goes by tracking every expense, income, bill, and debt in one clear and organized view.
                     </Typography>
                     <Box className="flex flex-col gap-[24px] justify-center items-start">
@@ -93,16 +91,16 @@ export default function WhyChooseUs() {
 
 
                 {/*right side*/}
-                <Box className="flex w-full flex-col md:flex-row md:flex-wrap lg:w-[59%]">
+                <Box className="flex w-[59%] flex-row">
                     <Box
                         component="img"
                         src="/CountingMoney.jpg"
                         alt="An employee counting money"
-                        className="h-64 w-full rounded-t-xl object-cover sm:h-80 md:h-[499px] md:rounded-s-xl md:rounded-e-none"
+                        className="h-[499px] w-full rounded-s-xl object-cover"
                     />
 
                     <Box
-                        className="relative w-full overflow-hidden rounded-b-xl p-4 sm:p-6 md:h-[499px] md:rounded-e-xl md:rounded-s-none md:p-[32px]"
+                        className="relative h-[499px] w-full overflow-hidden rounded-e-xl p-[32px]"
                         sx={{
                         backgroundImage: "url('/footer-bg.jpg')",
                         backgroundSize: "cover",
@@ -112,9 +110,9 @@ export default function WhyChooseUs() {
                     >
                         
                     <Box className="absolute inset-0 bg-[#3447AA]/90" />
-                        <Box className="relative z-10 flex h-full items-center">
-                            <ContactUsForm />
-                        </Box>
+                        <Box className="relative z-10">
+                        <ContactUsForm />
+                            </Box>
                     </Box>
                 </Box>
 
