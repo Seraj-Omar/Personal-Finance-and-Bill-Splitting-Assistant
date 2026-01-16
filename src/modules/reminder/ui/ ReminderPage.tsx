@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation"
 const ReminderPage = () => {
     const router = useRouter()
   return (
-    <div className="max-w-7xl mx-auto px-6 py-12 ">
+    <div className="max-w-7xl mx-auto py-12 ">
 
   <section className="bg-[#fff7f7] mt-10 p-13 ">
   <div className="flex flex-col lg:flex-row gap-6 items-start">

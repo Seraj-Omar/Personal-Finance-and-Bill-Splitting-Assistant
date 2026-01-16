@@ -8,7 +8,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
       <PageHero title="Add Reminder" breadcrumb={["Home", "Reminder", "Add"]} />
       {children}
-      <Footer />
+
     </Providers>
   )
 }

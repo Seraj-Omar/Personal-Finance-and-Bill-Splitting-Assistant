@@ -33,7 +33,7 @@ export default function RootLayout({
       >
         {/* <PageHero title="Reminder" breadcrumb={["Home", "Reminder"]} /> */}
         <Providers>{children}</Providers>
-        {/* <Footer /> */}
+        <Footer />
         </body>
     </html>
   )
