@@ -5,12 +5,14 @@ const ReminderPage = () => {
   return (
     <div className="max-w-7xl mx-auto px-6 py-12 ">
 
-  <section className=" image-soft-bg mt-15">
+  <section className=" image-soft-bg mt-10 p-15 ">
   <div className="flex flex-col lg:flex-row gap-6 items-start">
 
         {/* LEFT – Bills */}
     <div className="flex-1 space-y-4">
           <BillsList />
+               <BillsList />
+                    <BillsList />
        <BillsList />
           {/* Create new reminder button */}
           <button className="w-full mt-4 flex items-center justify-center gap-2 main-bg-color text-white py-4 rounded-xl font-medium hover:bg-blue-700 transition">
