@@ -1,3 +1,4 @@
+"use client";
 import { Box, Typography } from "@mui/material";
 import { User, Phone, CalendarDays } from "lucide-react";
 import { useState, ChangeEvent, FormEvent } from "react";

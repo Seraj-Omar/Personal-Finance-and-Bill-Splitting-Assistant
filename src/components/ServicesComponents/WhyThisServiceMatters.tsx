@@ -34,10 +34,12 @@ export default function WhyChooseUs() {
 
                 {/*right side*/}
                 <Box className="flex flex-col gap-[16px] justify-center items-start">
-                    <Typography className="w-fit text-[#1C1A1A]">
-                        Why This Service Matters
+                    <Box className="w-fit">
+                        <Typography className="w-fit text-[#1C1A1A]">
+                            Why This Service Matters
+                        </Typography>
                         <Box className="mt-2 h-[3px] rounded-full hero-gradient" />
-                    </Typography>
+                    </Box>
                     <Typography className="w-[568px] !text-[#1C1A1A] !font-[500] !text-[24px]">
                         Smart Financial Tracking Creates a Strong Foundation for Better Control, Clear Insights, and Long-Term Financial Stability
                     </Typography>

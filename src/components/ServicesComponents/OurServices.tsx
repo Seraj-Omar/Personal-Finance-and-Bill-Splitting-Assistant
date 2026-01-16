@@ -69,10 +69,12 @@ export default function OurServices() {
     return (
         <Box className="flex w-full justify-start">
             <Box className="flex w-full flex-col items-start justify-between">
-                <Typography variant="h4" className="mb-3 !text-[24px] !font-[500] text-gray-900">
-                    Our Service
+                <Box className="w-fit">
+                    <Typography variant="h4" className="mb-3 !text-[24px] !font-[500] text-gray-900">
+                        Our Service
+                    </Typography>
                     <Box className="mt-2 h-[3px] w-full rounded-full hero-gradient" />
-                </Typography>
+                </Box>
                 <Box className="mt-7 grid w-full gap-6 md:grid-cols-2 lg:grid-cols-4">
                     {/* service cards */}
                     {servicesList.map((service) => (
