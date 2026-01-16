@@ -1,3 +1,5 @@
+"use client"
+
 type PageHeroProps = {
   title: string
   breadcrumb?: string[]
