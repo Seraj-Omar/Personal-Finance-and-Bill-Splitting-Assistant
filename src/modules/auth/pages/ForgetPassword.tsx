@@ -2,6 +2,8 @@
 
 import React from "react"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
+
 import {
   Box,
   Paper,
@@ -14,57 +16,72 @@ import {
 import MailOutlineIcon from "@mui/icons-material/MailOutline"
 
 const ForgetPassword = () => {
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    // Handle form submission logic here
+        router.push("/auth/forgot-password/code") 
+  };
+  const router = useRouter();
   return (
     <section className="min-h-screen w-full flex items-center justify-center p-3 bg-white">
-      <div className="grid grid-cols-1 lg:grid-cols-2 max-w-7xl w-full  main-gradient rounded-xl overflow-hidden shadow-lg h-[60vh]" style={{ height: "60vh" }}>
+<div
+  className="grid grid-cols-1 lg:grid-cols-2 max-w-7xl w-full rounded-xl overflow-hidden shadow-lg"
+  style={{
+    height: "75vh",
+    borderRadius: "16px",
+    background:
+      "linear-gradient(292.39deg, rgba(246, 227, 231, 0.84) 1.98%, rgba(52, 71, 170, 0.87) 98.11%)",
+  }}
+>
 
         {/* Left: Form */}
         <div className="p-8 lg:p-12 flex flex-col justify-center items-center texr-white">
-          <form className="flex flex-col gap-6">
-            <Typography variant="h4"  sx={{ color: "white" }} component="h1"  gutterBottom>
-         Check your email
+          <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
+            <Typography variant="h4" sx={{ color: "white" }} component="h1" gutterBottom>
+              Check your email
             </Typography>
-            <Typography variant="body1"  sx={{ color: "white" }} >
-A four-digit code has been sent to your email: example@gmail.com
-                   <br/>
- email: example@gmail.com
+            <Typography variant="body1" sx={{ color: "white" }} >
+              A four-digit code has been sent to your email: example@gmail.com
+              <br />
+              email: example@gmail.com
             </Typography>
-          <TextField
-  label="Email Address"
-  variant="outlined"
-  fullWidth
-  InputProps={{
-    startAdornment: (
-      <InputAdornment position="start">
-        <MailOutlineIcon sx={{ color: "white" }} />
-      </InputAdornment>
-    ),
-  }}
-  InputLabelProps={{
-    sx: {
-      color: "white",
-      "&.Mui-focused": { color: "white" },
-      "&.MuiInputLabel-shrink": { color: "white" }, 
-    },
-  }}
-  sx={{
-    "& .MuiOutlinedInput-root": {
-      borderRadius: "12px",
-      color: "white",
-      "& fieldset": { borderColor: "white" },
-      "&:hover fieldset": { borderColor: "white" },
-      "&.Mui-focused fieldset": { borderColor: "white" },
-    },
-  }}
-/>
- <Button
+            <TextField
+              label="Email Address"
+              variant="outlined"
+              fullWidth
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <MailOutlineIcon sx={{ color: "white" }} />
+                  </InputAdornment>
+                ),
+              }}
+              InputLabelProps={{
+                sx: {
+                  color: "white",
+                  "&.Mui-focused": { color: "white" },
+                  "&.MuiInputLabel-shrink": { color: "white" },
+                },
+              }}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "12px",
+                  color: "white",
+                  "& fieldset": { borderColor: "white" },
+                  "&:hover fieldset": { borderColor: "white" },
+                  "&.Mui-focused fieldset": { borderColor: "white" },
+                },
+              }}
+            />
+            <Button
+        
               type="submit"
               variant="contained"
               fullWidth
               sx={{
                 backgroundColor: "#3447AADE",
                 border: "none",
-                    height: "50px",
+                height: "50px",
                 borderRadius: "12px",
                 boxShadow: "none",
                 textTransform: "none",
@@ -75,7 +92,7 @@ A four-digit code has been sent to your email: example@gmail.com
                 },
               }}
             >
-              Send 
+              Send
             </Button>
 
 

@@ -4,8 +4,15 @@ import AuthForm from "../components/AuthForm"
 export default function LoginPageUI() {
   return (
     <section className="min-h-screen w-full flex items-center justify-center bg-whtite p-3">
-      <div className="grid grid-cols-1 lg:grid-cols-2 max-w-7xl w-full  main-gradient rounded-xl overflow-hidden shadow-lg">
-        
+<div
+  className="grid grid-cols-1 lg:grid-cols-2 max-w-7xl w-full rounded-xl overflow-hidden shadow-lg"
+  style={{
+    height: "75vh",
+    borderRadius: "16px",
+    background:
+      "linear-gradient(292.39deg, rgba(246, 227, 231, 0.84) 1.98%, rgba(52, 71, 170, 0.87) 98.11%)",
+  }}
+>        
         {/* Left: Form */}
         <div className="p-8 lg:p-12">
           <AuthForm type="login" />
