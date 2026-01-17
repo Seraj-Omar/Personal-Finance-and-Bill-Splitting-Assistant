@@ -21,7 +21,6 @@ import { useState } from "react";
 
 type AuthType = "login" | "register";
 
-// 🔹 Types واضحة
 type LoginForm = z.infer<typeof loginSchema>;
 type RegisterForm = z.infer<typeof registerSchema>;
 type FormData = LoginForm | RegisterForm;
@@ -30,7 +29,7 @@ export default function AuthForm({ type }: { type: AuthType }) {
   const isRegister = type === "register";
 const router = useRouter();
 
-  // 🔹 schema حسب النوع
+  // 
   const schema = isRegister ? registerSchema : loginSchema;
 const [loading, setLoading] = useState(false);
 const [showPassword, setShowPassword] = useState(false);
