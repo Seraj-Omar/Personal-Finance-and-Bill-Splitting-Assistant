@@ -1,20 +1,29 @@
 "use client"
 
+import * as React from "react"
 import { ThemeProvider, CssBaseline } from "@mui/material"
-import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter"
+import { CacheProvider } from "@emotion/react"
+import createCache from "@emotion/cache"
 import theme from "./theme"
 
-export default function Providers({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function Providers({ children }: { children: React.ReactNode }) {
+  const cache = React.useMemo(
+    () => createCache({ key: "mui", prepend: true }),
+    []
+  )
+
+  const [mounted, setMounted] = React.useState(false)
+
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
+
   return (
-    <AppRouterCacheProvider>
+    <CacheProvider value={cache}>
       <ThemeProvider theme={theme}>
-        <CssBaseline />
+        {mounted && <CssBaseline />}
         {children}
       </ThemeProvider>
-    </AppRouterCacheProvider>
+    </CacheProvider>
   )
-}
+} 

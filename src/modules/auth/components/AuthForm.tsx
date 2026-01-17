@@ -206,9 +206,13 @@ const onSubmit = async (data: FormData) => {
               <input type="checkbox" className="accent-white" />
               Remember me
             </label>
-            <button type="button" className="hover:underline">
-              Forgot password?
-            </button>
+             <button
+      type="button"
+      onClick={() => router.push("/auth/forgot-password")}
+      className="hover:underline"
+    >
+      Forgot password?
+    </button>
           </div>
         )}
 
