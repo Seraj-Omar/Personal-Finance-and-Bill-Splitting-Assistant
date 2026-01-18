@@ -7,15 +7,15 @@ import { Search, ChevronDown, User } from "lucide-react";
 export default function Navbar() {
   const pathname = usePathname();
 
-  const isActiveExact = (path: string) =>
-    pathname === path
-      ? "text-purple-600 font-semibold"
-      : "hover:text-purple-600 transition";
+const isActiveExact = (path: string) =>
+  pathname === path
+    ? "text-[#3447aaee] font-semibold"
+    : "hover:text-[#3447aaee] transition";
 
-  const isActiveGroup = (path: string) =>
-    pathname.startsWith(path)
-      ? "text-purple-600 font-semibold"
-      : "hover:text-purple-600 transition";
+const isActiveGroup = (path: string) =>
+  pathname.startsWith(path)
+    ? "text-[#3447aaee] font-semibold"
+    : "hover:text-[#3447AA] transition";
 
   return (
     <nav

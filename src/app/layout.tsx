@@ -6,6 +6,14 @@ import Footer from "../components/footer/Footer"
 import PageHero from "../shared/ui/page-hero/PageHero"
 import Header from "../components/Header"
 
+import { Roboto } from "next/font/google";
+
+const roboto = Roboto({
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  variable: "--font-roboto",
+});
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -27,7 +35,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={roboto.variable}>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Header/>
         {/* <PageHero
