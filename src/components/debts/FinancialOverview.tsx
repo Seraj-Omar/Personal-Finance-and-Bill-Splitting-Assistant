@@ -6,7 +6,7 @@ import { IconClockFilled, IconCircleCheckFilled, IconAlertTriangleFilled } from 
 export default function FinancialOverview() {
   return (
     <div className=" bg-[#F6F6F7B2] p-8 ">
-      <h2 className="relative text-lg font-semibold mb-4 w-fit bg-[#F6F6F7B2]">
+      <h2 className="relative text-lg font-semibold mb-4 w-fit bg-[#F6F6F7B2] text-[#1C1A1A]">
   Financial Overview
   <span className="mt-4 absolute left-0 bottom-0 w-full h-0.5 bg-gradient-to-r from-[#EFA5B6] to-[#3447AA]"></span>
 </h2>

@@ -29,36 +29,52 @@ const statusStyles = {
 const columns: Column<Payment>[] = [
   {
     key: "personName",
-    title: "Person Name",
+    title: "Person",
     render: (row) => (
       <div className="flex items-center gap-2">
-        <img src={row.avatar} className="w-8 h-8 rounded-full" />
-        <span>{row.personName}</span>
+        <img src={row.avatar} className="w-6 h-6 md:w-8 md:h-8 rounded-full" />
+        <span className="text-xs md:text-sm">{row.personName}</span>
       </div>
     ),
   },
   { key: "amount", title: "Amount" },
-  { key: "dueDate", title: "Due Date" },
-  { key: "description", title: "Description" },
+
+  {
+    key: "dueDate",
+    title: "Due Date",
+    render: (row) => (
+      <span className="hidden md:inline">{row.dueDate}</span>
+    ),
+  },
+
+  {
+    key: "description",
+    title: "Description",
+    render: (row) => (
+      <span className="hidden lg:inline">{row.description}</span>
+    ),
+  },
+
   {
     key: "status",
-    title: "Payment Status",
+    title: "Status",
     render: (row) => (
       <span
-        className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium ${statusStyles[row.status]}`}
+        className={`inline-flex items-center gap-1 md:gap-2 px-2 py-1 md:px-3 rounded-full text-[10px] md:text-xs font-medium ${statusStyles[row.status]}`}
       >
-        <span className="w-2 h-2 rounded-full bg-current"></span>
+        <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-current"></span>
         {row.status}
       </span>
     ),
   },
+
   {
     key: "action",
     title: "Action",
     render: () => (
-      <div className="flex gap-3">
-        <HiMiniTrash className="text-[#F52121C4]" size={18} />
-        <BiSolidPencil className="text-[#4B5563]" size={18} />
+      <div className="flex gap-2 md:gap-3">
+        <HiMiniTrash className="text-[#F52121C4]" size={16} />
+        <BiSolidPencil className="text-[#4B5563]" size={16} />
       </div>
     ),
   },

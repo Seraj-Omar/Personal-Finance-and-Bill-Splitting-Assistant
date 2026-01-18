@@ -5,6 +5,7 @@ import Providers from "./providers"
 import Footer from "../components/footer/Footer"
 import PageHero from "../shared/ui/page-hero/PageHero"
 import Header from "../components/Header"
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -29,10 +30,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Header/>
-        <PageHero
+        {/* <PageHero
           title="Services"
           breadcrumb={["Home", "Service"]}
-        />
+        /> */}
 
         <Providers>{children}</Providers>
         <Footer />
