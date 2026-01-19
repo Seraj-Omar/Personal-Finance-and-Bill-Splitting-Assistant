@@ -16,7 +16,7 @@ const progressList = [
 
 export default function WhyChooseUs() {
     return (
-        <Box className="flex flex-col p-[24px] bg-[#FFF] rounded-xl flex-wrap gap-[48px]">
+        <Box className="flex flex-col p-[24px] bg-[cyan] rounded-xl flex-wrap gap-[48px]">
             {/* get back and add the radial gradient */}
             {/* top part */}
             <Box className="flex flex-row gap-[24px] flex-wrap">
@@ -112,7 +112,7 @@ export default function WhyChooseUs() {
                     <Box className="absolute inset-0 bg-[#3447AA]/90" />
                         <Box className="relative z-10">
                         <ContactUsForm />
-                        </Box>
+                            </Box>
                     </Box>
                 </Box>
 

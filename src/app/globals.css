@@ -55,3 +55,13 @@ body {
 .main-text-color {
   color:#3447aaee;
 }
+/* Chrome, Safari, Edge */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* Firefox */
+input[type="date"] {
+  -moz-appearance: textfield;
+}

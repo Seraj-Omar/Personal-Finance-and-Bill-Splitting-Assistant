@@ -67,7 +67,7 @@ const servicesList: Service[] = [
 export default function OurServices() {
     const router = useRouter();
     return (
-        <Box className="flex w-full justify-start">
+        <Box className="flex w-full justify-center">
             <Box className="flex w-full flex-col items-start justify-between">
                 <Box className="w-fit">
                     <Typography variant="h4" className="mb-3 !text-[24px] !font-[500] text-gray-900">
@@ -75,12 +75,12 @@ export default function OurServices() {
                     </Typography>
                     <Box className="mt-2 h-[3px] w-full rounded-full hero-gradient" />
                 </Box>
-                <Box className="mt-7 grid w-full gap-6 md:grid-cols-2 lg:grid-cols-4">
+                <Box className="mt-7 grid w-full gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-4">
                     {/* service cards */}
                     {servicesList.map((service) => (
                         <Box
                             key={service.id}
-                            className="group flex w-[302px] h-[238px] flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-lg hover:bg-[#3447AA]"
+                            className="group flex h-full min-h-[220px] w-full flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-lg hover:bg-[#3447AA]"
                         >
                             <Typography className="mb-3 text-[18px] font-semibold text-gray-900 group-hover:text-white" variant="h6">
                                 {service.name}
