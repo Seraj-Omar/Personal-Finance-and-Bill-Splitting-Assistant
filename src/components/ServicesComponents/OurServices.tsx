@@ -4,6 +4,7 @@ import { Box, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { MoveRight, CircleDollarSign, TrendingUp, Wallet, FileText } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import TitleWithGradient from "../home/TitleWithGradient";
 
 type Service = {
     id: number;
@@ -67,15 +68,14 @@ const servicesList: Service[] = [
 export default function OurServices() {
     const router = useRouter();
     return (
-        <Box className="flex w-full justify-center">
+        <Box className="flex w-full justify-center px-4 py-8 s  m:px-6 md:px-10 lg:px-24 lg:py-12">
             <Box className="flex w-full flex-col items-start justify-between">
-                <Box className="w-fit">
-                    <Typography variant="h4" className="mb-3 !text-[24px] !font-[500] text-gray-900">
-                        Our Service
-                    </Typography>
-                    <Box className="mt-2 h-[3px] w-full rounded-full hero-gradient" />
+                <Box className="flex w-full flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <TitleWithGradient
+                        title="Our Service"
+                    />
                 </Box>
-                <Box className="mt-7 grid w-full gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-4">
+                <Box className="mt-7 grid w-full gap-5 sm:gap-6 md:gap-8 md:grid-cols-2 lg:grid-cols-4">
                     {/* service cards */}
                     {servicesList.map((service) => (
                         <Box
@@ -94,7 +94,7 @@ export default function OurServices() {
                                 {service.description}
                             </Typography>
 
-                            <button type="button" onClick={() => router.push(service.href)}className="mt-auto flex items-center text-[13px] font-medium group-hover:text-white hover:underline hover:cursor-pointer bg-transparent border-none outline-none main-text-color">
+                            <button type="button" onClick={() => router.push(service.href)} className="mt-auto flex items-center text-[13px] font-medium group-hover:text-white hover:text-white hover:underline hover:cursor-pointer bg-transparent border-none outline-none main-text-color">
                                 <span>{`Manage ${service.manage}`}</span>
                                 <MoveRight className="ml-1 h-4 w-4" />
                             </button>
