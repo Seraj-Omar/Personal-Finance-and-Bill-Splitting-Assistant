@@ -1,6 +1,6 @@
 "use client";
 import {Box,Typography} from "@mui/material";
-import { Wallet,MoveDown,MoveUp,DollarSign,ArrowUp,ArrowDown,Check, Calendar, AlertCircle  } from "lucide-react";
+import { ArrowUp,ArrowDown} from "lucide-react";
 import TitleWithGradient from "./TitleWithGradient";
 import { ReactNode } from "react";
 
