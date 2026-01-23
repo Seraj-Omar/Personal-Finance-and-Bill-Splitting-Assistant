@@ -2,6 +2,7 @@
 import { Box, Typography } from "@mui/material";
 import { Check } from "lucide-react";
 import ContactUsForm from "./ContactUsForm";
+import TitleWithGradient from "../home/TitleWithGradient";
 const featuresList = [
     "Secure wallet storage",
     "Real-time portfolio tracking",
@@ -35,10 +36,10 @@ export default function WhyChooseUs() {
                 {/*right side*/}
                 <Box className="flex flex-col gap-[16px] justify-center items-start">
                     <Box className="w-fit">
-                        <Typography className="w-fit text-[#1C1A1A]">
-                            Why This Service Matters
-                        </Typography>
-                        <Box className="mt-2 h-[3px] rounded-full hero-gradient" />
+                        <TitleWithGradient
+                            title="Why This Service Matters"
+                            text_size="16px"
+                        />
                     </Box>
                     <Typography className="w-[568px] !text-[#1C1A1A] !font-[500] !text-[24px]">
                         Smart Financial Tracking Creates a Strong Foundation for Better Control, Clear Insights, and Long-Term Financial Stability
@@ -111,8 +112,8 @@ export default function WhyChooseUs() {
                         
                     <Box className="absolute inset-0 bg-[#3447AA]/90" />
                         <Box className="relative z-10">
-                        <ContactUsForm />
-                            </Box>
+                            <ContactUsForm />
+                        </Box>
                     </Box>
                 </Box>
 
