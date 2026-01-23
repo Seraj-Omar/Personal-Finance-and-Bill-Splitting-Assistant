@@ -1,14 +1,16 @@
 "use client";
-import HomeFinancialOverview from "@/src/components/home/homeFinincialOverview";
-import OurServices from "@/src/components/ServicesComponents/OurServices";
-import { Box } from "@mui/material";
+import HomeFinancialOverview from "./homeFinincialOverview";
+import OurServices from "../ServicesComponents/OurServices";
 import WhyChooseUs from "./WhyChooseUs";
+import AttentionNeeded from "./AttentionNeeded";
+import { Box } from "@mui/material";
 export default function Home() {
  return (
     <Box component="main" className="flex flex-col items-center justify-center w-full flex-1">
         <HomeFinancialOverview />
         <OurServices />
         <WhyChooseUs />
+        <AttentionNeeded />
     </Box>
   );
 }
