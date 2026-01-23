@@ -70,6 +70,7 @@ export default function AttentionNeeded() {
                             <TitleWithGradient title="Attention Needed" />
                         </Box>
                         <Box component="p" className="mt-2 text-sm text-[#707070]">
+                            A quick summary of key financial observations based on your recent activity.
                         </Box>
                     </Box>
                     <Box component="ul" className="mt-4 flex flex-col gap-4 list-none">
