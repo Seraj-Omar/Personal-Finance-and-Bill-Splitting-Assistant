@@ -202,18 +202,12 @@ export default function Rewards() {
 
                     <Box className="flex flex-col sm:flex-row justify-between gap-3">
                         <button
+                            onClick={() => router.push('/profile/rewards')}
                             className="w-full py-3 rounded-2xl font-medium text-white flex items-center justify-center gap-2 hover:cursor-pointer hover:bg-[#2A3A8C] transition-colors duration-300"
                             style={{backgroundColor: "#3447AA"}}
                         >
                             <span className="inline-flex items-center justify-center">{rewardIcon}</span>
                             <span>Redeem</span>
-                        </button>
-                        <button
-                            onClick={() => router.push('/profile/rewards')}
-                            className="w-full py-3 rounded-2xl font-medium text-[#1C1A1A] bg-[#F9F9FA] flex items-center justify-center gap-2 border-[1px] border-solid border-[#E0E0E0] hover:cursor-pointer hover:bg-[#EFEFEF] transition-colors duration-300"
-                        >
-                            <span className="inline-flex items-center justify-center">{menuicon}</span>
-                            <span>View Rewards</span>
                         </button>
                     </Box>
                 </Box>
