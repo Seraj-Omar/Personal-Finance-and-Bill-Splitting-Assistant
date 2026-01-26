@@ -51,7 +51,7 @@ const isActiveGroup = (path: string) =>
         </li>
 
         <li>
-          <Link href="/" className={isActiveExact("/reminder")}>
+          <Link href="/reminder" className={isActiveExact("/reminder")}>
             Reminder
           </Link>
         </li>
