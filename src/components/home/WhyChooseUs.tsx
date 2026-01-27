@@ -124,7 +124,13 @@ export default function WhyChooseUs() {
         >
             <TitleWithGradient title="Why Choose Us" id="why-choose-us-heading" />
             <Box className="flex flex-wrap w-full justify-center items-center rounded-2xl p-4 sm:p-5 md:p-6 lg:p-8"
-                sx={{background:'linear-gradient(102.08deg, rgba(255, 255, 255, 0.2) 56.21%, rgba(255, 219, 227, 0.004) 98.01%), radial-gradient(11.48% 46.39% at 12.34% 50.13%, #FFFFFF 0%, rgba(104, 111, 255, 0.29) 29.74%, rgba(239, 165, 182, 0.26) 99.74%)'}}
+                sx={{
+                    background:{
+                        xs:'linear-gradient(102.08deg, rgba(255, 255, 255, 0.2) 56.21%, rgba(255, 219, 227, 0.004) 98.01%), radial-gradient(11.48% 46.39% at 12.34% 50.13%, #FFFFFF 0%, rgba(239, 165, 182, 0.26) 99.74%)',
+                        sm:'linear-gradient(102.08deg, rgba(255, 255, 255, 0.2) 56.21%, rgba(255, 219, 227, 0.004) 98.01%), radial-gradient(11.48% 46.39% at 12.34% 50.13%, #FFFFFF 0%, rgba(104, 111, 255, 0.29) 29.74%, rgba(239, 165, 182, 0.26) 99.74%)',
+                        lg:'linear-gradient(102.08deg, rgba(255, 255, 255, 0.2) 56.21%, rgba(255, 219, 227, 0.004) 98.01%), radial-gradient(11.48% 46.39% at 12.34% 50.13%, #FFFFFF 0%, rgba(104, 111, 255, 0.29) 29.74%, rgba(239, 165, 182, 0.26) 99.74%)'
+                    }
+                }}
             >
                 <Box className="flex w-full flex-col md:flex-row items-center justify-between gap-6 md:gap-10 px-2 sm:px-4 lg:px-8">
                     <Box className="w-fit">
