@@ -1,6 +1,6 @@
 "use client";
 import HomeFinancialOverview from "./homeFinincialOverview";
-import OurServices from "../ServicesComponents/OurServices";
+import OurServices from "./OurServices";
 import WhyChooseUs from "./WhyChooseUs";
 import AttentionNeeded from "./AttentionNeeded";
 import AskAi from "./AskAi";
