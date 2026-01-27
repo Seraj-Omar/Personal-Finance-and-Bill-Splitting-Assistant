@@ -3,6 +3,7 @@ import HomeFinancialOverview from "./homeFinincialOverview";
 import OurServices from "../ServicesComponents/OurServices";
 import WhyChooseUs from "./WhyChooseUs";
 import AttentionNeeded from "./AttentionNeeded";
+import AskAi from "./AskAi";
 import Rewards from "./Rewards";
 import { Box } from "@mui/material";
 export default function Home() {
@@ -12,6 +13,7 @@ export default function Home() {
         <OurServices />
         <WhyChooseUs />
         <AttentionNeeded />
+        <AskAi />
         <Rewards />
     </Box>
   );
