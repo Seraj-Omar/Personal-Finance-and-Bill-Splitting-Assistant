@@ -5,15 +5,20 @@ type TitleWithGradientProps = {
     title: string;
     text_size?: string;
     id?: string;
+    text_color?: string;
 };
 
-export default function TitleWithGradient({ title, text_size, id }: TitleWithGradientProps) {
+function generateRandomId(){
+    return Math.random().toString(36);
+}
+export default function TitleWithGradient({ title, text_size,id, text_color }: TitleWithGradientProps) {
     return (
         <Box>
             <Typography
-                id={id}
+                id={id||generateRandomId()}
                 component="h2"
                 className={`!font-[500] !text-[${text_size || 24}px] mb-2`}
+                style={{ color: text_color || undefined }}
             >
                 {title}
             </Typography>
