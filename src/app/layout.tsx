@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Roboto } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
+import Footer from "../components/footer/Footer";
+import Header from "../components/Header";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,7 +35,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={roboto.variable}>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <Header/>
         <Providers>{children}</Providers>
+        <Footer />
       </body>
     </html>
   );
