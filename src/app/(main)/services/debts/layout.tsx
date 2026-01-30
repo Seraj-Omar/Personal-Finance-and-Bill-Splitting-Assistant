@@ -1,4 +1,4 @@
-import Providers from "../providers"
+import Providers from "../../../providers"
 import Footer from "@/src/components/footer/Footer"
 import PageHero from "@/src/shared/ui/page-hero/PageHero"
 
