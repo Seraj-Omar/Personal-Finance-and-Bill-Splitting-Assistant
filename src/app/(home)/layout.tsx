@@ -1,5 +1,6 @@
 import HomeHero from "@/src/components/home/HomeHero"
-
+import Footer from "../../components/footer/Footer";
+import Header from "../../components/Header";
 export default function HomeLayout({
   children,
 }: {
@@ -7,8 +8,10 @@ export default function HomeLayout({
 }) {
   return (
     <>
+      <Header />
       <HomeHero />
       {children}
+      <Footer />
     </>
   )
 }
