@@ -1,17 +1,22 @@
 "use client";
-import React, { useEffect, useState } from "react";
+
+import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 import {
-  MenuItem,
   Typography,
   TextField,
   Button,
   InputAdornment,
+  Paper,
+  List,
+  ListItemButton,
+  ListItemText,
+  Box,
 } from "@mui/material";
 
-import SearchIcon from "@mui/icons-material/Search"; 
+import SearchIcon from "@mui/icons-material/Search";
 
 const currencies = [
   { code: "USD", name: "United States (US Dollar)", flag: "🇺🇸" },
@@ -25,117 +30,187 @@ const currencies = [
 
 export default function CurrencyPage() {
   const router = useRouter();
+
   const [selectedCurrency, setSelectedCurrency] = useState("AED");
+  const [query, setQuery] = useState("");
 
   useEffect(() => {
     const pendingEmail = sessionStorage.getItem("pendingEmail");
-    const token = sessionStorage.getItem("token"); 
+    const token = sessionStorage.getItem("token");
 
     if (!pendingEmail && !token) {
       router.replace("/register");
     }
   }, [router]);
 
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return currencies;
+    return currencies.filter(
+      (c) =>
+        c.code.toLowerCase().includes(q) || c.name.toLowerCase().includes(q)
+    );
+  }, [query]);
+
   const handleContinue = (e: React.FormEvent) => {
     e.preventDefault();
-
     sessionStorage.setItem("pendingCurrency", selectedCurrency);
-
     router.push("/login");
   };
 
   return (
-    <section className="min-h-screen w-full flex items-center justify-center p-3 bg-white">
+    <section className="min-h-screen w-full bg-[#f5f5f7] flex items-center justify-center p-6">
+      {/* Frame 1280x921 */}
       <div
-        className="grid grid-cols-1 lg:grid-cols-2 max-w-7xl w-full rounded-xl overflow-hidden shadow-lg"
+        className="w-full max-w-[1280px] h-[921px] rounded-[16px] overflow-hidden shadow-lg"
         style={{
-          height: "75vh",
-          borderRadius: "16px",
           background:
             "linear-gradient(292.39deg, rgba(246, 227, 231, 0.84) 1.98%, rgba(52, 71, 170, 0.87) 98.11%)",
         }}
       >
-        {/* Left */}
-        <div className="p-8 lg:p-12 flex flex-col justify-center items-center text-white">
-          <form
-            onSubmit={handleContinue}
-            className="flex flex-col gap-6 w-full max-w-[520px]"
-          >
-            <Typography variant="h4" sx={{ color: "white", fontWeight: 700 }} component="h1">
-              Select currency
-            </Typography>
-
-            <Typography variant="body1" sx={{ color: "white", opacity: 0.9 }}>
-              This currency will be used across the platform
-            </Typography>
-
-            <TextField
-              select
-              value={selectedCurrency}
-              onChange={(e) => setSelectedCurrency(e.target.value)}
-              fullWidth
-              SelectProps={{ displayEmpty: true }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon sx={{ color: "white" }} />
-                  </InputAdornment>
-                ),
-              }}
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: "12px",
-                  color: "white",
-                  backgroundColor: "rgba(255,255,255,0.06)",
-                  "& fieldset": { borderColor: "rgba(255,255,255,0.5)" },
-                  "&:hover fieldset": { borderColor: "white" },
-                  "&.Mui-focused fieldset": { borderColor: "white" },
-                },
-                "& .MuiSvgIcon-root": { color: "white" },
-              }}
-            >
-              {currencies.map((cur) => (
-                <MenuItem
-                  key={cur.code}
-                  value={cur.code}
-                  sx={{ display: "flex", alignItems: "center", gap: 5, borderRadius: "10px" }}
+        {/* padding 24 */}
+        <div className="h-full w-full p-6">
+          <div className="grid h-full grid-cols-1 lg:grid-cols-2 rounded-[16px] overflow-hidden">
+            {/* LEFT */}
+            <div className="h-full w-full flex items-start">
+              {/* نفس الستايل: مش بالنص 100% — شوي لليسار */}
+              <div className="w-full pl-10 pr-6 pt-28">
+                <Box
+                  component="form"
+                  onSubmit={handleContinue}
+                  sx={{ width: "100%", maxWidth: 460 }}
                 >
-                  <span style={{ fontSize: "18px" }}>{cur.flag}</span>
-                  <span style={{ fontSize: "14px" }}>{cur.name}</span>
-                </MenuItem>
-              ))}
-            </TextField>
+                  <Typography
+                    variant="h4"
+                    component="h1"
+                    sx={{ color: "white", fontWeight: 700, mb: 1 }}
+                  >
+                    Select currency
+                  </Typography>
 
-            <Button
-              type="submit"
-              variant="contained"
-              fullWidth
-              sx={{
-                backgroundColor: "#3447AADE",
-                height: "50px",
-                borderRadius: "12px",
-                boxShadow: "none",
-                textTransform: "none",
-                fontWeight: 600,
-                "&:hover": { backgroundColor: "#3447AA", boxShadow: "none" },
-              }}
-            >
-              Continue
-            </Button>
-          </form>
-        </div>
+                  <Typography
+                    variant="body2"
+                    sx={{ color: "white", opacity: 0.9, mb: 2.5 }}
+                  >
+                    This currency will be used across the platform
+                  </Typography>
 
-        {/* Right */}
-        <div className="relative hidden lg:block">
-          <Image src="/authImage.jpg" alt="Auth" fill className="object-cover" priority />
-          <div className="absolute inset-0 bg-black/30" />
-          <div className="absolute inset-0 flex flex-col justify-start p-8 text-white mt-16">
-            <h2 className="text-2xl font-semibold leading-snug text-3xl">
-              Building clarity into your daily work.
-            </h2>
-            <p className="mt-2 text-sm text-white/80 max-w-xs text-2xl">
-              A simple space to stay organized, focused, and in control.
-            </p>
+                  {/* Search */}
+                  <TextField
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="Search for Currency"
+                    fullWidth
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon sx={{ color: "#64748b" }} />
+                        </InputAdornment>
+                      ),
+                    }}
+                    sx={{
+                      mb: 2,
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "12px",
+                        backgroundColor: "rgba(255,255,255,0.95)",
+                        "& fieldset": { borderColor: "rgba(255,255,255,0.6)" },
+                      },
+                      "& input": { fontSize: 14 },
+                    }}
+                  />
+
+                  {/* List Box */}
+                  <Paper
+                    elevation={0}
+                    sx={{
+                      borderRadius: "12px",
+                      overflow: "hidden",
+                      backgroundColor: "rgba(255,255,255,0.95)",
+                      border: "1px solid rgba(255,255,255,0.6)",
+                      mb: 2.5,
+                    }}
+                  >
+                    <List dense disablePadding>
+                      {filtered.map((cur) => {
+                        const active = cur.code === selectedCurrency;
+                        return (
+                          <ListItemButton
+                            key={cur.code}
+                            onClick={() => setSelectedCurrency(cur.code)}
+                            sx={{
+                              px: 2,
+                              py: 1.2,
+                              gap: 1.5,
+                              backgroundColor: active
+                                ? "rgba(52, 71, 170, 0.87)"
+                                : "transparent",
+                              "&:hover": {
+                                backgroundColor: active
+                                  ? "rgba(52, 71, 170, 0.87)"
+                                  : "rgba(0,0,0,0.04)",
+                              },
+                            }}
+                          >
+                            <span style={{ fontSize: 16 }}>{cur.flag}</span>
+                            <ListItemText
+                              primary={` ${cur.name}`}
+                              sx={{
+                                "& .MuiListItemText-primary": {
+                                  fontSize: 13,
+                                  color: active ? "white" : "#1f2937",
+                                },
+                              }}
+                            />
+                          </ListItemButton>
+                        );
+                      })}
+                    </List>
+                  </Paper>
+
+                  {/* Continue */}
+                  <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    sx={{
+                      height: 48,
+                      borderRadius: "12px",
+                      boxShadow: "none",
+                      textTransform: "none",
+                      fontWeight: 600,
+                      backgroundColor: "rgba(52, 71, 170, 0.87)",
+                      "&:hover": {
+                        backgroundColor: "rgba(52, 71, 170, 1)",
+                        boxShadow: "none",
+                      },
+                    }}
+                  >
+                    Continue
+                  </Button>
+                </Box>
+              </div>
+            </div>
+
+            {/* RIGHT */}
+            <div className="relative hidden lg:block rounded-[16px] overflow-hidden">
+              <Image
+                src="/authImage.jpg"
+                alt="Auth"
+                fill
+                className="object-cover"
+                priority
+              />
+              <div className="absolute inset-0 bg-black/30" />
+
+              <div className="absolute inset-0 p-6 pt-16 text-white">
+                <h2 className="text-[24px] font-semibold leading-snug">
+                  Building clarity into your daily work.
+                </h2>
+                <p className="mt-2 text-[12px] text-white/80 max-w-[260px]">
+                  A simple space to stay organized, focused, and in control.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>

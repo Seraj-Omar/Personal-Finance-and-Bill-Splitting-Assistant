@@ -49,16 +49,20 @@ const onSubmit = async (data: FormData) => {
   try {
     setLoading(true);
 
-    if (isRegister) {
-      const registerData = data as RegisterForm;
+  if (isRegister) {
+  const registerData = data as RegisterForm;
 
-      await registerUser({
-        name: registerData.name,
-        email: registerData.email,
-        password: registerData.password,
-      });
+  await registerUser({
+    name: registerData.name,
+    email: registerData.email,
+    password: registerData.password,
+  });
 
-    router.push("/currency")
+  sessionStorage.setItem("pendingEmail", registerData.email);
+
+  router.push("/currency");
+  return;
+
 
 
     } else {
@@ -81,7 +85,7 @@ const onSubmit = async (data: FormData) => {
 
 
   return (
-    <div className="w-full max-w-md text-white">
+    <div className="w-full max-w-md text-white ">
       {/* Title */}
       <h1 className="text-3xl font-semibold mb-2">
         {isRegister ? "Create Account" : "Welcome Back"}
@@ -104,7 +108,7 @@ const onSubmit = async (data: FormData) => {
                 {...register("name")}
                 type="text"
                 placeholder="John Doe"
-                className="w-full rounded-xl bg-white/10 border border-white/20 pl-11 pr-4 py-3 text-sm outline-none focus:border-white/40"
+                className="w-full rounded-xl border border-white/80  pl-11 pr-4 py-3 text-sm outline-none focus:border-white/40"
               />
             </div>
             {"name" in errors && errors.name && (
@@ -117,14 +121,14 @@ const onSubmit = async (data: FormData) => {
 
         {/* Email */}
         <div>
-          <label className="block text-sm mb-1">Company email</label>
+          <label className="block text-sm mb-3"> Email</label>
           <div className="relative">
             <HiOutlineMail className="absolute left-4 top-1/2 -translate-y-1/2 text-white/70" />
             <input
               {...register("email")}
               type="email"
               placeholder="example@email.com"
-              className="w-full rounded-xl bg-white/10 border border-white/20 pl-11 pr-4 py-3 text-sm outline-none focus:border-white/40"
+              className="w-full rounded-xl border border-white/80 pl-11 pr-4 py-3 text-sm outline-none focus:border-white/40"
             />
           </div>
           {errors.email && (
@@ -136,7 +140,7 @@ const onSubmit = async (data: FormData) => {
 
 {/* Password */}
 <div>
-  <label className="block text-sm mb-1">Password</label>
+  <label className="block text-sm mb-3">Password</label>
 
   <div className="relative">
     <HiOutlineLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 text-white/70" />
@@ -145,7 +149,7 @@ const onSubmit = async (data: FormData) => {
       {...register("password")}
       type={showPassword ? "text" : "password"}
       placeholder="••••••••••••"
-      className="w-full rounded-xl bg-white/10 border border-white/20 pl-11 pr-11 py-3 text-sm outline-none focus:border-white/40"
+      className="w-full rounded-xl border border-white/80 pl-11 pr-11 py-3 text-sm outline-none focus:border-white/40"
     />
 
     {/* Eye icon */}
@@ -179,7 +183,7 @@ const onSubmit = async (data: FormData) => {
         {...register("confirmPassword")}
         type={showConfirmPassword ? "text" : "password"}
         placeholder="••••••••••••"
-        className="w-full rounded-xl bg-white/10 border border-white/20 px-4 pr-11 py-3 text-sm outline-none focus:border-white/40"
+        className="w-full rounded-xl border border-white/80 px-4 pr-11 py-3 text-sm outline-none focus:border-white/40"
       />
 
       <button
