@@ -1,4 +1,4 @@
-import BillsClient from "../../components/bills/BillsClient";
+import BillsClient from "@/src/components/bills/BillsClient";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
