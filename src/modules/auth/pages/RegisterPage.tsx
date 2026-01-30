@@ -14,7 +14,7 @@ export default function RegisterPageUI() {
   }}
 >
         {/* Left: Form */}
-        <div className="p-8 lg:p-12">
+        <div className="p-8 lg:p-12 flex flex-col justify-center items-center text-white">
           <AuthForm type="register" />
         </div>
 

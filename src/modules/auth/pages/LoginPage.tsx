@@ -3,7 +3,7 @@ import AuthForm from "../components/AuthForm"
 
 export default function LoginPageUI() {
   return (
-    <section className="min-h-screen w-full flex items-center justify-center bg-whtite p-3">
+<section className="min-h-screen w-full flex items-center justify-center bg-white p-2">
 <div
   className="grid grid-cols-1 lg:grid-cols-2 max-w-7xl w-full rounded-xl overflow-hidden shadow-lg"
   style={{
@@ -14,12 +14,12 @@ export default function LoginPageUI() {
   }}
 >        
         {/* Left: Form */}
-        <div className="p-8 lg:p-12">
-          <AuthForm type="login" />
-        </div>
+<div className="p-6 lg:p-8 flex flex-col justify-center items-center text-white">
+  <AuthForm type="login" />
+</div>
 
         {/* Right: Image */}
-        <div className="relative hidden lg:block">
+        <div className="relative  lg:block">
   <Image
     src="/authImage.jpg"
     alt="Auth"
