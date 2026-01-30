@@ -43,6 +43,8 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     resolver: zodResolver(schema),
   });
 
+
+
 const onSubmit = async (data: FormData) => {
   try {
     setLoading(true);
@@ -55,6 +57,10 @@ const onSubmit = async (data: FormData) => {
         email: registerData.email,
         password: registerData.password,
       });
+
+    router.push("/currency")
+
+
     } else {
       const loginData = data as LoginForm;
 
@@ -62,14 +68,16 @@ const onSubmit = async (data: FormData) => {
         email: loginData.email,
         password: loginData.password,
       });
-    }
 
+      router.push("/");
+    }
   } catch (error) {
     console.error(error);
   } finally {
     setLoading(false);
   }
 };
+
 
 
   return (
@@ -84,7 +92,7 @@ const onSubmit = async (data: FormData) => {
           : "Enter your credentials to access your account"}
       </p>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+<form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
 
         {/* Full Name */}
         {isRegister && (
@@ -207,7 +215,7 @@ const onSubmit = async (data: FormData) => {
             </label>
              <button
       type="button"
-      onClick={() => router.push("/auth/forgot-password")}
+      onClick={() => router.push("/forgot-password")}
       className="hover:underline"
     >
       Forgot password?
@@ -216,13 +224,13 @@ const onSubmit = async (data: FormData) => {
         )}
 
         {/* Submit */}
-        <button
-
-          type="submit"
-          className="w-full mt-2 rounded-xl main-blue-color hover:bg-indigo-700 transition py-3 text-sm font-medium"
-        >
-          {isRegister ? "Sign up" : "Log in"}
-        </button>
+  <button
+  type="submit"
+  disabled={loading}
+  className="w-full mt-2 rounded-xl main-blue-color hover:bg-indigo-700 transition py-3 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+>
+  {loading ? "Loading..." : isRegister ? "Sign up" : "Log in"}
+</button>
 
         {/* Divider */}
         <div className="flex items-center gap-4 my-4 text-white/60 text-sm">
@@ -255,12 +263,12 @@ const onSubmit = async (data: FormData) => {
           {isRegister ? (
             <>
               Already have an account?{" "}
-              <span className="font-medium cursor-pointer"><Link href="/auth/login">Log in</Link></span>
+              <span className="font-medium cursor-pointer"><Link href="/login">Log in</Link></span>
             </>
           ) : (
             <>
               Don’t have an account?{" "}
-              <span className="font-medium cursor-pointer"><Link href="/auth/register">Sign up</Link></span>
+              <span className="font-medium cursor-pointer"><Link href="/register">Sign up</Link></span>
             </>
           )}
         </p>
