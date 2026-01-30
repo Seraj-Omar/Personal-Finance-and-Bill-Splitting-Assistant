@@ -1,5 +1,6 @@
 "use client";
 import { Box, Typography } from "@mui/material";
+import { useId } from "react";
 
 type TitleWithGradientProps = {
     title: string;
@@ -8,14 +9,12 @@ type TitleWithGradientProps = {
     text_color?: string;
 };
 
-function generateRandomId(){
-    return Math.random().toString(36);
-}
 export default function TitleWithGradient({ title, text_size,id, text_color }: TitleWithGradientProps) {
+    const autoId = useId();
     return (
         <Box>
             <Typography
-                id={id||generateRandomId()}
+                id={id || autoId}
                 component="h2"
                 className={`!font-[500] !text-[${text_size || 24}px] mb-2`}
                 style={{ color: text_color || undefined }}
