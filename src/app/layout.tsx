@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Roboto } from "next/font/google";
 import "./globals.css";
-import Providers from "./providers";
 import { AuthProvider } from "../context/AuthContext"
 import Footer from "../components/footer/Footer";
 import Header from "../components/Header";
@@ -35,10 +34,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={roboto.variable}>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <ThemeRegistry><AuthProvider>{children}</AuthProvider></ThemeRegistry>
-      </body>
-    </html>
+  <html lang="en">
+    <body
+      className={`${roboto.className} ${geistSans.variable} ${geistMono.variable} antialiased`}
+    >
+      <ThemeRegistry>
+        <AuthProvider>{children}</AuthProvider>
+      </ThemeRegistry>
+    </body>
+  </html>
+
   )
 }
