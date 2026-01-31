@@ -11,6 +11,8 @@ export default function Navbar() {
   const serviceRef = useRef<HTMLLIElement | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isServiceOpen, setIsServiceOpen] = useState(false);
+  const [avatarError, setAvatarError] = useState(false);
+
 
 const { isAuthed, user } = useAuth();
   const [mounted, setMounted] = useState(false);
@@ -31,10 +33,10 @@ const { isAuthed, user } = useAuth();
       : "hover:text-[#3447aaee] transition";
 
   const services = [
-    { name: "Debt", href: "/debts" },
-    { name: "Bill", href: "/bills" },
-    { name: "Expenses", href: "/expenses" },
-    { name: "Income", href: "/incomes" },
+    { name: "Debt", href: "/services/debts" },
+    { name: "Bill", href: "/services/bills" },
+    { name: "Expenses", href: "/services/expenses" },
+    { name: "Income", href: "/services/incomes" },
   ];
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -141,46 +143,49 @@ const { isAuthed, user } = useAuth();
           <span>Search</span>
         </button>
 
-        {!mounted ? (
-          <div className="flex items-center gap-1 text-gray-700 text-lg opacity-70">
-            <User size={20} className="fill-current" />
-            <span>...</span>
-          </div>
-        ) : isAuthed ? (
-  <Link
+ {!mounted ? (
+  <div className="flex items-center gap-2 px-2 py-1 rounded-full text-gray-700 text-lg opacity-70">
+    <div className="w-9 h-9 rounded-full bg-gray-200 border border-gray-200" />
+    <div className="w-24 h-4 bg-gray-200 rounded" />
+  </div>
+) : isAuthed ? (
+ <Link
   href="/profile"
   className="flex items-center gap-2 px-2 py-1 rounded-full
              text-gray-700 hover:text-[#3447aaee]
              hover:bg-gray-100 transition text-lg"
 >
-  <img
-    src={user?.avatarAssetId || "/default-avatar.png"}
-    alt={user?.fullName || "User"}
-    className="
-      w-9 h-9
-      rounded-full
-      object-cover
-      border border-gray-200
-      flex-shrink-0
-    "
-    onError={(e) => {
-      (e.currentTarget as HTMLImageElement).src = "/default-avatar.png";
-    }}
-  />
+  {user?.avatarAssetId && !avatarError ? (
+    <img
+      src={user.avatarAssetId}
+      alt={user.fullName}
+      className="w-9 h-9 rounded-full object-cover border border-gray-200 flex-shrink-0"
+      onError={() => setAvatarError(true)}
+    />
+  ) : (
+    <div
+      className="w-9 h-9 rounded-full bg-[#f9f9fa] border border-gray-200
+                 flex items-center justify-center text-gray-600 flex-shrink-0"
+    >
+      <User size={18} />
+    </div>
+  )}
 
   <span className="max-w-[120px] truncate font-medium">
     {user?.fullName}
   </span>
 </Link>
-        ) : (
-          <Link
-            href="/login"
-            className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] transition text-lg"
-          >
-            <User size={20} className="fill-current" />
-            <span>Sign In</span>
-          </Link>
-        )}
+
+) : (
+  <Link
+    href="/login"
+    className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] transition text-lg"
+  >
+    <User size={20} className="fill-current" />
+    <span>Sign In</span>
+  </Link>
+)}
+
       </div>
 
       <div className="md:hidden flex items-center gap-3">
