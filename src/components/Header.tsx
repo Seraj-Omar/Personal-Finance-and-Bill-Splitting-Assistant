@@ -22,10 +22,10 @@ export default function Navbar() {
       : "hover:text-[#3447aaee] transition";
 
   const services = [
-    { name: "Debt", href: "/debts" },
-    { name: "Bill", href: "/bills" },
-    { name: "Expenses", href: "/expenses" },
-    { name: "Income", href: "/incomes" },
+    { name: "Debt", href: "/services/debts" },
+    { name: "Bill", href: "/services/bills" },
+    { name: "Expenses", href: "/services/expenses" },
+    { name: "Income", href: "/services/incomes" },
   ];
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -121,11 +121,9 @@ export default function Navbar() {
       </ul>
 
       <div className="hidden md:flex items-center gap-[12px]  text-[18px] font-medium">
-        <Link href="/notification" className="group">
-          <div className="w-[40px] h-[40px] flex items-center justify-center rounded-[30px] bg-[#f9f9fa] text-gray-700 group-hover:text-[#3447aaee] transition">
-            <Bell size={20} className="fill-current" />
-          </div>
-        </Link>
+        <div className="w-[40px] h-[40px] flex items-center justify-center rounded-[30px] bg-[#f9f9fa] text-gray-700 group-hover:text-[#3447aaee] transition">
+          <Bell size={20} className="fill-current" />
+        </div>
 
         <button className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition  text-lg">
           <Search size={20} />
@@ -142,11 +140,10 @@ export default function Navbar() {
       </div>
 
       <div className="md:hidden flex items-center gap-3">
-        <Link href="/notification">
-          <button className="w-[40px] h-[40px] flex items-center justify-center rounded-full bg-[#f9f9fa] text-gray-700 hover:text-[#3447aaee] transition">
-            <Bell size={20} className="fill-current" />
-          </button>
-        </Link>
+        <button className="w-[40px] h-[40px] flex items-center justify-center rounded-full bg-[#f9f9fa] text-gray-700 hover:text-[#3447aaee] transition">
+          <Bell size={20} className="fill-current" />
+        </button>
+
         <button className="w-[40px] h-[40px] flex items-center justify-center rounded-full bg-[#f9f9fa] text-gray-700 hover:text-[#3447aaee] transition">
           <Search size={20} />
         </button>
