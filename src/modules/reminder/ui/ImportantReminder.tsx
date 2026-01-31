@@ -53,7 +53,7 @@ const ImportantReminder = () => {
                 "Group-friendly reminders",
               ].map((item, i) => (
                 <li key={i} className="flex items-center gap-3 text-gray-700">
-                  <span className="w-5 h-5 rounded-full main-bg-color  text-white flex items-center justify-center text-xs">
+                  <span className="w-5 h-5 rounded-full bg-[#3447AA]  text-white flex items-center justify-center text-xs">
                     ✓
                   </span>
                   {item}

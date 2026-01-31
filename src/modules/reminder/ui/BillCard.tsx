@@ -19,17 +19,17 @@ const BillCard = ({ bill, onEdit, onDelete, onToggle }: BillCardProps) => {
           {bill.title}
         </h3>
 
-        <p className="text-sm text-gray-500 mb-2">
-          value: <span className="font-medium text-gray-800">
+        <p className="text-sm text-gray-500 mb-2 flex justify-between">
+          value: <span className="font-medium text-gray-800 flex-1">
             ${bill.value.toLocaleString()}
           </span>
+        
         </p>
 
         <div className="flex items-center gap-3 text-xs text-gray-500">
           <span className="px-3 py-1 rounded-full bg-gray-100">
             {bill.frequency}
           </span>
-          <span>{bill.date}</span>
         </div>
       </div>
 
@@ -40,7 +40,7 @@ const BillCard = ({ bill, onEdit, onDelete, onToggle }: BillCardProps) => {
         <button
           onClick={() => onToggle(bill.id, !bill.active)}
           className={`w-11 h-6 rounded-full relative transition ${
-            bill.active ? "main-bg-color" : "bg-gray-300"
+            bill.active ? "bg-[#3447AA]" : "bg-gray-300"
           }`}
         >
           <span
@@ -49,7 +49,7 @@ const BillCard = ({ bill, onEdit, onDelete, onToggle }: BillCardProps) => {
             }`}
           />
         </button>
-
+     <span className="gap-3 text-xs text-gray-500">{bill.date}</span>
         {/* Actions */}
         <div className="flex gap-3">
           <button
