@@ -1,3 +1,4 @@
+import Link from "next/link"
 import FooterBackground from "./FooterBackground"
 import {
   Mail,
@@ -42,27 +43,82 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Quick Links */}
-        <div>
-          <h4 className="font-semibold mb-4">Quick Links</h4>
-          <ul className="space-y-3 text-sm opacity-90">
-            <li className="cursor-pointer hover:opacity-100">Service</li>
-            <li className="cursor-pointer hover:opacity-100">Home</li>
-            <li className="cursor-pointer hover:opacity-100">Reminder</li>
-            <li className="cursor-pointer hover:opacity-100">Pages</li>
-          </ul>
-        </div>
+      <div>
+  <h4 className="font-semibold mb-4">Quick Links</h4>
+  <ul className="space-y-3 text-sm opacity-90">
+    <li>
+      <Link
+        href="/"
+        className="cursor-pointer hover:opacity-100"
+      >
+        Service
+      </Link>
+    </li>
+    <li>
+      <Link
+        href="/"
+        className="cursor-pointer hover:opacity-100"
+      >
+        Home
+      </Link>
+    </li>
+    <li>
+      <Link
+        href="/reminder"
+        className="cursor-pointer hover:opacity-100"
+      >
+        Reminder
+      </Link>
+    </li>
+    <li>
+      <Link
+        href="/pages"
+        className="cursor-pointer hover:opacity-100"
+      >
+        Pages
+      </Link>
+    </li>
+  </ul>
+</div>
 
-        {/* Featured Service */}
-        <div>
-          <h4 className="font-semibold mb-4">Featured Service</h4>
-          <ul className="space-y-3 text-sm opacity-90">
-            <li className="cursor-pointer hover:opacity-100">Budget</li>
-            <li className="cursor-pointer hover:opacity-100">Debts</li>
-            <li className="cursor-pointer hover:opacity-100">Expense</li>
-            <li className="cursor-pointer hover:opacity-100">Invoice</li>
-          </ul>
-        </div>
+{/* Featured Service */}
+<div>
+  <h4 className="font-semibold mb-4">Featured Service</h4>
+  <ul className="space-y-3 text-sm opacity-90">
+    <li>
+      <Link
+        href="/service/budget"
+        className="cursor-pointer hover:opacity-100"
+      >
+        Budget
+      </Link>
+    </li>
+    <li>
+      <Link
+        href="/service/debts"
+        className="cursor-pointer hover:opacity-100"
+      >
+        Debts
+      </Link>
+    </li>
+    <li>
+      <Link
+        href="/service/expense"
+        className="cursor-pointer hover:opacity-100"
+      >
+        Expense
+      </Link>
+    </li>
+    <li>
+      <Link
+        href="/"
+        className="cursor-pointer hover:opacity-100"
+      >
+        Invoice
+      </Link>
+    </li>
+  </ul>
+</div>
 
         {/* Newsletter */}
         <div>
