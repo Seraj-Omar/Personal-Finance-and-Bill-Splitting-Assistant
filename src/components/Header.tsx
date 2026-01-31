@@ -4,12 +4,14 @@ import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Search, ChevronDown, User, Menu, X, Bell } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
 export default function Navbar() {
   const pathname = usePathname();
   const serviceRef = useRef<HTMLLIElement | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isServiceOpen, setIsServiceOpen] = useState(false);
+const { isAuthed } = useAuth();
 
   const isActiveExact = (path: string) =>
     pathname === path
@@ -132,13 +134,23 @@ export default function Navbar() {
           <span>Search</span>
         </button>
 
-        <Link
-          href="/login"
-          className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition  text-lg"
-        >
-          <User size={20} className="fill-current" />
-          <span>Sign In</span>
-        </Link>
+        {isAuthed ? (
+          <Link
+            href="/profile"
+            className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] transition text-lg"
+          >
+            <User size={20} className="fill-current" />
+            <span>Profile</span>
+          </Link>
+        ) : (
+          <Link
+            href="/login"
+            className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] transition text-lg"
+          >
+            <User size={20} className="fill-current" />
+            <span>Sign In</span>
+          </Link>
+        )}
       </div>
 
       <div className="md:hidden flex items-center gap-3">
@@ -196,14 +208,23 @@ export default function Navbar() {
           <Link href="/budget" onClick={() => setIsMobileMenuOpen(false)}>
             Budget
           </Link>
-
-          <Link
-            href="/login"
-            className="text-gray-700 hover:text-[#3447aaee] transition"
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            Sign In
-          </Link>
+          {isAuthed ? (
+            <Link
+              href="/profile"
+              className="text-gray-700 hover:text-[#3447aaee] transition"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Profile
+            </Link>
+          ) : (
+            <Link
+              href="/login"
+              className="text-gray-700 hover:text-[#3447aaee] transition"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Sign In
+            </Link>
+          )}
         </div>
       )}
     </nav>

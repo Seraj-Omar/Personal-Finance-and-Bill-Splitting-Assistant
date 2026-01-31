@@ -30,7 +30,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    /* --background: #0a0a0a; */
     --foreground: #ededed;
   }
 }
@@ -64,4 +64,16 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 /* Firefox */
 input[type="date"] {
   -moz-appearance: textfield;
+}
+
+.main-gradient {
+  background: linear-gradient(
+    135deg,
+    #3447AADE 0%,
+    #F6E3E7D6 100%
+  );
+}
+
+.main-blue-color{
+  background-color: #3447AADE;
 }
