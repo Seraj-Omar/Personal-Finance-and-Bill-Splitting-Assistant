@@ -11,7 +11,14 @@ export default function Navbar() {
   const serviceRef = useRef<HTMLLIElement | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isServiceOpen, setIsServiceOpen] = useState(false);
-const { isAuthed } = useAuth();
+
+const { isAuthed, user } = useAuth();
+  const [mounted, setMounted] = useState(false);
+  
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const isActiveExact = (path: string) =>
     pathname === path
@@ -134,14 +141,37 @@ const { isAuthed } = useAuth();
           <span>Search</span>
         </button>
 
-        {isAuthed ? (
-          <Link
-            href="/profile"
-            className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] transition text-lg"
-          >
+        {!mounted ? (
+          <div className="flex items-center gap-1 text-gray-700 text-lg opacity-70">
             <User size={20} className="fill-current" />
-            <span>Profile</span>
-          </Link>
+            <span>...</span>
+          </div>
+        ) : isAuthed ? (
+  <Link
+  href="/profile"
+  className="flex items-center gap-2 px-2 py-1 rounded-full
+             text-gray-700 hover:text-[#3447aaee]
+             hover:bg-gray-100 transition text-lg"
+>
+  <img
+    src={user?.avatarAssetId || "/default-avatar.png"}
+    alt={user?.fullName || "User"}
+    className="
+      w-9 h-9
+      rounded-full
+      object-cover
+      border border-gray-200
+      flex-shrink-0
+    "
+    onError={(e) => {
+      (e.currentTarget as HTMLImageElement).src = "/default-avatar.png";
+    }}
+  />
+
+  <span className="max-w-[120px] truncate font-medium">
+    {user?.fullName}
+  </span>
+</Link>
         ) : (
           <Link
             href="/login"
@@ -167,66 +197,90 @@ const { isAuthed } = useAuth();
         </button>
       </div>
 
-      {isMobileMenuOpen && (
-        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-11/12 bg-white rounded-xl flex flex-col gap-4 p-4 md:hidden z-50">
-          <Link href="/" onClick={() => setIsMobileMenuOpen(false)}>
-            Home
-          </Link>
+{isMobileMenuOpen && (
+  <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-11/12 bg-white rounded-xl flex flex-col gap-4 p-4 md:hidden z-50">
+    <Link href="/" onClick={() => setIsMobileMenuOpen(false)}>
+      Home
+    </Link>
 
-          <div className="flex flex-col gap-2">
-            <button
-              type="button"
-              onClick={() => setIsServiceOpen((prev) => !prev)}
-              className="flex items-center justify-between"
-            >
-              <span>Service</span>
-              <ChevronDown
-                size={16}
-                className={`${isServiceOpen ? "rotate-180" : ""}`}
-              />
-            </button>
+    <div className="flex flex-col gap-2">
+      <button
+        type="button"
+        onClick={() => setIsServiceOpen((prev) => !prev)}
+        className="flex items-center justify-between"
+      >
+        <span>Service</span>
+        <ChevronDown
+          size={16}
+          className={`${isServiceOpen ? "rotate-180" : ""}`}
+        />
+      </button>
 
-            {isServiceOpen && (
-              <ul className="flex flex-col gap-2 pl-4 text-sm text-gray-600">
-                {services.map((item) => (
-                  <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                    >
-                      {item.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-
-          <Link href="/reminder" onClick={() => setIsMobileMenuOpen(false)}>
-            Reminder
-          </Link>
-          <Link href="/budget" onClick={() => setIsMobileMenuOpen(false)}>
-            Budget
-          </Link>
-          {isAuthed ? (
-            <Link
-              href="/profile"
-              className="text-gray-700 hover:text-[#3447aaee] transition"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Profile
-            </Link>
-          ) : (
-            <Link
-              href="/login"
-              className="text-gray-700 hover:text-[#3447aaee] transition"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Sign In
-            </Link>
-          )}
-        </div>
+      {isServiceOpen && (
+        <ul className="flex flex-col gap-2 pl-4 text-sm text-gray-600">
+          {services.map((item) => (
+            <li key={item.href}>
+              <Link
+                href={item.href}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {item.name}
+              </Link>
+            </li>
+          ))}
+        </ul>
       )}
+    </div>
+
+    <Link href="/reminder" onClick={() => setIsMobileMenuOpen(false)}>
+      Reminder
+    </Link>
+
+    <Link href="/budget" onClick={() => setIsMobileMenuOpen(false)}>
+      Budget
+    </Link>
+
+    {/* Auth link */}
+    {!mounted ? (
+      <span className="text-gray-500">...</span>
+    ) : isAuthed ? (
+<Link
+  href="/profile"
+  className="flex items-center gap-2 px-2 py-1 rounded-full
+             text-gray-700 hover:text-[#3447aaee]
+             hover:bg-gray-100 transition text-lg"
+>
+  <img
+    src={user?.avatarAssetId || "/default-avatar.png"}
+    alt={user?.fullName || "User"}
+    className="
+      w-9 h-9
+      rounded-full
+      object-cover
+      border border-gray-200
+      flex-shrink-0
+    "
+    onError={(e) => {
+      (e.currentTarget as HTMLImageElement).src = "/default-avatar.png";
+    }}
+  />
+
+  <span className="max-w-[120px] truncate font-medium">
+    {user?.fullName}
+  </span>
+</Link>
+    ) : (
+      <Link
+        href="/login"
+        className="text-gray-700 hover:text-[#3447aaee] transition"
+        onClick={() => setIsMobileMenuOpen(false)}
+      >
+        Sign In
+      </Link>
+    )}
+  </div>
+)}
+
     </nav>
   );
 }
