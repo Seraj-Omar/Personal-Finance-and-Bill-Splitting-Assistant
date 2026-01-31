@@ -3,10 +3,10 @@ import { User, Lock, BarChart2, Gift, Trash2 } from "lucide-react";
 
 export default function Sidebar({
   activeTab,
-  setActiveTab,
+  onChange,
 }: {
   activeTab: "info" | "password";
-  setActiveTab: (v: "info" | "password") => void;
+  onChange: (tab: "info" | "password") => void;
 }) {
   return (
     <div className="w-[280px] bg-white rounded-2xl p-4">
@@ -20,7 +20,7 @@ export default function Sidebar({
 
 }
         active={activeTab === "info"}
-        onClick={() => setActiveTab("info")}
+        onClick={() => onChange("info")}
       />
       <SidebarItem
         title="Password manager"
@@ -30,12 +30,15 @@ export default function Sidebar({
 </svg>
 }
         active={activeTab === "password"}
-        onClick={() => setActiveTab("password")}
+        onClick={() => onChange("password")}
       />
       <SidebarItem other title="Report" icon={<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="ml-3">
 <path d="M16 11.78L20.24 4.45L21.97 5.45L16.74 14.5L10.23 10.75L5.46 19H22V21H2V3H4V17.54L9.5 8L16 11.78Z" fill="#1C1A1A"/>
+
 </svg>
+
 } />
+
       <SidebarItem other title="Rewards" icon={<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="ml-3">
 <path d="M9.06 1.93022C7.17 1.92022 5.33 3.74022 6.17 6.00022H3C2.46957 6.00022 1.96086 6.21093 1.58579 6.586C1.21071 6.96108 1 7.46978 1 8.00022V10.0002C1 10.2654 1.10536 10.5198 1.29289 10.7073C1.48043 10.8949 1.73478 11.0002 2 11.0002H11V8.00022H13V11.0002H22C22.2652 11.0002 22.5196 10.8949 22.7071 10.7073C22.8946 10.5198 23 10.2654 23 10.0002V8.00022C23 7.46978 22.7893 6.96108 22.4142 6.586C22.0391 6.21093 21.5304 6.00022 21 6.00022H17.83C19 2.73022 14.6 0.420217 12.57 3.24022L12 4.00022L11.43 3.22022C10.8 2.33022 9.93 1.94022 9.06 1.93022ZM9 4.00022C9.89 4.00022 10.34 5.08022 9.71 5.71022C9.08 6.34022 8 5.89022 8 5.00022C8 4.735 8.10536 4.48065 8.29289 4.29311C8.48043 4.10557 8.73478 4.00022 9 4.00022ZM15 4.00022C15.89 4.00022 16.34 5.08022 15.71 5.71022C15.08 6.34022 14 5.89022 14 5.00022C14 4.735 14.1054 4.48065 14.2929 4.29311C14.4804 4.10557 14.7348 4.00022 15 4.00022ZM2 12.0002V20.0002C2 20.5307 2.21071 21.0394 2.58579 21.4144C2.96086 21.7895 3.46957 22.0002 4 22.0002H20C20.5304 22.0002 21.0391 21.7895 21.4142 21.4144C21.7893 21.0394 22 20.5307 22 20.0002V12.0002H13V20.0002H11V12.0002H2Z" fill="#1C1A1A"/>
 </svg>
