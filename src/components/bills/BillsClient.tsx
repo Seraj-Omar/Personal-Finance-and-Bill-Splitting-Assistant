@@ -60,7 +60,7 @@ export default function BillsClient() {
   ];
 
   return (
-    <Box className="relative flex w-full flex-col px-[80px] py-10 gap-6 bg-white min-h-screen">
+    <Box className="relative flex w-full flex-col px-20 py-10 gap-6 bg-white min-h-screen">
       {isAddModalOpen &&
         (activeTab === 0 ? (
           <AddIndividualClient onClose={() => setIsAddModalOpen(false)} />
@@ -90,10 +90,10 @@ export default function BillsClient() {
         </Tabs>
       </Box>
 
-      <Box className="w-full bg-white rounded-t-[25px] -mt-8 px-10 py-10 flex justify-between items-center shadow-sm border-b border-gray-100">
+      <Box className="w-full bg-white rounded-t-[25px] -mt-8 px-10 py-10 flex justify-between items-center shadow-none border-b border-gray-50">
         <Typography
           variant="h6"
-          className="font-extrabold text-[#374151] text-[20px]"
+          className="font-extrabold text-[#374151] text-[18px]"
         >
           {activeTab === 0 ? "Individual Bills." : "Group Bills."}
         </Typography>
@@ -102,12 +102,12 @@ export default function BillsClient() {
           startIcon={<Plus size={24} strokeWidth={2.5} />}
           onClick={() => setIsAddModalOpen(true)}
           sx={{
-            borderRadius: "50px",
-            padding: "12px 35px",
+            borderRadius: "14px",
+            padding: "10px 28px",
             backgroundColor: "#3A4CB1",
             textTransform: "none",
-            fontWeight: "bold",
-            fontSize: "16px",
+            fontWeight: "600",
+            fontSize: "14px",
             boxShadow: "none",
             "&:hover": { backgroundColor: "#2D3B8E", boxShadow: "none" },
           }}
@@ -116,66 +116,60 @@ export default function BillsClient() {
         </Button>
       </Box>
 
-      <TableContainer className="shadow-none border border-gray-100 rounded-2xl overflow-hidden">
+      <TableContainer className="shadow-none border-none overflow-hidden">
         <Table>
-          <TableHead className="bg-[#F8FAFC]">
+          <TableHead sx={{ backgroundColor: "#F9FAFB" }}>
             <TableRow>
-              <TableCell sx={{ py: 3, fontWeight: "bold", color: "#6B7280" }}>
-                Bills Name
-              </TableCell>
-              {activeTab === 1 && (
-                <TableCell sx={{ py: 3, fontWeight: "bold", color: "#6B7280" }}>
-                  Members
+              {[
+                "Bills Name",
+                "Bills num",
+                "Amount",
+                "Date",
+                "Payment Status",
+                "Action",
+              ].map((head) => (
+                <TableCell
+                  key={head}
+                  align={head === "Action" ? "center" : "left"}
+                  sx={{
+                    py: 2,
+                    fontWeight: "bold",
+                    color: "#9CA3AF",
+                    borderBottom: "none",
+                  }}
+                >
+                  {head}
                 </TableCell>
-              )}
-              <TableCell sx={{ py: 3, fontWeight: "bold", color: "#6B7280" }}>
-                Bills num
-              </TableCell>
-              <TableCell sx={{ py: 3, fontWeight: "bold", color: "#6B7280" }}>
-                Amount
-              </TableCell>
-              <TableCell sx={{ py: 3, fontWeight: "bold", color: "#6B7280" }}>
-                Date
-              </TableCell>
-              <TableCell sx={{ py: 3, fontWeight: "bold", color: "#6B7280" }}>
-                Payment Status
-              </TableCell>
-              <TableCell
-                sx={{ py: 3, fontWeight: "bold", color: "#6B7280" }}
-                align="center"
-              >
-                Action
-              </TableCell>
+              ))}
             </TableRow>
           </TableHead>
           <TableBody>
             {demoBills.map((bill, index) => {
               const config = statusConfig[bill.status] || statusConfig.Unpaid;
               return (
-                <TableRow key={index} hover sx={{ "& td": { py: 4 } }}>
-                  <TableCell className="font-medium text-gray-800">
+                <TableRow
+                  key={index}
+                  sx={{ "& td": { py: 3, borderBottom: "none" } }}
+                >
+                  <TableCell className="text-gray-700 font-medium">
                     {bill.name}
                   </TableCell>
-                  {activeTab === 1 && <TableCell>👤👤👤</TableCell>}
                   <TableCell className="text-gray-500">{bill.num}</TableCell>
-                  <TableCell className="font-bold text-gray-900">
+                  <TableCell className="font-bold text-gray-800">
                     {bill.amount}
                   </TableCell>
-                  <TableCell className="text-gray-600">{bill.date}</TableCell>
+                  <TableCell className="text-gray-500">{bill.date}</TableCell>
                   <TableCell>
                     <Box
-                      className="flex items-center gap-2 px-4 py-2 rounded-full w-fit"
-                      style={{
-                        backgroundColor: config.bg,
-                        border: `1px solid ${config.border}`,
-                      }}
+                      className="flex items-center gap-2 px-3 py-1.5 rounded-full w-fit"
+                      style={{ backgroundColor: config.bg }}
                     >
                       <Box
                         className="w-2 h-2 rounded-full"
                         style={{ backgroundColor: config.dot }}
                       />
                       <Typography
-                        className="text-[13px] font-bold"
+                        className="text-[12px] font-bold"
                         style={{ color: config.text }}
                       >
                         {bill.status}
@@ -183,16 +177,16 @@ export default function BillsClient() {
                     </Box>
                   </TableCell>
                   <TableCell align="center">
-                    <Box className="flex justify-center gap-4">
+                    <Box className="flex justify-center gap-3">
                       <IconButton
                         onClick={() => console.log("Delete")}
-                        className="text-red-500 hover:bg-red-50"
+                        className="text-red-400"
                       >
                         <Trash2 size={18} />
                       </IconButton>
                       <IconButton
                         onClick={() => console.log("Edit")}
-                        className="text-gray-600 hover:bg-gray-100"
+                        className="text-gray-400"
                       >
                         <Pencil size={18} />
                       </IconButton>
@@ -213,7 +207,7 @@ function IconButton({ children, className, onClick }: any) {
     <button
       type="button"
       onClick={onClick}
-      className={`p-2 rounded-lg transition-all duration-200 active:scale-95 ${className}`}
+      className={`p-1.5 hover:bg-gray-50 rounded-md transition-all ${className}`}
     >
       {children}
     </button>
