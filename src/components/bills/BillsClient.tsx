@@ -57,15 +57,24 @@ export default function BillsClient() {
         </Tabs>
       </Box>
 
-      <Box className="flex justify-between items-center mb-4 mt-4">
-        <Typography variant="h6" className="font-bold text-gray-700">
+      <Box className="w-full bg-white rounded-t-[25px] -mt-8 px-10 py-10 flex justify-between items-center shadow-sm border-b border-gray-100">
+        <Typography
+          variant="h6"
+          className="font-extrabold text-[#374151] text-[20px]"
+        >
           {activeTab === 0 ? "Individual Bills." : "Group Bills."}
         </Typography>
         <Button
           variant="contained"
-          startIcon={<Plus size={18} />}
-          onClick={() => setIsAddModalOpen(true)}
-          className="bg-[#3447AA] hover:bg-[#27369B] rounded-xl normal-case px-6 py-2 shadow-lg"
+          startIcon={<Plus size={24} strokeWidth={2.5} />}
+          sx={{
+            borderRadius: "50px",
+            padding: "12px 35px", 
+            backgroundColor: "#3A4CB1",
+            textTransform: "none",
+            fontWeight: "bold",
+            fontSize: "16px",
+          }}
         >
           {activeTab === 0 ? "Create new Bills Bill" : "Create new Group Bills"}
         </Button>
@@ -97,7 +106,7 @@ export default function BillsClient() {
             </TableRow>
           </TableHead>
           <TableBody>
-            <TableRow >
+            <TableRow>
               <TableCell>ANAS ABUJABER</TableCell>
               {activeTab === 1 && <TableCell>👤👤👤</TableCell>}
               <TableCell>INV-2025-001</TableCell>
