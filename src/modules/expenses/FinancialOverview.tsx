@@ -1,5 +1,4 @@
-import { DollarSign } from "lucide-react";
-import { IconBuildingBank, IconArrowsDownUp, IconArrowsUpDown } from "@tabler/icons-react";
+
 import Card from "@/src/components/debts/Card";
 
 export default function FinancialOverview() {

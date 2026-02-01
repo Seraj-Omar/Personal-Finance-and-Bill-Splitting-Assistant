@@ -97,7 +97,7 @@ const Categories = () => {
       {/* Content */}
       <div className="flex flex-col lg:flex-row gap-6">
         {/* LEFT */}
-        <div className="w-full lg:w-[65%] space-y-4
+        <div className="w-full lg:w-[100%] space-y-4
 ">
           {categories.map((cat) => (
             <CategoryCard
@@ -112,17 +112,16 @@ const Categories = () => {
           ))}
         </div>
 
-        {/* RIGHT */}
-        <div className="w-full lg:w-[35%]  bg-[#F9F9FA] rounded-2xl shadow-sm  flex justify-center items-center">
-          <ExpensesDonutCard />
-        </div>
+<div className="w-full lg:w-[35%]     bg-[#F9FAFB],
+">
+  <ExpensesDonutCard />
+</div>
       </div>
             <AddExpenseModal
         open={open}
         onClose={() => setOpen(false)}
         onSave={(data) => {
           console.log("Saved:", data)
-          // ✅ هون بعدين بنربط Supabase insert
         }}
       />
     </div>

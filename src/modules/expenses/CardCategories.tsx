@@ -19,7 +19,7 @@ const CategoryCard = ({
 }: CategoryCardProps) => {
   return (
     <div
-      className={`w-full rounded-xl border bg-white px-4 py-4 transition ${
+      className={`w-full rounded-xl border bg-white px-4 py-3 transition ${
         active ? "border-indigo-600 shadow-sm" : "border-gray-200"
       }`}
     >
