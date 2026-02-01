@@ -13,7 +13,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Chip,
 } from "@mui/material";
 import { Plus, Trash2, Pencil } from "lucide-react";
 import AddIndividualClient from "./AddIndividualClient";
@@ -23,9 +22,43 @@ export default function BillsClient() {
   const [activeTab, setActiveTab] = useState(0);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
+  const statusConfig: any = {
+    Paid: { bg: "#ECFDF5", border: "#D1FAE5", dot: "#10B981", text: "#065F46" },
+    Unpaid: {
+      bg: "#EFF6FF",
+      border: "#DBEAFE",
+      dot: "#3B82F6",
+      text: "#1E40AF",
+    },
+    Overdue: {
+      bg: "#FEF2F2",
+      border: "#FEE2E2",
+      dot: "#EF4444",
+      text: "#991B1B",
+    },
+  };
+
   const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
   };
+
+  const demoBills = [
+    {
+      name: "ANAS ABUJABER",
+      num: "INV-2025-001",
+      amount: "$450.00",
+      date: "Jan 22, 2026",
+      status: "Paid",
+    },
+    {
+      name: "Electricity Bill",
+      num: "INV-2025-002",
+      amount: "$120.00",
+      date: "Jan 25, 2026",
+      status: "Unpaid",
+    },
+  ];
+
   return (
     <Box className="relative flex w-full flex-col px-[80px] py-10 gap-6 bg-white min-h-screen">
       {isAddModalOpen &&
@@ -67,13 +100,16 @@ export default function BillsClient() {
         <Button
           variant="contained"
           startIcon={<Plus size={24} strokeWidth={2.5} />}
+          onClick={() => setIsAddModalOpen(true)}
           sx={{
             borderRadius: "50px",
-            padding: "12px 35px", 
+            padding: "12px 35px",
             backgroundColor: "#3A4CB1",
             textTransform: "none",
             fontWeight: "bold",
             fontSize: "16px",
+            boxShadow: "none",
+            "&:hover": { backgroundColor: "#2D3B8E", boxShadow: "none" },
           }}
         >
           {activeTab === 0 ? "Create new Bills Bill" : "Create new Group Bills"}
@@ -82,72 +118,102 @@ export default function BillsClient() {
 
       <TableContainer className="shadow-none border border-gray-100 rounded-2xl overflow-hidden">
         <Table>
-          <TableHead className="bg-gray-50">
+          <TableHead className="bg-[#F8FAFC]">
             <TableRow>
-              <TableCell className="font-bold text-gray-600">
+              <TableCell sx={{ py: 3, fontWeight: "bold", color: "#6B7280" }}>
                 Bills Name
               </TableCell>
               {activeTab === 1 && (
-                <TableCell className="font-bold text-gray-600">
-                  Group members
+                <TableCell sx={{ py: 3, fontWeight: "bold", color: "#6B7280" }}>
+                  Members
                 </TableCell>
               )}
-              <TableCell className="font-bold text-gray-600">
+              <TableCell sx={{ py: 3, fontWeight: "bold", color: "#6B7280" }}>
                 Bills num
               </TableCell>
-              <TableCell className="font-bold text-gray-600">Amount</TableCell>
-              <TableCell className="font-bold text-gray-600">Date</TableCell>
-              <TableCell className="font-bold text-gray-600">
+              <TableCell sx={{ py: 3, fontWeight: "bold", color: "#6B7280" }}>
+                Amount
+              </TableCell>
+              <TableCell sx={{ py: 3, fontWeight: "bold", color: "#6B7280" }}>
+                Date
+              </TableCell>
+              <TableCell sx={{ py: 3, fontWeight: "bold", color: "#6B7280" }}>
                 Payment Status
               </TableCell>
-              <TableCell className="font-bold text-gray-600" align="center">
+              <TableCell
+                sx={{ py: 3, fontWeight: "bold", color: "#6B7280" }}
+                align="center"
+              >
                 Action
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            <TableRow>
-              <TableCell>ANAS ABUJABER</TableCell>
-              {activeTab === 1 && <TableCell>👤👤👤</TableCell>}
-              <TableCell>INV-2025-001</TableCell>
-              <TableCell>$450.00</TableCell>
-              <TableCell>Jan 22, 2026</TableCell>
-              <TableCell>
-                <Chip
-                  label="Paid"
-                  color="success"
-                  size="small"
-                  className="bg-green-100 text-green-700 font-bold"
-                />
-              </TableCell>
-              <TableCell align="center">
-                <Box className="flex justify-center gap-2">
-                  <IconButton
-                    size="small"
-                    className="text-red-500 hover:bg-red-50"
-                  >
-                    <Trash2 size={18} />
-                  </IconButton>
-                  <IconButton
-                    size="small"
-                    className="text-blue-500 hover:bg-blue-50"
-                  >
-                    <Pencil size={18} />
-                  </IconButton>
-                </Box>
-              </TableCell>
-            </TableRow>
+            {demoBills.map((bill, index) => {
+              const config = statusConfig[bill.status] || statusConfig.Unpaid;
+              return (
+                <TableRow key={index} hover sx={{ "& td": { py: 4 } }}>
+                  <TableCell className="font-medium text-gray-800">
+                    {bill.name}
+                  </TableCell>
+                  {activeTab === 1 && <TableCell>👤👤👤</TableCell>}
+                  <TableCell className="text-gray-500">{bill.num}</TableCell>
+                  <TableCell className="font-bold text-gray-900">
+                    {bill.amount}
+                  </TableCell>
+                  <TableCell className="text-gray-600">{bill.date}</TableCell>
+                  <TableCell>
+                    <Box
+                      className="flex items-center gap-2 px-4 py-2 rounded-full w-fit"
+                      style={{
+                        backgroundColor: config.bg,
+                        border: `1px solid ${config.border}`,
+                      }}
+                    >
+                      <Box
+                        className="w-2 h-2 rounded-full"
+                        style={{ backgroundColor: config.dot }}
+                      />
+                      <Typography
+                        className="text-[13px] font-bold"
+                        style={{ color: config.text }}
+                      >
+                        {bill.status}
+                      </Typography>
+                    </Box>
+                  </TableCell>
+                  <TableCell align="center">
+                    <Box className="flex justify-center gap-4">
+                      <IconButton
+                        onClick={() => console.log("Delete")}
+                        className="text-red-500 hover:bg-red-50"
+                      >
+                        <Trash2 size={18} />
+                      </IconButton>
+                      <IconButton
+                        onClick={() => console.log("Edit")}
+                        className="text-gray-600 hover:bg-gray-100"
+                      >
+                        <Pencil size={18} />
+                      </IconButton>
+                    </Box>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </TableContainer>
     </Box>
   );
 }
-function IconButton({ children, className, onClick, size }: any) {
+
+function IconButton({ children, className, onClick }: any) {
   return (
     <button
+      type="button"
       onClick={onClick}
-      className={`p-2 rounded-lg transition-colors ${className}`}
+      className={`p-2 rounded-lg transition-all duration-200 active:scale-95 ${className}`}
     >
       {children}
     </button>
