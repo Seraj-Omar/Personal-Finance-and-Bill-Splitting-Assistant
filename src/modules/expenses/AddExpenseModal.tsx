@@ -73,7 +73,6 @@ const AddExpenseModal = ({
     return `${yyyy}-${mm}-${dd}`
   })
 
-  // ESC close
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose()
@@ -82,7 +81,6 @@ const AddExpenseModal = ({
     return () => window.removeEventListener("keydown", handler)
   }, [open, onClose])
 
-  // Lock scroll when modal open
   useEffect(() => {
     if (!open) return
     const original = document.body.style.overflow
@@ -119,7 +117,8 @@ const AddExpenseModal = ({
       {/* Overlay */}
       <div
         onClick={onClose}
-        className="absolute inset-0 bg-black/30 backdrop-blur-[5px]"
+        className="absolute inset-0 bg-white/50
+"
       />
 
       {/* Modal box */}
