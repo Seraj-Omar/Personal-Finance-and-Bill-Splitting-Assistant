@@ -67,14 +67,6 @@ export default function BillsClient() {
         ) : (
           <AddGroupClient onClose={() => setIsAddModalOpen(false)} />
         ))}
-
-      <Typography
-        variant="h3"
-        className="text-center font-bold text-[#3447AA] mb-8"
-      >
-        Bills
-      </Typography>
-
       <Box className="border-b border-gray-200">
         <Tabs
           value={activeTab}
