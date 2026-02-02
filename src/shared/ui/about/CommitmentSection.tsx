@@ -32,7 +32,7 @@ export default function CommitmentSection() {
         className="w-full"
         style={{
           maxWidth: "1280px",
-          // ✅ height auto للموبايل
+        
           height: "auto",
           padding: "24px",
           display: "flex",
