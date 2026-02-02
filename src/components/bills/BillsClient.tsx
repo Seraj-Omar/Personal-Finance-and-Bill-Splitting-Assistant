@@ -13,6 +13,8 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Avatar,
+  AvatarGroup,
 } from "@mui/material";
 import { Plus, Trash2, Pencil } from "lucide-react";
 import AddIndividualClient from "./AddIndividualClient";
@@ -23,41 +25,74 @@ export default function BillsClient() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const statusConfig: any = {
-    Paid: { bg: "#ECFDF5", border: "#D1FAE5", dot: "#10B981", text: "#065F46" },
-    Unpaid: {
-      bg: "#EFF6FF",
-      border: "#DBEAFE",
-      dot: "#3B82F6",
-      text: "#1E40AF",
-    },
-    Overdue: {
-      bg: "#FEF2F2",
-      border: "#FEE2E2",
-      dot: "#EF4444",
-      text: "#991B1B",
-    },
+    Paid: { bg: "#F0FDF4", dot: "#22C55E", text: "#166534" },
+    Unpaid: { bg: "#EFF6FF", dot: "#3B82F6", text: "#1E40AF" },
+    Pending: { bg: "#FFF7ED", dot: "#D97706", text: "#9A3412" }, 
+    Overdue: { bg: "#FEF2F2", dot: "#EF4444", text: "#991B1B" }, 
   };
 
-  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
-    setActiveTab(newValue);
-  };
-
-  const demoBills = [
+  const individualBills = [
     {
-      name: "ANAS ABUJABER",
-      num: "INV-2025-001",
-      amount: "$450.00",
-      date: "Jan 22, 2026",
+      name: "Anas AbuJaber",
+      num: "INV-2026-001",
+      amount: "$2,450.00",
+      date: "Jan 20, 2024",
       status: "Paid",
     },
     {
-      name: "Electricity Bill",
-      num: "INV-2025-002",
-      amount: "$120.00",
+      name: "Seraj Omar",
+      num: "INV-2026-002",
+      amount: "$1,850.00",
+      date: "Jan 21, 2024",
+      status: "Pending",
+    },
+    {
+      name: "Noor Al-Afifi",
+      num: "INV-2026-003",
+      amount: "$1,850.00",
+      date: "Jan 21, 2024",
+      status: "Overdue",
+    },
+    {
+      name: "Nour Anwar",
+      num: "INV-2026-004",
+      amount: "$1,850.00",
       date: "Jan 25, 2026",
       status: "Unpaid",
     },
   ];
+
+  const groupBills = [
+    {
+      name: "Water Bill",
+      num: "INV-2025-001",
+      total: "$2,450.00",
+      share: "$60.00",
+      date: "Sep 25, 2024",
+      percentage: "100%",
+      status: "Paid",
+      members: [
+        "https://i.pravatar.cc/150?u=1",
+        "https://i.pravatar.cc/150?u=2",
+        "https://i.pravatar.cc/150?u=3",
+      ],
+    },
+    {
+      name: "Electricity Bill",
+      num: "INV-2025-002",
+      total: "$1,850.00",
+      share: "$10.00",
+      date: "Sep 25, 2024",
+      percentage: "60%",
+      status: "Pending",
+      members: [
+        "https://i.pravatar.cc/150?u=4",
+        "https://i.pravatar.cc/150?u=5",
+      ],
+    },
+  ];
+
+  const currentData = activeTab === 0 ? individualBills : groupBills;
 
   return (
     <Box className="relative flex w-full flex-col px-20 py-10 gap-6 bg-white min-h-screen">
@@ -70,11 +105,15 @@ export default function BillsClient() {
       <Box className="border-b border-gray-200">
         <Tabs
           value={activeTab}
-          onChange={handleTabChange}
+          onChange={(_, v) => setActiveTab(v)}
           variant="fullWidth"
           sx={{
-            "& .MuiTabs-indicator": { backgroundColor: "#3447AA" },
-            "& .MuiTab-root": { fontWeight: "bold" },
+            "& .MuiTabs-indicator": { backgroundColor: "#3447AA", height: 3 },
+            "& .MuiTab-root": {
+              fontWeight: "bold",
+              textTransform: "none",
+              fontSize: "15px",
+            },
           }}
         >
           <Tab label="Individual Bills" />
@@ -82,75 +121,110 @@ export default function BillsClient() {
         </Tabs>
       </Box>
 
-      <Box className="w-full bg-white rounded-t-[25px] -mt-8 px-10 py-10 flex justify-between items-center shadow-none border-b border-gray-50">
-        <Typography
-          variant="h6"
-          className="font-extrabold text-[#374151] text-[18px]"
-        >
+      <Box className="w-full bg-white flex justify-between items-center py-4">
+        <Typography variant="h6" className="font-extrabold text-[#374151]">
           {activeTab === 0 ? "Individual Bills." : "Group Bills."}
         </Typography>
         <Button
           variant="contained"
-          startIcon={<Plus size={24} strokeWidth={2.5} />}
+          startIcon={<Plus size={20} />}
           onClick={() => setIsAddModalOpen(true)}
           sx={{
             borderRadius: "14px",
-            padding: "10px 28px",
+            px: 4,
+            py: 1.5,
             backgroundColor: "#3A4CB1",
             textTransform: "none",
-            fontWeight: "600",
-            fontSize: "14px",
+            fontWeight: "bold",
             boxShadow: "none",
-            "&:hover": { backgroundColor: "#2D3B8E", boxShadow: "none" },
+            "&:hover": { backgroundColor: "#2D3B8E" },
           }}
         >
           {activeTab === 0 ? "Create new Bills Bill" : "Create new Group Bills"}
         </Button>
       </Box>
 
-      <TableContainer className="shadow-none border-none overflow-hidden">
+      <TableContainer className="shadow-none border-none">
         <Table>
           <TableHead sx={{ backgroundColor: "#F9FAFB" }}>
             <TableRow>
-              {[
-                "Bills Name",
-                "Bills num",
-                "Amount",
-                "Date",
-                "Payment Status",
-                "Action",
-              ].map((head) => (
-                <TableCell
-                  key={head}
-                  align={head === "Action" ? "center" : "left"}
-                  sx={{
-                    py: 2,
-                    fontWeight: "bold",
-                    color: "#9CA3AF",
-                    borderBottom: "none",
-                  }}
-                >
-                  {head}
-                </TableCell>
-              ))}
+              <TableCell sx={headStyle}>Bills Name</TableCell>
+              {activeTab === 1 && (
+                <TableCell sx={headStyle}>Group members</TableCell>
+              )}
+              <TableCell sx={headStyle}>Bills num</TableCell>
+              {activeTab === 1 ? (
+                <>
+                  <TableCell sx={headStyle}>Total Amount</TableCell>
+                  <TableCell sx={headStyle}>Your share</TableCell>
+                </>
+              ) : (
+                <TableCell sx={headStyle}>Amount</TableCell>
+              )}
+              <TableCell sx={headStyle}>Date</TableCell>
+              {activeTab === 1 && (
+                <TableCell sx={headStyle}>Payment percentage</TableCell>
+              )}
+              <TableCell sx={headStyle}>Payment Status</TableCell>
+              <TableCell sx={headStyle} align="center">
+                Action
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {demoBills.map((bill, index) => {
+            {currentData.map((bill: any, index) => {
               const config = statusConfig[bill.status] || statusConfig.Unpaid;
               return (
                 <TableRow
                   key={index}
-                  sx={{ "& td": { py: 3, borderBottom: "none" } }}
+                  sx={{
+                    "& td": {
+                      py: 3,
+                      borderBottom: "none",
+                      verticalAlign: "middle",
+                    },
+                  }}
                 >
-                  <TableCell className="text-gray-700 font-medium">
+                  <TableCell className="font-medium text-gray-700">
                     {bill.name}
                   </TableCell>
+
+                  {activeTab === 1 && (
+                    <TableCell>
+                      <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <AvatarGroup
+                          max={3}
+                          sx={{
+                            "& .MuiAvatar-root": {
+                              width: 32,
+                              height: 32,
+                              fontSize: 12,
+                              border: "2px solid white",
+                            },
+                          }}
+                        >
+                          {bill.members.map((m: any, i: number) => (
+                            <Avatar key={i} src={m} />
+                          ))}
+                        </AvatarGroup>
+                      </Box>
+                    </TableCell>
+                  )}
                   <TableCell className="text-gray-500">{bill.num}</TableCell>
                   <TableCell className="font-bold text-gray-800">
-                    {bill.amount}
+                    {activeTab === 1 ? bill.total : bill.amount}
                   </TableCell>
+                  {activeTab === 1 && (
+                    <TableCell className="font-bold text-gray-800">
+                      {bill.share}
+                    </TableCell>
+                  )}
                   <TableCell className="text-gray-500">{bill.date}</TableCell>
+                  {activeTab === 1 && (
+                    <TableCell className="text-[#3A4CB1] font-bold">
+                      {bill.percentage}
+                    </TableCell>
+                  )}
                   <TableCell>
                     <Box
                       className="flex items-center gap-2 px-3 py-1.5 rounded-full w-fit"
@@ -161,7 +235,7 @@ export default function BillsClient() {
                         style={{ backgroundColor: config.dot }}
                       />
                       <Typography
-                        className="text-[12px] font-bold"
+                        className="text-[13px] font-bold"
                         style={{ color: config.text }}
                       >
                         {bill.status}
@@ -170,16 +244,10 @@ export default function BillsClient() {
                   </TableCell>
                   <TableCell align="center">
                     <Box className="flex justify-center gap-3">
-                      <IconButton
-                        onClick={() => console.log("Delete")}
-                        className="text-red-400"
-                      >
+                      <IconButton className="text-red-400">
                         <Trash2 size={18} />
                       </IconButton>
-                      <IconButton
-                        onClick={() => console.log("Edit")}
-                        className="text-gray-400"
-                      >
+                      <IconButton className="text-gray-400">
                         <Pencil size={18} />
                       </IconButton>
                     </Box>
@@ -194,11 +262,17 @@ export default function BillsClient() {
   );
 }
 
-function IconButton({ children, className, onClick }: any) {
+const headStyle = {
+  py: 2,
+  fontWeight: "bold",
+  color: "#9CA3AF",
+  borderBottom: "none",
+  fontSize: "13px",
+};
+
+function IconButton({ children, className }: any) {
   return (
     <button
-      type="button"
-      onClick={onClick}
       className={`p-1.5 hover:bg-gray-50 rounded-md transition-all ${className}`}
     >
       {children}
