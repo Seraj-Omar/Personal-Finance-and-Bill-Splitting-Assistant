@@ -85,7 +85,7 @@ export default function AvatarSection() {
           </button>
         </div>
 
-        <div className="flex gap-3">
+        {/* <div className="flex gap-3">
           <button
             onClick={() => setOpen(true)}
             className="px-5 py-2 rounded-lg bg-[#3447AA] text-white font-medium"
@@ -98,7 +98,7 @@ export default function AvatarSection() {
           >
             Delete avatar
           </button>
-        </div>
+        </div> */}
       </div>
 
       <UploadPictureModal
