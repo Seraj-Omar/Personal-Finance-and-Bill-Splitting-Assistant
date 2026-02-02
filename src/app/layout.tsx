@@ -3,7 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
 import Providers from "./providers"
 import Footer from "../components/footer/Footer"
-import PageHero from "../shared/ui/page-hero/PageHero"
 import Header from "../components/Header"
 import { Roboto } from "next/font/google";
 
@@ -12,6 +11,7 @@ const roboto = Roboto({
   weight: ["400", "500", "700"],
   variable: "--font-roboto",
 });
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -35,11 +35,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={roboto.variable}>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <Header/>
-        <PageHero
-          title="Services"
-          breadcrumb={["Home", "Service"]}
-        />
+        <Header />
+
+        {/* 
+          Hero removed from global layout
+          Each page has its own hero via nested layout
+        */}
 
         <Providers>{children}</Providers>
         <Footer />

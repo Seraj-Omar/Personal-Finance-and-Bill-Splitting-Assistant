@@ -11,7 +11,7 @@ const PageHero = ({ title, breadcrumb }: PageHeroProps) => {
 <div
   className="absolute inset-0 opacity-20"
   style={{
-    backgroundImage: "url('/noise.svg')",
+    // backgroundImage: "url('/noise.svg')",
     opacity: 0.04,   
     mixBlendMode: "overlay",
   }}
