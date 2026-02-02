@@ -1,52 +1,55 @@
+import Image from "next/image"
+
 type PageHeroProps = {
   title: string
   breadcrumb?: string[]
+  bgImage?: string
 }
 
-const PageHero = ({ title, breadcrumb }: PageHeroProps) => {
+const PageHero = ({ title, breadcrumb, bgImage = "/hero-image.jpg" }: PageHeroProps) => {
   return (
-    <section className="relative overflow-hidden rounded-b-2xl  hero-gradient p-9">
+    <section className="relative overflow-hidden rounded-b-[60px] w-full py-12">
 
-      {/* Texture Image */}
-<div
-  className="absolute inset-0 opacity-20"
-  style={{
-    // backgroundImage: "url('/noise.svg')",
-    opacity: 0.04,   
-    mixBlendMode: "overlay",
-  }}
-/>
-
-
-
-      {/* Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-8 py-24 text-center">
-        <h1 className="text-4xl font-bold text-white mb-2 main-text-color text-6xl">
-          {title}
-        </h1>
-     {breadcrumb && (
-  <p className="text-lg mt-5 font-bold ">
-    {breadcrumb.map((item, index) => {
-      const isLast = index === breadcrumb.length - 1
-
-      return (
-        <span
-          key={index}
-          className={isLast ? "main-text-color font-medium" : "text-gray-600"}
-        >
-          {item}
-          {!isLast && " • "}
-        </span>
-      )
-    })}
-  </p>
-)}
-
+      <div className="absolute inset-0">
+        <Image
+          src={bgImage}
+          alt="hero background"
+          fill
+          priority
+          quality={100}
+          className="object-cover scale-[1.15]"
+          style={{
+            objectPosition: "85% 75%",
+          }}
+        />
       </div>
 
+      {/* Overlay */}
+      {/* <div className="absolute inset-0 bg-[#0B1D5B]/30" /> */}
+
+      {/*  Content */}
+      <div className="relative z-10 max-w-7xl mx-auto px-8 py-24 text-center">
+        <h1 className="text-6xl font-bold text-white mb-2">{title}</h1>
+
+        {breadcrumb && (
+          <p className="text-base mt-5 font-semibold text-[#5792FF]">
+            {breadcrumb.map((item, index) => {
+              const isLast = index === breadcrumb.length - 1
+              return (
+                <span
+                  key={index}
+                  className={isLast ? "text-white font-bold" : "text-[#5792FF]  transition"}
+                >
+                  {item}
+                  {!isLast && " . "}
+                </span>
+              )
+            })}
+          </p>
+        )}
+      </div>
     </section>
   )
 }
-
 
 export default PageHero
