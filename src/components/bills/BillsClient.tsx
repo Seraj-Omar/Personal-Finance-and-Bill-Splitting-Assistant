@@ -7,18 +7,13 @@ import {
   Tabs,
   Tab,
   Button,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Avatar,
   AvatarGroup,
 } from "@mui/material";
 import { Plus, Trash2, Pencil } from "lucide-react";
 import AddIndividualClient from "./AddIndividualClient";
 import AddGroupClient from "./AddGroupClient";
+import Table, { Column } from "@/src/components/Table";
 
 export default function BillsClient() {
   const [activeTab, setActiveTab] = useState(0);
@@ -27,10 +22,107 @@ export default function BillsClient() {
   const statusConfig: any = {
     Paid: { bg: "#F0FDF4", dot: "#22C55E", text: "#166534" },
     Unpaid: { bg: "#EFF6FF", dot: "#3B82F6", text: "#1E40AF" },
-    Pending: { bg: "#FFF7ED", dot: "#D97706", text: "#9A3412" }, 
-    Overdue: { bg: "#FEF2F2", dot: "#EF4444", text: "#991B1B" }, 
+    Pending: { bg: "#FFF7ED", dot: "#D97706", text: "#9A3412" },
+    Overdue: { bg: "#FEF2F2", dot: "#EF4444", text: "#991B1B" },
   };
 
+  const columns: Column<any>[] = [
+    {
+      key: "name",
+      title: "Bills Name",
+      render: (row) => (
+        <span className="font-medium text-gray-700">{row.name}</span>
+      ),
+    },
+    ...(activeTab === 1
+      ? [
+          {
+            key: "members",
+            title: "Group members",
+            render: (row: any) => (
+              <Box className="flex items-center justify-center h-full">
+                <AvatarGroup
+                  max={3}
+                  sx={{
+                    "& .MuiAvatar-root": {
+                      width: 32,
+                      height: 32,
+                      fontSize: 12,
+                      border: "2px solid white",
+                    },
+                  }}
+                >
+                  {row.members?.map((m: any, i: number) => (
+                    <Avatar key={i} src={m} />
+                  ))}
+                </AvatarGroup>
+              </Box>
+            ),
+          },
+        ]
+      : []),
+    { key: "num", title: "Bills num" },
+    {
+      key: "amount",
+      title: activeTab === 1 ? "Total Amount" : "Amount",
+      render: (row) => (
+        <span className="font-bold text-gray-800">
+          {activeTab === 1 ? row.total : row.amount}
+        </span>
+      ),
+    },
+    ...(activeTab === 1 ? [{ key: "share", title: "Your share" }] : []),
+    { key: "date", title: "Date" },
+    ...(activeTab === 1
+      ? [
+          {
+            key: "percentage",
+            title: "Payment percentage",
+            render: (row) => (
+              <span className="text-[#3A4CB1] font-bold">{row.percentage}</span>
+            ),
+          },
+        ]
+      : []),
+    {
+      key: "status",
+      title: "Payment Status",
+      render: (row) => {
+        const config = statusConfig[row.status] || statusConfig.Unpaid;
+        return (
+          <Box
+            className="flex items-center gap-2 px-3 py-1.5 rounded-full w-fit"
+            style={{ backgroundColor: config.bg }}
+          >
+            <Box
+              className="w-2 h-2 rounded-full"
+              style={{ backgroundColor: config.dot }}
+            />
+            <Typography
+              className="text-[13px] font-bold"
+              style={{ color: config.text }}
+            >
+              {row.status}
+            </Typography>
+          </Box>
+        );
+      },
+    },
+    {
+      key: "action",
+      title: "Action",
+      render: () => (
+        <Box className="flex justify-center gap-3">
+          <button className="p-1.5 hover:bg-gray-50 text-red-400 rounded-md transition-all">
+            <Trash2 size={18} />
+          </button>
+          <button className="p-1.5 hover:bg-gray-50 text-gray-400 rounded-md transition-all">
+            <Pencil size={18} />
+          </button>
+        </Box>
+      ),
+    },
+  ];
   const individualBills = [
     {
       name: "Anas AbuJaber",
@@ -121,6 +213,7 @@ export default function BillsClient() {
         </Tabs>
       </Box>
 
+      {/* حافظنا على نفس تصميم الزر تماماً */}
       <Box className="w-full bg-white flex justify-between items-center py-4">
         <Typography variant="h6" className="font-extrabold text-[#374151]">
           {activeTab === 0 ? "Individual Bills." : "Group Bills."}
@@ -144,138 +237,7 @@ export default function BillsClient() {
         </Button>
       </Box>
 
-      <TableContainer className="shadow-none border-none">
-        <Table>
-          <TableHead sx={{ backgroundColor: "#F9FAFB" }}>
-            <TableRow>
-              <TableCell sx={headStyle}>Bills Name</TableCell>
-              {activeTab === 1 && (
-                <TableCell sx={headStyle}>Group members</TableCell>
-              )}
-              <TableCell sx={headStyle}>Bills num</TableCell>
-              {activeTab === 1 ? (
-                <>
-                  <TableCell sx={headStyle}>Total Amount</TableCell>
-                  <TableCell sx={headStyle}>Your share</TableCell>
-                </>
-              ) : (
-                <TableCell sx={headStyle}>Amount</TableCell>
-              )}
-              <TableCell sx={headStyle}>Date</TableCell>
-              {activeTab === 1 && (
-                <TableCell sx={headStyle}>Payment percentage</TableCell>
-              )}
-              <TableCell sx={headStyle}>Payment Status</TableCell>
-              <TableCell sx={headStyle} align="center">
-                Action
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {currentData.map((bill: any, index) => {
-              const config = statusConfig[bill.status] || statusConfig.Unpaid;
-              return (
-                <TableRow
-                  key={index}
-                  sx={{
-                    "& td": {
-                      py: 3,
-                      borderBottom: "none",
-                      verticalAlign: "middle",
-                    },
-                  }}
-                >
-                  <TableCell className="font-medium text-gray-700">
-                    {bill.name}
-                  </TableCell>
-
-                  {activeTab === 1 && (
-                    <TableCell>
-                      <Box sx={{ display: "flex", alignItems: "center" }}>
-                        <AvatarGroup
-                          max={3}
-                          sx={{
-                            "& .MuiAvatar-root": {
-                              width: 32,
-                              height: 32,
-                              fontSize: 12,
-                              border: "2px solid white",
-                            },
-                          }}
-                        >
-                          {bill.members.map((m: any, i: number) => (
-                            <Avatar key={i} src={m} />
-                          ))}
-                        </AvatarGroup>
-                      </Box>
-                    </TableCell>
-                  )}
-                  <TableCell className="text-gray-500">{bill.num}</TableCell>
-                  <TableCell className="font-bold text-gray-800">
-                    {activeTab === 1 ? bill.total : bill.amount}
-                  </TableCell>
-                  {activeTab === 1 && (
-                    <TableCell className="font-bold text-gray-800">
-                      {bill.share}
-                    </TableCell>
-                  )}
-                  <TableCell className="text-gray-500">{bill.date}</TableCell>
-                  {activeTab === 1 && (
-                    <TableCell className="text-[#3A4CB1] font-bold">
-                      {bill.percentage}
-                    </TableCell>
-                  )}
-                  <TableCell>
-                    <Box
-                      className="flex items-center gap-2 px-3 py-1.5 rounded-full w-fit"
-                      style={{ backgroundColor: config.bg }}
-                    >
-                      <Box
-                        className="w-2 h-2 rounded-full"
-                        style={{ backgroundColor: config.dot }}
-                      />
-                      <Typography
-                        className="text-[13px] font-bold"
-                        style={{ color: config.text }}
-                      >
-                        {bill.status}
-                      </Typography>
-                    </Box>
-                  </TableCell>
-                  <TableCell align="center">
-                    <Box className="flex justify-center gap-3">
-                      <IconButton className="text-red-400">
-                        <Trash2 size={18} />
-                      </IconButton>
-                      <IconButton className="text-gray-400">
-                        <Pencil size={18} />
-                      </IconButton>
-                    </Box>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <Table columns={columns} data={currentData} />
     </Box>
-  );
-}
-
-const headStyle = {
-  py: 2,
-  fontWeight: "bold",
-  color: "#9CA3AF",
-  borderBottom: "none",
-  fontSize: "13px",
-};
-
-function IconButton({ children, className }: any) {
-  return (
-    <button
-      className={`p-1.5 hover:bg-gray-50 rounded-md transition-all ${className}`}
-    >
-      {children}
-    </button>
   );
 }
