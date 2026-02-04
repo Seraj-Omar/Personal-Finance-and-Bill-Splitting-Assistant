@@ -14,7 +14,6 @@ import {
 } from "@mui/material";
 import { User, Calendar, Plus, Trash2 } from "lucide-react";
 import BillModalWrapper from "./ui/BillModalWrapper";
-import SmartBillBanner from "./ui/SmartBillBanner";
 import BillInput from "./ui/BillInput";
 import ReminderToggle from "./ui/ReminderToggle";
 import ReminderFrequency from "./ui/ReminderFrequency";
@@ -66,8 +65,6 @@ export default function AddGroupClient({ onClose }: Props) {
 
   return (
     <BillModalWrapper onClose={onClose} title="Add Group Bills">
-      <SmartBillBanner />
-
       <BillInput label="Bill Name" icon={User} placeholder="Bill name" />
 
       <Box>
