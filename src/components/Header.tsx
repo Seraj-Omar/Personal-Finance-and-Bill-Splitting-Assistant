@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Search, ChevronDown, User, Menu, X, Bell } from "lucide-react";
@@ -44,7 +45,7 @@ export default function Navbar() {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isServiceOpen]);
+  }, [isServiceOpen, isMobileMenuOpen]);
 
   return (
     <nav
@@ -62,10 +63,13 @@ export default function Navbar() {
     >
       <Link href="/">
         <div className="flex  items-center gap-[8px] cursor-pointer">
-          <img
+          <Image
             src="/logo.png"
+            width={62}
+            height={46}
             className="w-[62px] h-[45.55px]"
             alt="Trackly Logo"
+            priority
           />
           <h3 className="font-bold text-[24px]">Trackly</h3>
         </div>
