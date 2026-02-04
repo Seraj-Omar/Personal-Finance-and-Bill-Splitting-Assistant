@@ -44,8 +44,8 @@ export default function HomeHero() {
 
                 <Box component="header" className="flex flex-col gap-5 my-4 w-full lg:w-auto">
                     <Box className="w-fit">
-                        <TitleWithGradient title="Financial Service" text_size="16px" text_color="#FFFFFF"/>
-                    </Box>
+	                        <TitleWithGradient title="Financial Service" text_size="md" text_color="#FFFFFF"/>
+	                    </Box>
                     <Typography id="home-hero-heading" component="h1" fontWeight="700" fontSize="48px" color="#FFFFFF" className="max-w-lg">
                         How to Manage Your Finances
                     </Typography>

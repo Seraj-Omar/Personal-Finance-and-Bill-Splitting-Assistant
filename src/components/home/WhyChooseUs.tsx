@@ -122,7 +122,7 @@ export default function WhyChooseUs() {
             aria-labelledby="why-choose-us-heading"
             className="flex flex-col px-4 py-8 sm:px-6 md:px-10 lg:px-24 lg:py-12 gap-6 w-full items-start justify-center"
         >
-            <TitleWithGradient title="Why Choose Us" id="why-choose-us-heading" />
+            <TitleWithGradient title="Why Choose Us" id="why-choose-us-heading" text_size="xl" />
             <Box className="flex flex-wrap w-full justify-center items-center rounded-2xl p-4 sm:p-5 md:p-6 lg:p-8"
                 sx={{
                     background:{

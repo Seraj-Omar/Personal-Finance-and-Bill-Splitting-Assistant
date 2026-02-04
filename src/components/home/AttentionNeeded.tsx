@@ -67,7 +67,7 @@ export default function AttentionNeeded() {
                 <Box component="article" className="flex flex-col gap-4 lg:w-1/2">
                     <Box component="header">
                         <Box component="h2" className="w-fit">
-                            <TitleWithGradient title="Attention Needed" />
+                            <TitleWithGradient title="Attention Needed" text_size="lg" />
                         </Box>
                         <Box component="p" className="mt-2 text-sm text-[#707070]">
                             A quick summary of key financial observations based on your recent activity.
