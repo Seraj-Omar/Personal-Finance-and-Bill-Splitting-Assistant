@@ -243,7 +243,7 @@ export default function Navbar() {
           />
 
           <div
-            className="fixed top-26 right-4 md:right-6 w-full max-w-md lg:max-w-xl max-h-[90vh] overflow-y-auto rounded-xl bg-white shadow-2xl border border-gray-100 z-[60] scrollbar-notifications hidden sm:block notification-panel-enter"
+            className="fixed top-26 right-2 md:right-3 w-full max-w-md lg:max-w-xl max-h-[90vh] overflow-y-auto rounded-xl bg-white shadow-2xl border border-gray-100 z-[60] scrollbar-notifications hidden sm:block notification-panel-enter"
           >
             <Notifactions />
           </div>
