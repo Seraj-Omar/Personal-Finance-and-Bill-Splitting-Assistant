@@ -59,25 +59,27 @@ body {
 /* Custom scrollbar for notification panel */
 .scrollbar-notifications {
   scrollbar-width: thin;
-  scrollbar-color: #cbd5ff transparent;
+  scrollbar-color: #3447aaee transparent;
 }
 
 .scrollbar-notifications::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 .scrollbar-notifications::-webkit-scrollbar-track {
-  background: transparent;
+  background: #eef2ff;
+  border-radius: 9999px;
 }
 
 .scrollbar-notifications::-webkit-scrollbar-thumb {
-  background-color: #cbd5ff;
+  background-color: #3447aaee;
   border-radius: 9999px;
 }
 
 .scrollbar-notifications::-webkit-scrollbar-thumb:hover {
-  background-color: #9aa5ff;
+  background-color: #1e2c7d;
 }
+
 /* Chrome, Safari, Edge */
 input[type="date"]::-webkit-calendar-picker-indicator {
   opacity: 0;
