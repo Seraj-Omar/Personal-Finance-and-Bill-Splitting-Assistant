@@ -55,6 +55,29 @@ body {
 .main-text-color {
   color:#3447aaee;
 }
+
+/* Custom scrollbar for notification panel */
+.scrollbar-notifications {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5ff transparent;
+}
+
+.scrollbar-notifications::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollbar-notifications::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-notifications::-webkit-scrollbar-thumb {
+  background-color: #cbd5ff;
+  border-radius: 9999px;
+}
+
+.scrollbar-notifications::-webkit-scrollbar-thumb:hover {
+  background-color: #9aa5ff;
+}
 /* Chrome, Safari, Edge */
 input[type="date"]::-webkit-calendar-picker-indicator {
   opacity: 0;
