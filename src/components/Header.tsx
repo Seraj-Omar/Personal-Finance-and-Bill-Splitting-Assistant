@@ -62,13 +62,6 @@ export default function Navbar() {
 
   return (
     <>
-      {isNotificationsOpen && (
-        <div
-          className="fixed inset-0 bg-black/40 backdrop-blur-[1px] z-40"
-          onClick={() => setIsNotificationsOpen(false)}
-        />
-      )}
-
       <nav
         className="
         absolute top-5 left-1/2 -translate-x-1/2
@@ -154,14 +147,6 @@ export default function Navbar() {
             >
               <Bell size={20} className="fill-current" />
             </button>
-
-            {isNotificationsOpen && (
-              <div
-                className="fixed right-4 top-24 w-full max-w-md lg:max-w-xl max-h-[90vh] overflow-y-auto rounded-xl bg-white shadow-2xl border border-gray-100 z-[60] scrollbar-notifications"
-              >
-                <Notifactions />
-              </div>
-            )}
           </div>
 
           <button className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition  text-lg">
@@ -187,14 +172,6 @@ export default function Navbar() {
             >
               <Bell size={20} className="fill-current" />
             </button>
-
-            {isNotificationsOpen && (
-              <div
-                className="fixed inset-x-4 top-24 w-auto max-w-md mx-auto max-h-[70vh] overflow-y-auto rounded-xl bg-white border border-gray-100 z-[60] scrollbar-notifications"
-              >
-                <Notifactions />
-              </div>
-            )}
           </div>
 
           <button className="w-[40px] h-[40px] flex items-center justify-center rounded-full bg-[#f9f9fa] text-gray-700 hover:text-[#3447aaee] transition">
@@ -257,6 +234,27 @@ export default function Navbar() {
           </div>
         )}
       </nav>
+
+      {isNotificationsOpen && (
+        <>
+          <div
+            className="fixed inset-0 bg-black/40 backdrop-blur-[1px] z-40"
+            onClick={() => setIsNotificationsOpen(false)}
+          />
+
+          <div
+            className="fixed top-26 right-4 md:right-6 w-full max-w-md lg:max-w-xl max-h-[90vh] overflow-y-auto rounded-xl bg-white shadow-2xl border border-gray-100 z-[60] scrollbar-notifications hidden sm:block"
+          >
+            <Notifactions />
+          </div>
+
+          <div
+            className="fixed inset-x-4 top-26 w-auto max-w-md mx-auto max-h-[70vh] overflow-y-auto rounded-xl bg-white border border-gray-100 z-[60] scrollbar-notifications sm:hidden"
+          >
+            <Notifactions />
+          </div>
+        </>
+      )}
     </>
   );
 }
