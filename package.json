@@ -14,14 +14,6 @@
     "@hookform/resolvers": "^5.2.2",
     "@mui/icons-material": "^7.3.7",
     "@mui/material": "^7.3.7",
-<<<<<<< HEAD
-    "@tabler/icons-react": "^3.36.1",
-    "lucide-react": "^0.562.0",
-    "next": "16.1.1",
-    "react": "19.2.3",
-    "react-dom": "19.2.3",
-    "react-icons": "^5.5.0"
-=======
     "@mui/material-nextjs": "^7.3.7",
     "next": "16.1.1",
     "react": "19.2.3",
@@ -29,7 +21,6 @@
     "react-hook-form": "^7.70.0",
     "react-icons": "^5.5.0",
     "zod": "^4.3.5"
->>>>>>> feature/auth-ui
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
