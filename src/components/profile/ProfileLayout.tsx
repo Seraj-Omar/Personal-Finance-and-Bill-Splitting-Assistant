@@ -32,7 +32,8 @@ const searchParams = useSearchParams();
 };
 
   return (
-    <div className="flex  p-15  mt-10 ">
+   <div className="flex p-4 sm:p-6 lg:p-15 mt-6 sm:mt-8 lg:mt-10">
+
         
       <Sidebar activeTab={activeTab}  onChange={handleTabChange} />
 

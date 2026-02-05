@@ -63,7 +63,8 @@ export default function AvatarSection() {
 
   return (
     <>
-      <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-10 mb-6 lg:gap-50">
+     <div className="flex flex-col lg:flex-row items-center gap-4 lg:gap-10 mb-6">
+
         <div className="relative">
           <img src={avatar} className="w-40 h-40  rounded-full object-cover" />
 
@@ -85,7 +86,8 @@ export default function AvatarSection() {
           </button>
         </div>
 
-        {/* <div className="flex gap-3">
+       <div className="flex gap-3 lg:flex-1 lg:justify-center">
+
           <button
             onClick={() => setOpen(true)}
             className="px-5 py-2 rounded-lg bg-[#3447AA] text-white font-medium"
@@ -98,7 +100,7 @@ export default function AvatarSection() {
           >
             Delete avatar
           </button>
-        </div> */}
+        </div>
       </div>
 
       <UploadPictureModal
