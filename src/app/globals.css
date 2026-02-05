@@ -80,6 +80,23 @@ body {
   background-color: #1e2c7d;
 }
 
+/* Notification panel enter animation */
+@keyframes notification-panel-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.notification-panel-enter {
+  animation: notification-panel-enter 0.32s cubic-bezier(0.22, 0.61, 0.36, 1);
+  transform-origin: top right;
+}
+
 /* Chrome, Safari, Edge */
 input[type="date"]::-webkit-calendar-picker-indicator {
   opacity: 0;
