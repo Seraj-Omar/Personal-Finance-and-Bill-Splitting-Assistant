@@ -29,24 +29,19 @@ export default function SidebarItem({
         <div className="absolute left-0 w-2.5 h-full bg-[#3447AA] rounded-r-md" />
       )}
 
-    
-     <div className="flex items-center gap-3  lg:justify-start justify-center ">
-
+      <div className="flex items-center gap-3  lg:justify-start justify-center ">
         {React.cloneElement(icon as React.ReactElement<any>, {
           stroke: active ? "#3447AA" : !other ? "#1C1A1A" : "none",
           color: active ? "#3447AA" : !other ? "#1C1A1A" : "none",
-          fill: active && !personal ? "#3447AA" : !personal ? "#1C1A1A" : "none",
+          fill:
+            active && !personal ? "#3447AA" : !personal ? "#1C1A1A" : "none",
         })}
-        <span className="font-medium hidden lg:inline">
-          {title}
-          </span>
-
+        <span className="font-medium hidden lg:inline">{title}</span>
       </div>
 
-    
       {other && !danger && (
         <svg
-          className="w-6 h-6 hidden lg:block" 
+          className="w-6 h-6 hidden lg:block"
           width="24"
           height="24"
           viewBox="0 0 24 24"

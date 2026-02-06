@@ -4,14 +4,13 @@ import { useState, useRef, useEffect } from "react";
 import UploadPictureModal from "./UploadPictureModal";
 
 export default function AvatarSection() {
-  const [open, setOpen] = useState(false); 
+  const [open, setOpen] = useState(false);
   const [cameraOpen, setCameraOpen] = useState(false);
   const [avatar, setAvatar] = useState("/profile.jpg");
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
- 
   const openCamera = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -23,13 +22,11 @@ export default function AvatarSection() {
     }
   };
 
-  
   const closeCamera = () => {
     streamRef.current?.getTracks().forEach((track) => track.stop());
     setCameraOpen(false);
   };
 
-  
   const takePhoto = () => {
     const video = videoRef.current;
     const canvas = canvasRef.current;
@@ -44,7 +41,6 @@ export default function AvatarSection() {
     }
   };
 
-  
   useEffect(() => {
     if (cameraOpen && videoRef.current && streamRef.current) {
       videoRef.current.srcObject = streamRef.current;
@@ -52,7 +48,6 @@ export default function AvatarSection() {
     }
   }, [cameraOpen]);
 
- 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const handleCameraUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -63,12 +58,10 @@ export default function AvatarSection() {
 
   return (
     <>
-     <div className="flex flex-col lg:flex-row items-center gap-4 lg:gap-10 mb-6">
-
+      <div className="flex flex-col lg:flex-row items-center gap-4 lg:gap-10 mb-6">
         <div className="relative">
           <img src={avatar} className="w-40 h-40  rounded-full object-cover" />
 
-         
           <input
             ref={fileInputRef}
             type="file"
@@ -77,7 +70,6 @@ export default function AvatarSection() {
             onChange={handleCameraUpload}
           />
 
-         
           <button
             onClick={openCamera}
             className="absolute bottom-1 right-1 w-10 h-10 sm:w-8 sm:h-8 bg-[#3447AA] border-2 border-white rounded-full flex items-center justify-center text-white"
@@ -86,8 +78,7 @@ export default function AvatarSection() {
           </button>
         </div>
 
-       <div className="flex gap-3 lg:flex-1 lg:justify-center">
-
+        <div className="flex gap-3 lg:flex-1 lg:justify-center">
           <button
             onClick={() => setOpen(true)}
             className="px-5 py-2 rounded-lg bg-[#3447AA] text-white font-medium"
@@ -109,49 +100,46 @@ export default function AvatarSection() {
         onUpload={handleUpload}
       />
 
-     
       {cameraOpen && (
-  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-    <div
-      onClick={(e) => e.stopPropagation()}
-      className="bg-white rounded-2xl w-full max-w-2xl shadow-xl animate-scaleIn"
-    >
-     
-      <div className="bg-[#F4F4F4] p-5 font-semibold relative text-[#262626] border-b-[1.5px] border-[#CCCCCC] rounded-t-2xl">
-        <IconX
-          fill="#161616"
-          onClick={closeCamera}
-          className="absolute top-6 right-6 text-2xl cursor-pointer"
-        />
-        Take Photo
-      </div>
-
-     
-      <div className="p-6 flex flex-col items-center justify-center space-y-6">
-        <video
-          ref={videoRef}
-          className="w-full h-72 rounded-xl object-cover border border-[#E0E0E0]"
-        />
-        <canvas ref={canvasRef} className="hidden" />
-
-        <div className="flex  gap-3 w-full">
-          <button
-            onClick={takePhoto}
-            className="px-6 py-2 w-full h-full bg-[#3447AA] text-white font-medium rounded-lg"
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white rounded-2xl w-full max-w-2xl shadow-xl animate-scaleIn"
           >
-            Take Photo
-          </button>
-          <button
-            onClick={closeCamera}
-            className="px-6 py-2 w-full border border-[#E0E0E0] bg-white font-medium rounded-lg"
-          >
-            Cancel
-          </button>
+            <div className="bg-[#F4F4F4] p-5 font-semibold relative text-[#262626] border-b-[1.5px] border-[#CCCCCC] rounded-t-2xl">
+              <IconX
+                fill="#161616"
+                onClick={closeCamera}
+                className="absolute top-6 right-6 text-2xl cursor-pointer"
+              />
+              Take Photo
+            </div>
+
+            <div className="p-6 flex flex-col items-center justify-center space-y-6">
+              <video
+                ref={videoRef}
+                className="w-full h-72 rounded-xl object-cover border border-[#E0E0E0]"
+              />
+              <canvas ref={canvasRef} className="hidden" />
+
+              <div className="flex  gap-3 w-full">
+                <button
+                  onClick={takePhoto}
+                  className="px-6 py-2 w-full h-full bg-[#3447AA] text-white font-medium rounded-lg"
+                >
+                  Take Photo
+                </button>
+                <button
+                  onClick={closeCamera}
+                  className="px-6 py-2 w-full border border-[#E0E0E0] bg-white font-medium rounded-lg"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-  </div>
-)}
+      )}
     </>
   );
 }

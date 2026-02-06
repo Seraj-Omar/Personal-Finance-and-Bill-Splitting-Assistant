@@ -22,7 +22,6 @@ export default function UploadPictureModal({ open, onClose, onUpload }: Props) {
         onClick={(e) => e.stopPropagation()}
         className="bg-white rounded-2xl w-full max-w-2xl shadow-xl animate-scaleIn"
       >
-      
         <div className="bg-[#F4F4F4] p-5 font-semibold relative text-[#262626] border-b-[1.5px] border-[#CCCCCC] rounded-t-2xl">
           <IconX
             fill="#161616"
@@ -33,7 +32,6 @@ export default function UploadPictureModal({ open, onClose, onUpload }: Props) {
         </div>
 
         <div className="p-6 space-y-6">
-         
           <div
             onClick={() => fileRef.current?.click()}
             className="border border-dashed border-[#E0E0E0] rounded-xl p-8 text-center cursor-pointer bg-[#F9F9FA] hover:bg-gray-50"
@@ -52,7 +50,6 @@ export default function UploadPictureModal({ open, onClose, onUpload }: Props) {
 
             {!selectedFile ? (
               <>
-               
                 <svg
                   width="56"
                   height="56"
@@ -61,7 +58,13 @@ export default function UploadPictureModal({ open, onClose, onUpload }: Props) {
                   xmlns="http://www.w3.org/2000/svg"
                   className="mx-auto mb-4"
                 >
-                  <rect width="56" height="56" rx="28" fill="#3447AA" fillOpacity="0.1" />
+                  <rect
+                    width="56"
+                    height="56"
+                    rx="28"
+                    fill="#3447AA"
+                    fillOpacity="0.1"
+                  />
                   <path
                     d="M37.0037 39.642H30.1381V32.7045H32.407C32.9824 32.7045 33.3224 32.0507 32.9824 31.5799L28.5689 25.4728C28.2877 25.0805 27.7058 25.0805 27.4246 25.4728L23.011 31.5799C22.671 32.0507 23.0045 32.7045 23.5864 32.7045H25.8553V39.642H18.1659C14.7331 39.4524 12 36.2419 12 32.7634C12 30.3637 13.3012 28.2713 15.2301 27.1402C15.0535 26.6628 14.962 26.1528 14.962 25.6167C14.962 23.1647 16.9432 21.1835 19.3952 21.1835C19.9248 21.1835 20.4348 21.275 20.9121 21.4516C22.331 18.4438 25.3911 16.358 28.9481 16.358C33.5513 16.3645 37.3437 19.8888 37.7752 24.3809C41.3126 24.9889 44 28.2648 44 31.9722C44 35.9346 40.9138 39.3674 37.0037 39.642Z"
                     fill="#3447AA"
@@ -73,7 +76,7 @@ export default function UploadPictureModal({ open, onClose, onUpload }: Props) {
               </>
             ) : (
               <>
-               <svg
+                <svg
                   width="56"
                   height="56"
                   viewBox="0 0 56 56"
@@ -81,20 +84,26 @@ export default function UploadPictureModal({ open, onClose, onUpload }: Props) {
                   xmlns="http://www.w3.org/2000/svg"
                   className="mx-auto mb-4"
                 >
-                  <rect width="56" height="56" rx="28" fill="#3447AA" fillOpacity="0.1" />
+                  <rect
+                    width="56"
+                    height="56"
+                    rx="28"
+                    fill="#3447AA"
+                    fillOpacity="0.1"
+                  />
                   <path
                     d="M37.0037 39.642H30.1381V32.7045H32.407C32.9824 32.7045 33.3224 32.0507 32.9824 31.5799L28.5689 25.4728C28.2877 25.0805 27.7058 25.0805 27.4246 25.4728L23.011 31.5799C22.671 32.0507 23.0045 32.7045 23.5864 32.7045H25.8553V39.642H18.1659C14.7331 39.4524 12 36.2419 12 32.7634C12 30.3637 13.3012 28.2713 15.2301 27.1402C15.0535 26.6628 14.962 26.1528 14.962 25.6167C14.962 23.1647 16.9432 21.1835 19.3952 21.1835C19.9248 21.1835 20.4348 21.275 20.9121 21.4516C22.331 18.4438 25.3911 16.358 28.9481 16.358C33.5513 16.3645 37.3437 19.8888 37.7752 24.3809C41.3126 24.9889 44 28.2648 44 31.9722C44 35.9346 40.9138 39.3674 37.0037 39.642Z"
                     fill="#3447AA"
                   />
                 </svg>
-               
-              
-                <p className="text-sm text-gray-600 mt-1">{selectedFile.name}</p>
+
+                <p className="text-sm text-gray-600 mt-1">
+                  {selectedFile.name}
+                </p>
               </>
             )}
           </div>
 
-         
           <div className="flex justify-center gap-3">
             <button
               onClick={onClose}
