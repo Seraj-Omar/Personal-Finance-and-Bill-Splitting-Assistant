@@ -1,16 +1,36 @@
-"use client"
+"use client";
 
-import React, { useEffect, useMemo, useState } from "react"
-import { Paper, Tabs, Tab, Box, Typography, IconButton } from "@mui/material"
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft"
-import ChevronRightIcon from "@mui/icons-material/ChevronRight"
-import { PieChart } from "@mui/x-charts/PieChart"
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Paper, Tabs, Tab, Box, Typography, IconButton } from "@mui/material";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import { PieChart } from "@mui/x-charts/PieChart";
 
-const ExpensesDonutCard = () => { 
-  const [tab, setTab] = useState(2) //
-  const [mounted, setMounted] = useState(false)
+const ExpensesDonutCard = () => {
+  const [tab, setTab] = useState(2);
+  const [mounted, setMounted] = useState(false);
 
-  useEffect(() => setMounted(true), [])
+  // ✅ لقياس حجم الكونتينر
+  const chartWrapRef = useRef<HTMLDivElement | null>(null);
+  const [ringSize, setRingSize] = useState(320); // حجم الدائرة البيضاء
+
+  useEffect(() => setMounted(true), []);
+
+  useEffect(() => {
+    if (!chartWrapRef.current) return;
+
+    const el = chartWrapRef.current;
+
+    const ro = new ResizeObserver(([entry]) => {
+      const w = entry.contentRect.width;
+
+      const next = Math.max(220, Math.min(w, 320));
+      setRingSize(next);
+    });
+
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   const data = useMemo(
     () => [
@@ -21,25 +41,31 @@ const ExpensesDonutCard = () => {
       { id: 4, value: 17, color: "#E9A3AD" },
     ],
     []
-  )
-  const SIZE = 220;
+  );
+
+  const chartSize = Math.round(ringSize - 20);
+
+  const innerRadius = Math.round(ringSize * 0.2875); 
+  const outerRadius = Math.round(ringSize * 0.43125); 
 
   return (
-  <Paper
-  elevation={0}
-  sx={{
-    width: 409,       
-    height: 584,        
-    p: "32px",    
-    borderRadius: "16px",
-    border: "1px solid #E5E7EB",
-    backgroundColor: "#F9FAFB",
-    display: "flex",
-    flexDirection: "column",
-    gap: "32px",        
-    boxSizing: "border-box",
-  }}
->
+    <Paper
+      elevation={0}
+      sx={{
+        width: "100%",            
+        maxWidth: 409,            
+        height: "auto",        
+        minHeight: 584,          
+        p: "32px",
+        borderRadius: "16px",
+        border: "1px solid #E5E7EB",
+        backgroundColor: "#F9FAFB",
+        display: "flex",
+        flexDirection: "column",
+        gap: "32px",
+        boxSizing: "border-box",
+      }}
+    >
       {/* Tabs */}
       <Box sx={{ display: "flex", justifyContent: "center", mt: 0.5 }}>
         <Tabs
@@ -48,11 +74,7 @@ const ExpensesDonutCard = () => {
           centered
           sx={{
             minHeight: 0,
-            "& .MuiTabs-indicator": {
-              height: 2,
-              borderRadius: 2,
-              backgroundColor: "#2F46B8",
-            },
+            "& .MuiTabs-indicator": { height: 2, borderRadius: 2 },
             "& .MuiTab-root": {
               minHeight: 0,
               textTransform: "none",
@@ -82,14 +104,7 @@ const ExpensesDonutCard = () => {
           mb: 2,
         }}
       >
-        <IconButton
-          size="small"
-          sx={{
-            color: "#6B7280",
-            width: 32,
-            height: 32,
-          }}
-        >
+        <IconButton size="small" sx={{ color: "#6B7280", width: 32, height: 32 }}>
           <ChevronLeftIcon fontSize="small" />
         </IconButton>
 
@@ -97,25 +112,26 @@ const ExpensesDonutCard = () => {
           July
         </Typography>
 
-        <IconButton
-          size="small"
-          sx={{
-            color: "#6B7280",
-            width: 32,
-            height: 32,
-          }}
-        >
+        <IconButton size="small" sx={{ color: "#6B7280", width: 32, height: 32 }}>
           <ChevronRightIcon fontSize="small" />
         </IconButton>
       </Box>
 
       {/* Donut area */}
-      <Box sx={{ flex: 1, display: "grid", placeItems: "center" }}>
+      <Box
+        ref={chartWrapRef}
+        sx={{
+          flex: 1,
+          display: "grid",
+          placeItems: "center",
+          width: "100%",
+        }}
+      >
         <Box
           sx={{
             position: "relative",
-            width: 320,
-            height: 320,
+            width: ringSize,
+            height: ringSize,
             borderRadius: "999px",
             backgroundColor: "#FFFFFF",
             boxShadow: "0px 12px 28px rgba(17, 24, 39, 0.10)",
@@ -128,16 +144,16 @@ const ExpensesDonutCard = () => {
               series={[
                 {
                   data,
-                  innerRadius: 92, 
-                  outerRadius: 138,
-                  paddingAngle: 7, 
-                  cornerRadius: 14, 
+                  innerRadius,
+                  outerRadius,
+                  paddingAngle: 7,
+                  cornerRadius: 14,
                   startAngle: -90,
                   endAngle: 270,
                 },
               ]}
-              width={300}
-              height={300}
+              width={chartSize}
+              height={chartSize}
               margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
             />
           )}
@@ -159,7 +175,7 @@ const ExpensesDonutCard = () => {
         </Box>
       </Box>
     </Paper>
-  )
-}
+  );
+};
 
-export default ExpensesDonutCard
+export default ExpensesDonutCard;

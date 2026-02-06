@@ -117,7 +117,7 @@ const AddExpenseModal = ({
       {/* Overlay */}
       <div
         onClick={onClose}
-        className="absolute inset-0 bg-white/50
+        className="absolute inset-0 bg-black/10
 "
       />
 
@@ -221,6 +221,12 @@ const AddExpenseModal = ({
 
           {/* Footer buttons */}
           <div className="pt-2 flex items-center justify-between gap-4">
+                  <button
+              type="submit"
+              className="w-1/2 rounded-xl bg-[#3447AA] text-white px-4 py-3 text-sm font-medium hover:opacity-90 transition"
+            >
+              Save Expense
+            </button>
             <button
               type="button"
               onClick={onClose}
@@ -229,12 +235,7 @@ const AddExpenseModal = ({
               Cancel
             </button>
 
-            <button
-              type="submit"
-              className="w-1/2 rounded-xl bg-[#3447AA] text-white px-4 py-3 text-sm font-medium hover:opacity-90 transition"
-            >
-              Save Expense
-            </button>
+      
           </div>
         </form>
       </div>
