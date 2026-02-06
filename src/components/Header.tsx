@@ -6,6 +6,9 @@ import { useState, useRef, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Search, ChevronDown, User, Menu, X, Bell } from "lucide-react";
 import Notifactions from "./Notifactions";
+import { useAuthStatus } from "../modules/auth/hooks/useAuthStatus";
+import { logoutUser } from "../modules/auth/services/auth.api";
+import router from "next/router";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -13,6 +16,8 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isServiceOpen, setIsServiceOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+
+  const { isAuthed, user, ready } = useAuthStatus();
 
   const isActiveExact = (path: string) =>
     pathname === path
@@ -154,13 +159,26 @@ export default function Navbar() {
             <span>Search</span>
           </button>
 
-          <Link
-            href="/login"
-            className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition  text-lg"
-          >
-            <User size={20} className="fill-current" />
-            <span>Sign In</span>
-          </Link>
+          {ready && !isAuthed ? (
+            <Link
+
+              href="/register"
+              className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition  text-lg"
+            >
+              <User size={20} className="fill-current" />
+              <span>Sign up</span>
+            </Link>
+          ) : ready && isAuthed ? (
+            <div className="flex items-center gap-3">
+              <Link
+                href="/dashboard"
+                className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition  text-lg"
+              >
+                <User size={20} className="fill-current" />
+                <span>{user?.fullName || user?.name || "Account"}</span>
+              </Link>
+            </div>
+          ) : null}
         </div>
 
         <div className="md:hidden flex items-center gap-3">
@@ -224,13 +242,26 @@ export default function Navbar() {
               Budget
             </Link>
 
+       {ready && !isAuthed ? (
             <Link
-              href="/login"
-              className="text-gray-700 hover:text-[#3447aaee] transition"
-              onClick={() => setIsMobileMenuOpen(false)}
+            
+              href="/register"
+              className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition  text-lg"
             >
-              Sign In
+              <User size={20} className="fill-current" />
+              <span>Sign up</span>
             </Link>
+          ) : ready && isAuthed ? (
+            <div className="flex items-center gap-3">
+              <Link
+                href="/dashboard"
+                className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition  text-lg"
+              >
+                <User size={20} className="fill-current" />
+                <span>{user?.fullName || user?.name || "Account"}</span>
+              </Link>
+            </div>
+          ) : null}
           </div>
         )}
       </nav>
@@ -242,15 +273,11 @@ export default function Navbar() {
             onClick={() => setIsNotificationsOpen(false)}
           />
 
-          <div
-            className="fixed top-26 right-2 md:right-3 w-full max-w-md lg:max-w-xl max-h-[90vh] overflow-y-auto rounded-xl bg-white shadow-2xl border border-gray-100 z-[60] scrollbar-notifications hidden sm:block notification-panel-enter"
-          >
+          <div className="fixed top-26 right-2 md:right-3 w-full max-w-md lg:max-w-xl max-h-[90vh] overflow-y-auto rounded-xl bg-white shadow-2xl border border-gray-100 z-[60] scrollbar-notifications hidden sm:block notification-panel-enter">
             <Notifactions />
           </div>
 
-          <div
-            className="fixed inset-x-4 top-26 w-auto max-w-md mx-auto max-h-[70vh] overflow-y-auto rounded-xl bg-white border border-gray-100 z-[60] scrollbar-notifications sm:hidden notification-panel-enter"
-          >
+          <div className="fixed inset-x-4 top-26 w-auto max-w-md mx-auto max-h-[70vh] overflow-y-auto rounded-xl bg-white border border-gray-100 z-[60] scrollbar-notifications sm:hidden notification-panel-enter">
             <Notifactions />
           </div>
         </>
