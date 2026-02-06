@@ -200,7 +200,7 @@ export default function DonutChart() {
           {stats.breakdown.map((item, i) => (
             <div
               key={i}
-              className="w-[465px] h-[54px] rounded-[8px] border border-gray-300 flex items-center justify-between px-3"
+              className="sm:w-[465px] h-[54px] rounded-[8px] border border-gray-300 flex items-center justify-between px-3"
               style={{ backgroundColor: item.bg }}
             >
               <div className="flex items-center gap-2">
@@ -224,7 +224,7 @@ export default function DonutChart() {
             </div>
           ))}
 
-          <div className="w-[465px] h-[75px] rounded-[8px] my-4 border border-gray-300 px-3 flex flex-col justify-center text-sm bg-[#E0E0E05E]">
+          <div className="sm:w-[465px] h-[75px] rounded-[8px] my-4 border border-gray-300 px-3 flex flex-col justify-center text-sm bg-[#E0E0E05E]">
             <div className="flex justify-between">
               <span>Total Bills</span>
               <span>{stats.totalBills}</span>

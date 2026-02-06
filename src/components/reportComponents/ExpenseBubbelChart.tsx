@@ -134,16 +134,19 @@ export default function PackedBubbleChart() {
 
   return (
     <>
-      <div className="overflow-auto w-[457px] h-[217px]">
-        <svg ref={svgRef} />
+      <div className="w-full max-w-[457px] aspect-[457/217] overflow-auto">
+        <svg ref={svgRef} className="w-full h-full" />
       </div>
-      <div className="w-full border-t border-dashed border-[0.5px] border-[#e0e0e0] -rotate-[0.39deg]"></div>
+      <div className="w-full border-t border-dashed border-gray-300 opacity-70"></div>
 
-      <div className="mt-4 flex flex-wrap justify-between gap-y-3">
+      <div className="mt-4 flex flex-wrap gap-x-6 gap-y-3 justify-start sm:justify-between">
         {expenses
           .filter((item) => item.value > 0)
           .map((item) => (
-            <div key={item.label} className="flex items-center gap-2 text-sm">
+            <div
+              key={item.label}
+              className="flex items-start gap-2 text-xs sm:text-sm"
+            >
               <span
                 style={{
                   width: 10,

@@ -29,47 +29,28 @@ export default function ExpenseReport() {
         </p>
       </div>
       <div>
-        <ul className="flex items-center justify-center gap-2">
-          <li
-            onClick={() => setSelected("Day")}
-            className={`w-[108.25px] h-[32px] px-2 py-2 text-[14px] flex items-center justify-center border-b-[3px] cursor-pointer ${
-              selected === "Day"
-                ? "text-[#3447AA] border-[#3447AA]"
-                : "text-[#AEAEAE] border-transparent"
-            }`}
-          >
-            Day
-          </li>
-          <li
-            onClick={() => setSelected("Week")}
-            className={`w-[108.25px] h-[32px] px-2 py-2 text-[14px] flex items-center justify-center border-b-[3px] cursor-pointer ${
-              selected === "Week"
-                ? "text-[#3447AA] border-[#3447AA]"
-                : "text-[#AEAEAE] border-transparent"
-            }`}
-          >
-            Week
-          </li>
-          <li
-            onClick={() => setSelected("Month")}
-            className={`w-[108.25px] h-[32px] px-2 py-2 text-[14px] flex items-center justify-center border-b-[3px] cursor-pointer ${
-              selected === "Month"
-                ? "text-[#3447AA] border-[#3447AA]"
-                : "text-[#AEAEAE] border-transparent"
-            }`}
-          >
-            Month
-          </li>
-          <li
-            onClick={() => setSelected("Year")}
-            className={`w-[108.25px] h-[32px] px-2 py-2 text-[14px] flex items-center justify-center border-b-[3px] cursor-pointer ${
-              selected === "Year"
-                ? "text-[#3447AA] border-[#3447AA]"
-                : "text-[#AEAEAE] border-transparent"
-            }`}
-          >
-            Year
-          </li>
+        <ul className="flex flex-wrap items-center justify-center gap-2 sm:gap-4">
+          {["Day", "Week", "Month", "Year"].map((item) => (
+            <li
+              key={item}
+              onClick={() => setSelected(item)}
+              className={`
+        px-3 sm:px-6 py-2
+        text-xs sm:text-sm
+        flex items-center justify-center
+        border-b-[3px]
+        cursor-pointer
+        transition-all duration-200
+        ${
+          selected === item
+            ? "text-[#3447AA] border-[#3447AA]"
+            : "text-[#AEAEAE] border-transparent"
+        }
+      `}
+            >
+              {item}
+            </li>
+          ))}
         </ul>
       </div>
       <ExpenseBubbelChart />
