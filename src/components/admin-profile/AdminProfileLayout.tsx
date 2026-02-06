@@ -31,11 +31,11 @@ export default function ProfileLayout() {
   };
 
   return (
-    <div className="  p-5 lg:p-10 bg-gray-100 ">
+    <div className="  p-2 lg:p-10 bg-gray-100 ">
       <p className="text-2xl font-bold ">Profile</p>
       <p className="text-[#AEAEAE]">Your financial profile at a glance</p>
-      <div className="flex  p-15  mt-10 bg-white rounded-lg ">
-        <div className=" bg-white rounded-2xl p-4 shadow-md h-fit">
+      <div className="flex  lg:p-15 p-5  mt-10 bg-white rounded-lg ">
+        <div className=" bg-white rounded-2xl p-2 lg:p-4 shadow-md h-fit">
           <Sidebar activeTab={activeTab} onChange={handleTabChange} />
         </div>
 
