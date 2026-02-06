@@ -5,6 +5,7 @@ import "./globals.css";
 // import Providers from "../../../providers";
 import Footer from "../components/footer/Footer";
 import Header from "../components/Header";
+
 import ThemeRegistry from "./theme-registry";
 
 const geistSans = Geist({

@@ -78,7 +78,7 @@ export default function HomeHero() {
                         </Typography>
                     </Box>
                     <button
-                    onClick={() => {router.push("/expenses")}}
+                    onClick={() => {router.push("/services/expenses")}}
                     type="button"
                     className="text-[#3447AA] bg-[#FFFFFF] w-fit px-3 py-4 rounded-2xl text-[18px] font-[500] hover:bg-[#f0f0f0] hover:cursor-pointer transition-colors duration-300 ease-in-out"
                     >
