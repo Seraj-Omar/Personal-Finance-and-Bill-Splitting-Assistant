@@ -125,7 +125,7 @@ export default function ManageExpenses() {
     width: "100%",
     height: "699px",
     opacity: 1,
-    p: "20px",
+ 
     gap: "10px",
     borderRadius: "16px",
     border: "1px solid",

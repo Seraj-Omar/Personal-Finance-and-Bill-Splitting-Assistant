@@ -17,13 +17,15 @@ const Budget = () => {
   const [activeFilter, setActiveFilter] = useState<FilterType>("All");
 
   return (
-    <Container
-      maxWidth="xl"
-      sx={{
-        py: 5,
+<Container
+  maxWidth={false}
+  disableGutters
+  sx={{
+    py: 5,
+    px: { xs: "10px", sm: "12px", md: "16px", lg: "100px" }, // خليها 10 حتى على lg
+  }}
+>
 
-      }}
-    >
       <PadgetComponent />
 
       <Box
