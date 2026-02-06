@@ -22,18 +22,14 @@ export default function Navbar() {
   const [isServiceOpen, setIsServiceOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
-  // ✅ مصدر الحقيقة بعد Google login (cookie)
   const { data, isLoading: meLoading, isError: meError } = useMe();
   const user = data?.data?.user || data?.user || data;
   const authedByMe = !!user;
 
-  // ✅ fallback (لو عندك token/session)
   const { isAuthed: authedByStorage, ready } = useAuthStatus();
 
-  // ✅ النهائي: إذا /me رجع user => authed (حتى لو ما في token)
   const isAuthedFinal = authedByMe || authedByStorage;
 
-  // إذا /me لسه عم يحمل، ممكن تعتبره "غير جاهز" عشان ما يفلّكر
   const readyFinal = ready || meLoading === false;
 
   const isActiveExact = (path: string) =>
@@ -210,7 +206,7 @@ export default function Navbar() {
                 className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition  text-lg"
               >
                 <User size={20} className="fill-current" />
-                <span>{user?.fullName || user?.name || "Account"}</span>
+                <span>{user?.fullName || "Account"}</span>
               </Link>
 
             </div>

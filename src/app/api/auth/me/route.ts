@@ -1,29 +1,24 @@
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
-  const base = process.env.BASE_URL; 
+  const base = process.env.NEXT_PUBLIC_BASE_URL; // مثال: https://gsg-project-group-5.vercel.app/api/v1
+  if (!base) return NextResponse.json({ message: "Missing BACKEND_URL" }, { status: 500 });
 
-  if (!base) {
-    return NextResponse.json(
-      { message: "BASE_URL is missing" },
-      { status: 500 }
-    );
-  }
+  const cookie = req.headers.get("cookie") ?? "";
+  const auth = req.headers.get("authorization") ?? ""; // اخ
 
-  const res = await fetch(`${base}/auth/me`, {
+  const upstream = await fetch(`${base}/auth/me`, {
     headers: {
-      cookie: req.headers.get("cookie") ?? "",
+      ...(cookie ? { cookie } : {}),
+      ...(auth ? { authorization: auth } : {}),
+      accept: "application/json",
     },
     cache: "no-store",
   });
 
-  const data = await res.text();
-
-  return new NextResponse(data, {
-    status: res.status,
-    headers: {
-      "content-type":
-        res.headers.get("content-type") ?? "application/json",
-    },
+  const text = await upstream.text();
+  return new NextResponse(text, {
+    status: upstream.status,
+    headers: { "Content-Type": "application/json" },
   });
 }

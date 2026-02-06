@@ -56,7 +56,11 @@ export async function logoutUser() {
 
 
 export async function fetchMe() {
-  const res = await fetch( `${BASE_URL}/auth/me`, { credentials: "include" });
+  const token = sessionStorage.getItem("token");
+  const res = await fetch( `${BASE_URL}/auth/me`, { 
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+    credentials: "include",
+  });
   if (!res.ok) throw new Error("Unauthenticated");
   return res.json();
 }
