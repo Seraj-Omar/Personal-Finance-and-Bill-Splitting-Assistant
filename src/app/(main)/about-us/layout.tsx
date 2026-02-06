@@ -1,35 +1,21 @@
-
-// import PageHero from "../../shared/ui/page-hero/PageHero";
-
-// export default function AboutLayout({
-//   children,
-// }: {
-//   children: React.ReactNode
-// }) {
-//   return (
-//     <>
-//       <PageHero
-//         title="About Us"
-//         breadcrumb={["Home", "Service"]}
-//       />
-//       {children}
-//     </>
-//   )
-// }
-
+import Header from "../../../components/Header";
+import Footer from "../../../components/footer/Footer";
 import PageHero from "../../../shared/ui/page-hero/PageHero";
+
 export default function AboutLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <>
-      <PageHero
-        title="About Us"
-        breadcrumb={["Home","About Us"]}
-      />
+      <Header />
+
+      <PageHero title="About Us" breadcrumb={["Home", "About Us"]} />
+
       {children}
+
+      <Footer />
     </>
-  )
+  );
 }
