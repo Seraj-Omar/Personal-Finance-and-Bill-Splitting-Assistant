@@ -9,7 +9,8 @@ export default function Sidebar({
   onChange: (tab: "info" | "password") => void;
 }) {
   return (
-    <div className="w-[280px] bg-white rounded-2xl p-4">
+   <div className="w-16 sm:w-20 lg:w-[280px] bg-white rounded-2xl p-2 lg:p-4">
+
       <SidebarItem
         title="Personal Information"
         personal={true}
