@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 const ReminderPage = () => {
   const router = useRouter();
   return (
-    <div className="max-w-7xl mx-auto py-12 ">
+<div className="container mx-auto py-5 ">
       <section
         className="mt-10 p-6 rounded-2xl"
         style={{
@@ -17,7 +17,7 @@ const ReminderPage = () => {
         }}
       >
         {" "}
-        <div className="flex flex-col lg:flex-row gap-6 ">
+        <div className="flex flex-col lg:flex-row gap-6 justify-center items-center">
           {/* LEFT – Bills */}
           <div className="flex-1 space-y-4">
             <BillsList />

@@ -2,6 +2,7 @@
 
 import { Pencil, Trash2 } from "lucide-react"
 import { Bill } from "../type"
+import { DateIcon } from "@/src/components/DateIcon"
 type BillCardProps = {
   bill: Bill
   onEdit: (bill: Bill) => void
@@ -11,7 +12,7 @@ type BillCardProps = {
 
 const BillCard = ({ bill, onEdit, onDelete, onToggle }: BillCardProps) => {
   return (
-    <div className="bg-white rounded-xl p-5 shadow-sm flex justify-between items-start">
+<div className="bg-white rounded-xl p-5 shadow-sm flex justify-between items-center">
 
       {/* Left */}
       <div>
@@ -49,8 +50,10 @@ const BillCard = ({ bill, onEdit, onDelete, onToggle }: BillCardProps) => {
             }`}
           />
         </button>
-     <span className="gap-3 text-xs text-gray-500">{bill.date}</span>
-        {/* Actions */}
+<div className="flex items-center gap-2 text-[#AEAEAE]">
+  <DateIcon />
+  <span className="text-sm">{bill.date}</span>
+</div>        {/* Actions */}
         <div className="flex gap-3">
           <button
             onClick={() => onEdit(bill)}

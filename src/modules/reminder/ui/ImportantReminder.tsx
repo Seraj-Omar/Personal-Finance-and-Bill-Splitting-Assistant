@@ -10,6 +10,7 @@ const ImportantReminder = () => {
       "linear-gradient(0deg, rgba(255, 255, 255, 0.41), rgba(255, 255, 255, 0.41)), linear-gradient(109.96deg, rgba(255, 255, 255, 0.2) 38.88%, rgba(255, 255, 255, 0.2) 97.14%), radial-gradient(19.21% 36.04% at 23.28% 40.12%, #FFFFFF 0%, rgba(101, 108, 252, 0.49) 0%, rgba(246, 227, 231, 0.64) 100%)",
     borderRadius: "16px",
     padding: "24px",
+    marginBottom: "40px",
   }}
 >
       <div className="max-w-7xl mx-auto px-6">
