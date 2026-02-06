@@ -29,25 +29,32 @@ export default function AskAIChat() {
   } = useAskAIChat(initialMessages);
 
   return (
-    <Container maxWidth="xl" sx={{ py: 6 }}>
-      {/* Title */}
-      <Typography
-        fontWeight={700}
-        sx={{ mb: 7, mt: 5, fontSize: { xs: 24, sm: 30 } }}
-      >
-        Ask AI
-      </Typography>
+<Container
+  maxWidth={false}
+  disableGutters
+  sx={{
+    py: 6,
+    px: { xs: "10px", sm: "12px", md: "16px" },
+  }}
+>  <Box sx={{ width: "100%", maxWidth: 1280, mx: "auto" ,}}>
+    <Typography
+      fontWeight={700}
+      sx={{ mb: 8, mt: 6, fontSize: { xs: 24, sm: 30 } }}
+    >
+      Ask AI
+    </Typography>
 
-      {/* Chat Wrapper */}
-      <Box
-        sx={{
-          maxWidth: 1280,
-          mx: "auto",
-          p: { xs: 2, sm: 4 },
-          backgroundColor: "#F9F9F9",
-          borderRadius: 4,
-        }}
-      >
+  <Box
+    sx={{
+      width: "100%",
+      maxWidth: 1280,   
+      mx: "auto",
+      p: { xs: 2, sm: 4 },
+      backgroundColor: "#F9F9F9",
+      borderRadius: 4,
+    }}
+  >
+
         <Paper
           elevation={0}
           sx={{
@@ -120,6 +127,7 @@ export default function AskAIChat() {
           </Stack>
         </Box>
       </Box>
+         </Box>
     </Container>
   );
 }

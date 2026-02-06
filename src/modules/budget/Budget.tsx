@@ -22,7 +22,7 @@ const Budget = () => {
   disableGutters
   sx={{
     py: 5,
-    px: { xs: "10px", sm: "12px", md: "16px", lg: "100px" }, // خليها 10 حتى على lg
+    px: { xs: "10px", sm: "12px", md: "16px", lg: "100px" }, 
   }}
 >
 

@@ -58,7 +58,7 @@ export default function AiBudgetSuggestions() {
       </Box>
 
       {/* ===== Button ===== */}
-      <Link href="/AiChat">
+      <Link href="/chat">
          <Button
         variant="contained"
         sx={{
