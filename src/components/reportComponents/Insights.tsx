@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 
 export default function Insights() {
   const [selectedAlert, setSelectedAlert] = useState<number | null>(null);
@@ -17,7 +18,7 @@ export default function Insights() {
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <g clip-path="url(#clip0_1744_1589)">
+          <g clipPath="url(#clip0_1744_1589)">
             <path
               d="M3.375 9.00001L10.656 2.62051C11.631 1.76626 13.125 2.48401 13.125 3.80626V9.00001H3.375Z"
               fill="#44BC59"
@@ -115,19 +116,19 @@ Last month: $142.30
   ];
 
   return (
-    <div className="flex flex-wrap justify-between w-[85%] mx-auto my-10 gap-10">
-      <div className="flex flex-col flex-1 min-w-[300px] max-w-[620px]">
+    <div className="flex items-center justify-center w-[89%] mb-[63px] gap-[63px]">
+      <div className="flex flex-col   lg:w-[597px] gap-[16px]">
         <div>
           <h5 className="text-[24px] font-medium">Insights</h5>
           <div className="w-[88px] h-[2px] rounded-[16px] hero-gradient"></div>
         </div>
 
-        <p className="text-[#1C1A1A80] mt-3 max-w-[483px]">
+        <p className="text-[#1C1A1A80] text-[16px]  max-w-[483px] leading-tight">
           A quick summary of key financial observations based on your recent
           activity.
         </p>
 
-        <div className="flex flex-col gap-[24px] mt-6">
+        <div className="flex flex-col gap-[24px] ">
           {alerts.map((alert, index) => (
             <div
               key={index}
@@ -167,11 +168,13 @@ Last month: $142.30
         </div>
       </div>
 
-      <div className="hidden lg:block lg:flex-1  rounded-[16px] overflow-hidden ">
-        <img
+      <div className="relative w-full lg:w-[620px] h-[444px] rounded-[16px] hidden lg:block overflow-hidden">
+        <Image
           src="/Insights.jpg"
           alt="Insights illustration - woman with tablet and financial dashboard"
-          className="w-full h-full object-cover"
+          fill
+          className="object-cover"
+          priority
         />
       </div>
 
