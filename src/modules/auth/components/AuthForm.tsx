@@ -7,17 +7,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, registerSchema } from "../schema/auth.schema";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
-import { loginUser, registerUser } from "../services/auth.api";
 import { HiOutlineEye, HiOutlineEyeOff } from "react-icons/hi";
 
-
-import {
-  HiOutlineMail,
-  HiOutlineLockClosed,
-  HiOutlineUser,
-} from "react-icons/hi";
+import { HiOutlineMail, HiOutlineLockClosed, HiOutlineUser } from "react-icons/hi";
 import Link from "next/link";
 import { useState } from "react";
+
+import { useLogin } from "../hooks/useLogin";
+import { useRegister } from "../hooks/useRegister";
 
 type AuthType = "login" | "register";
 
@@ -27,13 +24,18 @@ type FormData = LoginForm | RegisterForm;
 
 export default function AuthForm({ type }: { type: AuthType }) {
   const isRegister = type === "register";
-const router = useRouter();
+  const router = useRouter();
 
-  // 
+  const loginMutation = useLogin();
+  const registerMutation = useRegister();
+
+  const loading = isRegister ? registerMutation.isPending : loginMutation.isPending;
+  const apiError = isRegister ? registerMutation.error : loginMutation.error;
+
   const schema = isRegister ? registerSchema : loginSchema;
-const [loading, setLoading] = useState(false);
-const [showPassword, setShowPassword] = useState(false);
-const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const {
     register,
@@ -43,46 +45,35 @@ const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     resolver: zodResolver(schema),
   });
 
+  const onSubmit = async (data: FormData) => {
+    try {
+      if (isRegister) {
+        const registerData = data as RegisterForm;
 
+        await registerMutation.mutateAsync({
+          email: registerData.email,
+          password: registerData.password,
+          fullName: registerData.name,
+        });
 
-const onSubmit = async (data: FormData) => {
-  try {
-    setLoading(true);
+        sessionStorage.setItem("pendingEmail", registerData.email);
+        router.push("/login");
+        return;
+      }
 
-  if (isRegister) {
-  const registerData = data as RegisterForm;
-
-  await registerUser({
-    name: registerData.name,
-    email: registerData.email,
-    password: registerData.password,
-  });
-
-  sessionStorage.setItem("pendingEmail", registerData.email);
-
-  router.push("/currency");
-  return;
-
-
-
-    } else {
       const loginData = data as LoginForm;
 
-      await loginUser({
+      await loginMutation.mutateAsync({
         email: loginData.email,
         password: loginData.password,
       });
 
-      router.push("/");
+      router.push("/currency");
+    } catch (e) {
+      // React Query mutation will hold the error in `apiError`
+      console.error(e);
     }
-  } catch (error) {
-    console.error(error);
-  } finally {
-    setLoading(false);
-  }
-};
-
-
+  };
 
   return (
     <div className="w-full max-w-md text-white ">
@@ -96,8 +87,7 @@ const onSubmit = async (data: FormData) => {
           : "Enter your credentials to access your account"}
       </p>
 
-<form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {/* Full Name */}
         {isRegister && (
           <div>
@@ -105,16 +95,14 @@ const onSubmit = async (data: FormData) => {
             <div className="relative">
               <HiOutlineUser className="absolute left-4 top-1/2 -translate-y-1/2 text-white/70" />
               <input
-                {...register("name")}
+                {...register("name" as const)}
                 type="text"
                 placeholder="John Doe"
                 className="w-full rounded-xl border border-white/80  pl-11 pr-4 py-3 text-sm outline-none focus:border-white/40"
               />
             </div>
             {"name" in errors && errors.name && (
-              <p className="text-red-700 text-xs mt-1">
-                {errors.name.message}
-              </p>
+              <p className="text-red-700 text-xs mt-1">{errors.name.message as string}</p>
             )}
           </div>
         )}
@@ -125,90 +113,53 @@ const onSubmit = async (data: FormData) => {
           <div className="relative">
             <HiOutlineMail className="absolute left-4 top-1/2 -translate-y-1/2 text-white/70" />
             <input
-              {...register("email")}
+              {...register("email" as const)}
               type="email"
               placeholder="example@email.com"
               className="w-full rounded-xl border border-white/80 pl-11 pr-4 py-3 text-sm outline-none focus:border-white/40"
             />
           </div>
           {errors.email && (
-            <p className="text-red-700 text-xs mt-1">
-              {errors.email.message}
-            </p>
+            <p className="text-red-700 text-xs mt-1">{errors.email.message as string}</p>
           )}
         </div>
 
-{/* Password */}
-<div>
-  <label className="block text-sm mb-3">Password</label>
+        {/* Password */}
+        <div>
+          <label className="block text-sm mb-3">Password</label>
 
-  <div className="relative">
-    <HiOutlineLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 text-white/70" />
+          <div className="relative">
+            <HiOutlineLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 text-white/70" />
 
-    <input
-      {...register("password")}
-      type={showPassword ? "text" : "password"}
-      placeholder="••••••••••••"
-      className="w-full rounded-xl border border-white/80 pl-11 pr-11 py-3 text-sm outline-none focus:border-white/40"
-    />
+            <input
+              {...register("password" as const)}
+              type={showPassword ? "text" : "password"}
+              placeholder="••••••••••••"
+              className="w-full rounded-xl border border-white/80 pl-11 pr-11 py-3 text-sm outline-none focus:border-white/40"
+            />
 
-    {/* Eye icon */}
-    <button
-      type="button"
-      onClick={() => setShowPassword((prev) => !prev)}
-      className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white"
-    >
-      {showPassword ? (
-        <HiOutlineEyeOff size={18} />
-      ) : (
-        <HiOutlineEye size={18} />
-      )}
-    </button>
-  </div>
+            {/* Eye icon */}
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white"
+            >
+              {showPassword ? <HiOutlineEyeOff size={18} /> : <HiOutlineEye size={18} />}
+            </button>
+          </div>
 
-  {errors.password && (
-    <p className="text-red-700 text-xs mt-1">
-      {errors.password.message}
-    </p>
-  )}
-</div>
+          {errors.password && (
+            <p className="text-red-700 text-xs mt-1">{errors.password.message as string}</p>
+          )}
+        </div>
 
-       {/* Confirm Password */}
-{isRegister && (
-  <div>
-    <label className="block text-sm mb-1">Confirm password</label>
 
-    <div className="relative">
-      <input
-        {...register("confirmPassword")}
-        type={showConfirmPassword ? "text" : "password"}
-        placeholder="••••••••••••"
-        className="w-full rounded-xl border border-white/80 px-4 pr-11 py-3 text-sm outline-none focus:border-white/40"
-      />
 
-      <button
-        type="button"
-        onClick={() =>
-          setShowConfirmPassword((prev) => !prev)
-        }
-        className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white"
-      >
-        {showConfirmPassword ? (
-          <HiOutlineEyeOff size={18} />
-        ) : (
-          <HiOutlineEye size={18} />
+        {apiError && (
+          <p className="text-red-700 text-xs mt-1">
+            {(apiError as any)?.message || "Something went wrong"}
+          </p>
         )}
-      </button>
-    </div>
-
-    {"confirmPassword" in errors && errors.confirmPassword && (
-      <p className="text-red-700 text-xs mt-1">
-        {errors.confirmPassword.message}
-      </p>
-    )}
-  </div>
-)}
-
 
         {/* Remember / Forgot */}
         {!isRegister && (
@@ -217,24 +168,24 @@ const onSubmit = async (data: FormData) => {
               <input type="checkbox" className="accent-white" />
               Remember me
             </label>
-             <button
-      type="button"
-      onClick={() => router.push("/forgot-password")}
-      className="hover:underline"
-    >
-      Forgot password?
-    </button>
+            <button
+              type="button"
+              onClick={() => router.push("/forgot-password")}
+              className="hover:underline"
+            >
+              Forgot password?
+            </button>
           </div>
         )}
 
         {/* Submit */}
-  <button
-  type="submit"
-  disabled={loading}
-  className="w-full mt-2 rounded-xl main-blue-color hover:bg-indigo-700 transition py-3 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
->
-  {loading ? "Loading..." : isRegister ? "Sign up" : "Log in"}
-</button>
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full mt-2 rounded-xl main-blue-color hover:bg-indigo-700 transition py-3 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {loading ? "Loading..." : isRegister ? "Sign up" : "Log in"}
+        </button>
 
         {/* Divider */}
         <div className="flex items-center gap-4 my-4 text-white/60 text-sm">
@@ -267,12 +218,16 @@ const onSubmit = async (data: FormData) => {
           {isRegister ? (
             <>
               Already have an account?{" "}
-              <span className="font-medium cursor-pointer"><Link href="/login">Log in</Link></span>
+              <span className="font-medium cursor-pointer">
+                <Link href="/login">Log in</Link>
+              </span>
             </>
           ) : (
             <>
               Don’t have an account?{" "}
-              <span className="font-medium cursor-pointer"><Link href="/register">Sign up</Link></span>
+              <span className="font-medium cursor-pointer">
+                <Link href="/register">Sign up</Link>
+              </span>
             </>
           )}
         </p>

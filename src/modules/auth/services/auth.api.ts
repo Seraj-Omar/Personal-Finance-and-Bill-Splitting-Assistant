@@ -1,7 +1,13 @@
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+
 import { LoginPayload, RegisterPayload } from "../type";
 
 export async function loginUser(payload: LoginPayload) {
-  const res = await fetch("/api/auth/sign-in", {
+  if (!BASE_URL) throw new Error("Missing NEXT_PUBLIC_BASE_URL");
+
+  const url = `${BASE_URL}/auth/sign-in`;
+
+  const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
@@ -14,15 +20,18 @@ export async function loginUser(payload: LoginPayload) {
   const token = data?.data?.token;
   const user = data?.data?.user;
 
-
-if (token) sessionStorage.setItem("token", token);
-if (user) sessionStorage.setItem("user", JSON.stringify(user));
+  if (token) sessionStorage.setItem("token", token);
+  if (user) sessionStorage.setItem("user", JSON.stringify(user));
 
   return data;
 }
 
 export async function registerUser(payload: RegisterPayload) {
-  const res = await fetch("/api/auth/sign-up", {
+  if (!BASE_URL) throw new Error("Missing NEXT_PUBLIC_BASE_URL");
+
+  const url = `${BASE_URL}/auth/sign-up`;
+
+  const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
@@ -30,13 +39,15 @@ export async function registerUser(payload: RegisterPayload) {
 
   const data = await res.json().catch(() => ({}));
 
-  if (!res.ok) throw new Error(data?.message || "Register failed");
+  if (!res.ok) {
+    const message = data?.message || `Register failed (${res.status})`;
+    throw new Error(message);
+  }
 
   return data;
 }
 export async function logoutUser() {
-  // إذا ما عندك endpoint logout بالباك:
-  // logout بالفرونت = امسحي التخزين
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
+  sessionStorage.removeItem("token");
+  sessionStorage.removeItem("user");
+    window.dispatchEvent(new Event("auth:changed")); 
 }
