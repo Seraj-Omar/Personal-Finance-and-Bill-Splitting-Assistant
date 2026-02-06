@@ -2,22 +2,39 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useRef, useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { useState, useRef, useEffect, useMemo } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { Search, ChevronDown, User, Menu, X, Bell } from "lucide-react";
 import Notifactions from "./Notifactions";
+
 import { useAuthStatus } from "../modules/auth/hooks/useAuthStatus";
 import { logoutUser } from "../modules/auth/services/auth.api";
-import router from "next/router";
+import { useMe } from "../modules/auth/hooks/useMe";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const queryClient = useQueryClient();
+
   const serviceRef = useRef<HTMLLIElement | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isServiceOpen, setIsServiceOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
-  const { isAuthed, user, ready } = useAuthStatus();
+  // ✅ مصدر الحقيقة بعد Google login (cookie)
+  const { data, isLoading: meLoading, isError: meError } = useMe();
+  const user = data?.data?.user || data?.user || data;
+  const authedByMe = !!user;
+
+  // ✅ fallback (لو عندك token/session)
+  const { isAuthed: authedByStorage, ready } = useAuthStatus();
+
+  // ✅ النهائي: إذا /me رجع user => authed (حتى لو ما في token)
+  const isAuthedFinal = authedByMe || authedByStorage;
+
+  // إذا /me لسه عم يحمل، ممكن تعتبره "غير جاهز" عشان ما يفلّكر
+  const readyFinal = ready || meLoading === false;
 
   const isActiveExact = (path: string) =>
     pathname === path
@@ -29,18 +46,19 @@ export default function Navbar() {
       ? "text-[#3447aaee] font-semibold"
       : "hover:text-[#3447aaee] transition";
 
-  const services = [
-    { name: "Debt", href: "/services/debts" },
-    { name: "Bill", href: "/services/bills" },
-    { name: "Expenses", href: "/services/expenses" },
-    { name: "Income", href: "/services/incomes" },
-  ];
+  const services = useMemo(
+    () => [
+      { name: "Debt", href: "/services/debts" },
+      { name: "Bill", href: "/services/bills" },
+      { name: "Expenses", href: "/services/expenses" },
+      { name: "Income", href: "/services/incomes" },
+    ],
+    []
+  );
+
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (
-        serviceRef.current &&
-        !serviceRef.current.contains(event.target as Node)
-      ) {
+      if (serviceRef.current && !serviceRef.current.contains(event.target as Node)) {
         setIsServiceOpen(false);
       }
     }
@@ -49,21 +67,39 @@ export default function Navbar() {
       document.addEventListener("mousedown", handleClickOutside);
     }
 
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isServiceOpen, isMobileMenuOpen]);
 
   useEffect(() => {
     if (!isNotificationsOpen) return;
-
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-
     return () => {
       document.body.style.overflow = originalOverflow;
     };
   }, [isNotificationsOpen]);
+
+  // ✅ Logout: امسحي التخزين + امسحي كاش me عشان الهيدر يتحدث فورًا
+  const handleLogout = async () => {
+    try {
+      // إذا عندكم endpoint logout بالباك (كوكيز) استدعِيه
+      // لو logoutUser بس localStorage/sessionStorage، برضو تمام
+      await logoutUser?.();
+    } catch (e) {
+      // تجاهلي الخطأ، المهم ننضف محليًا
+      console.error(e);
+    } finally {
+      sessionStorage.removeItem("token");
+      sessionStorage.removeItem("user");
+      sessionStorage.removeItem("pendingEmail");
+      sessionStorage.removeItem("pendingCurrency");
+
+      // مهم جدًا: عشان ينعكس بالهيدر فورًا
+      queryClient.removeQueries({ queryKey: ["me"] });
+
+      router.push("/login");
+    }
+  };
 
   return (
     <>
@@ -159,24 +195,24 @@ export default function Navbar() {
             <span>Search</span>
           </button>
 
-          {ready && !isAuthed ? (
+          {readyFinal && !isAuthedFinal ? (
             <Link
-
               href="/register"
               className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition  text-lg"
             >
               <User size={20} className="fill-current" />
               <span>Sign up</span>
             </Link>
-          ) : ready && isAuthed ? (
+          ) : readyFinal && isAuthedFinal ? (
             <div className="flex items-center gap-3">
               <Link
-                href="/dashboard"
+                href="/settings/profile"
                 className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition  text-lg"
               >
                 <User size={20} className="fill-current" />
                 <span>{user?.fullName || user?.name || "Account"}</span>
               </Link>
+
             </div>
           ) : null}
         </div>
@@ -213,20 +249,14 @@ export default function Navbar() {
                 className="flex items-center justify-between"
               >
                 <span>Service</span>
-                <ChevronDown
-                  size={16}
-                  className={`${isServiceOpen ? "rotate-180" : ""}`}
-                />
+                <ChevronDown size={16} className={`${isServiceOpen ? "rotate-180" : ""}`} />
               </button>
 
               {isServiceOpen && (
                 <ul className="flex flex-col gap-2 pl-4 text-sm text-gray-600">
                   {services.map((item) => (
                     <li key={item.href}>
-                      <Link
-                        href={item.href}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                      >
+                      <Link href={item.href} onClick={() => setIsMobileMenuOpen(false)}>
                         {item.name}
                       </Link>
                     </li>
@@ -242,26 +272,25 @@ export default function Navbar() {
               Budget
             </Link>
 
-       {ready && !isAuthed ? (
-            <Link
-            
-              href="/register"
-              className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition  text-lg"
-            >
-              <User size={20} className="fill-current" />
-              <span>Sign up</span>
-            </Link>
-          ) : ready && isAuthed ? (
-            <div className="flex items-center gap-3">
+            {readyFinal && !isAuthedFinal ? (
               <Link
-                href="/dashboard"
+                href="/register"
                 className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition  text-lg"
               >
                 <User size={20} className="fill-current" />
-                <span>{user?.fullName || user?.name || "Account"}</span>
+                <span>Sign up</span>
               </Link>
-            </div>
-          ) : null}
+            ) : readyFinal && isAuthedFinal ? (
+              <div className="flex items-center gap-3">
+                <Link
+                  href="/settings/profile"
+                  className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition  text-lg"
+                >
+                  <User size={20} className="fill-current" />
+                  <span>{user?.fullName || user?.name || "Account"}</span>
+                </Link>
+              </div>
+            ) : null}
           </div>
         )}
       </nav>

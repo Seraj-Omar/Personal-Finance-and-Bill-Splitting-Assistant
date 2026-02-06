@@ -1,10 +1,12 @@
-import { apiFetch } from "@/src/lib/api";
+"use client";
+
 import { useQuery } from "@tanstack/react-query";
+import { fetchMe } from "../services/auth.api";
 
 export function useMe() {
   return useQuery({
     queryKey: ["me"],
-    queryFn: () => apiFetch("/auth/me"),
-    enabled: typeof window !== "undefined" && !!sessionStorage.getItem("token"),
+    queryFn: fetchMe,
+    retry: false,
   });
 }

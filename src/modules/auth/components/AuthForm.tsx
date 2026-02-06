@@ -9,7 +9,11 @@ import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { HiOutlineEye, HiOutlineEyeOff } from "react-icons/hi";
 
-import { HiOutlineMail, HiOutlineLockClosed, HiOutlineUser } from "react-icons/hi";
+import {
+  HiOutlineMail,
+  HiOutlineLockClosed,
+  HiOutlineUser,
+} from "react-icons/hi";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -29,7 +33,9 @@ export default function AuthForm({ type }: { type: AuthType }) {
   const loginMutation = useLogin();
   const registerMutation = useRegister();
 
-  const loading = isRegister ? registerMutation.isPending : loginMutation.isPending;
+  const loading = isRegister
+    ? registerMutation.isPending
+    : loginMutation.isPending;
   const apiError = isRegister ? registerMutation.error : loginMutation.error;
 
   const schema = isRegister ? registerSchema : loginSchema;
@@ -102,7 +108,9 @@ export default function AuthForm({ type }: { type: AuthType }) {
               />
             </div>
             {"name" in errors && errors.name && (
-              <p className="text-red-700 text-xs mt-1">{errors.name.message as string}</p>
+              <p className="text-red-700 text-xs mt-1">
+                {errors.name.message as string}
+              </p>
             )}
           </div>
         )}
@@ -120,7 +128,9 @@ export default function AuthForm({ type }: { type: AuthType }) {
             />
           </div>
           {errors.email && (
-            <p className="text-red-700 text-xs mt-1">{errors.email.message as string}</p>
+            <p className="text-red-700 text-xs mt-1">
+              {errors.email.message as string}
+            </p>
           )}
         </div>
 
@@ -144,16 +154,20 @@ export default function AuthForm({ type }: { type: AuthType }) {
               onClick={() => setShowPassword((prev) => !prev)}
               className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white"
             >
-              {showPassword ? <HiOutlineEyeOff size={18} /> : <HiOutlineEye size={18} />}
+              {showPassword ? (
+                <HiOutlineEyeOff size={18} />
+              ) : (
+                <HiOutlineEye size={18} />
+              )}
             </button>
           </div>
 
           {errors.password && (
-            <p className="text-red-700 text-xs mt-1">{errors.password.message as string}</p>
+            <p className="text-red-700 text-xs mt-1">
+              {errors.password.message as string}
+            </p>
           )}
         </div>
-
-
 
         {apiError && (
           <p className="text-red-700 text-xs mt-1">
@@ -198,6 +212,9 @@ export default function AuthForm({ type }: { type: AuthType }) {
         <div className="flex gap-3 flex-wrap">
           <button
             type="button"
+            onClick={() => {
+              window.location.href = `${process.env.NEXT_PUBLIC_BASE_URL}/auth/google`;
+            }}
             className="flex flex-1 items-center justify-center gap-2 bg-white text-black rounded-xl py-3 text-sm font-medium hover:bg-gray-100 transition"
           >
             <FcGoogle className="text-lg" />

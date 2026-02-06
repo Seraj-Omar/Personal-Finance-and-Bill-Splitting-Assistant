@@ -51,3 +51,12 @@ export async function logoutUser() {
   sessionStorage.removeItem("user");
     window.dispatchEvent(new Event("auth:changed")); 
 }
+
+
+
+
+export async function fetchMe() {
+  const res = await fetch( `${BASE_URL}/auth/me`, { credentials: "include" });
+  if (!res.ok) throw new Error("Unauthenticated");
+  return res.json();
+}
