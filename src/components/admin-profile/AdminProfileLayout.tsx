@@ -10,16 +10,15 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function ProfileLayout() {
-const searchParams = useSearchParams();
+  const searchParams = useSearchParams();
   const router = useRouter();
 
   const tabFromUrl = searchParams.get("tab");
 
   const [activeTab, setActiveTab] = useState<"info" | "password">(
-    tabFromUrl === "password" ? "password" : "info"
+    tabFromUrl === "password" ? "password" : "info",
   );
 
-  // Sync state when URL changes (refresh / back / forward)
   useEffect(() => {
     if (tabFromUrl === "password" || tabFromUrl === "info") {
       setActiveTab(tabFromUrl);
@@ -27,30 +26,29 @@ const searchParams = useSearchParams();
   }, [tabFromUrl]);
 
   const handleTabChange = (tab: "info" | "password") => {
-  setActiveTab(tab);
-  router.push(`?tab=${tab}`, { scroll: false });
-};
+    setActiveTab(tab);
+    router.push(`?tab=${tab}`, { scroll: false });
+  };
 
   return (
-    <div className="  p-10 bg-gray-100 ">
-        <p className="text-2xl font-bold ">Profile</p>
-        <p className="text-[#AEAEAE]">Your financial profile at a glance</p>
-    <div className="flex  p-15  mt-10 bg-white rounded-lg ">
-        
+    <div className="  p-5 lg:p-10 bg-gray-100 ">
+      <p className="text-2xl font-bold ">Profile</p>
+      <p className="text-[#AEAEAE]">Your financial profile at a glance</p>
+      <div className="flex  p-15  mt-10 bg-white rounded-lg ">
         <div className=" bg-white rounded-2xl p-4 shadow-md h-fit">
-      <Sidebar activeTab={activeTab}  onChange={handleTabChange} />
+          <Sidebar activeTab={activeTab} onChange={handleTabChange} />
         </div>
 
-      <div className="flex-1 bg-white rounded-2xl p-6 ml-6 ">
-        <AvatarSection />
-        <Divider />
+        <div className="flex-1 bg-white rounded-2xl p-6 ml-6 ">
+          <AvatarSection />
+          <Divider />
 
-        {activeTab === "info" && <PersonalInfoForm />}
-        {activeTab === "password" && <PasswordForm />}
+          {activeTab === "info" && <PersonalInfoForm />}
+          {activeTab === "password" && <PasswordForm />}
 
-        <UpdateButton />
+          <UpdateButton />
+        </div>
       </div>
-    </div>
     </div>
   );
 }
