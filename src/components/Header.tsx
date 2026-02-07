@@ -11,6 +11,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const serviceRef = useRef<HTMLLIElement | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isServiceOpenMobile, setIsServiceOpenMobile] = useState(false);
   const [isServiceOpen, setIsServiceOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
@@ -85,11 +86,11 @@ export default function Navbar() {
               alt="Trackly Logo"
               priority
             />
-            <h3 className="font-bold text-[24px]">Trackly</h3>
+            <h3 className="font-bold text-[18px] md:text-[24px]">Trackly</h3>
           </div>
         </Link>
 
-        <ul className="hidden md:flex gap-[24px] items-center text-sm font-medium  text-[18px]">
+        <ul className="hidden lg:flex gap-[24px] items-center text-sm font-medium  text-[18px]">
           <li>
             <Link href="/" className={isActiveExact("/")}>
               Home
@@ -138,7 +139,7 @@ export default function Navbar() {
           </li>
         </ul>
 
-        <div className="hidden md:flex items-center gap-[12px]  text-[18px] font-medium">
+        <div className="hidden lg:flex items-center gap-[12px]  text-[18px] font-medium">
           <div className="relative">
             <button
               type="button"
@@ -158,32 +159,36 @@ export default function Navbar() {
             href="/login"
             className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition  text-lg"
           >
-            <User size={20} className="fill-current" />
+            <User className="w-[15px] h-[15px] md:w-[20px] md:h-[20px] fill-current" />
             <span>Sign In</span>
           </Link>
         </div>
 
-        <div className="md:hidden flex items-center gap-3">
+        <div className="lg:hidden flex items-center gap-1 lg:gap-3">
           <div className="relative">
             <button
-              className="w-[40px] h-[40px] flex items-center justify-center rounded-full bg-[#f9f9fa] text-gray-700 hover:text-[#3447aaee] transition"
+              className="w-[30px] h-[30px] md:w-[40px] md:h-[40px]  flex items-center justify-center rounded-full bg-[#f9f9fa] text-gray-700 hover:text-[#3447aaee] transition"
               type="button"
               onClick={() => setIsNotificationsOpen((prev) => !prev)}
             >
-              <Bell size={20} className="fill-current" />
+              <Bell className="w-[15px] h-[15px] md:w-[20px] md:h-[20px] fill-current" />
             </button>
           </div>
 
-          <button className="w-[40px] h-[40px] flex items-center justify-center rounded-full bg-[#f9f9fa] text-gray-700 hover:text-[#3447aaee] transition">
-            <Search size={20} />
+          <button className="w-[30px] h-[30px] md:w-[40px] md:h-[40px] flex items-center justify-center rounded-full bg-[#f9f9fa] text-gray-700 hover:text-[#3447aaee] transition">
+            <Search className="w-[15px] h-[15px] md:w-[20px] md:h-[20px]  " />
           </button>
           <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            {isMobileMenuOpen ? (
+              <X className="w-[17px] h-[17px] md:w-[20px] md:h-[20px]" />
+            ) : (
+              <Menu className="w-[17px] h-[17px] md:w-[20px] md:h-[20px]" />
+            )}
           </button>
         </div>
 
         {isMobileMenuOpen && (
-          <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-11/12 bg-white rounded-xl flex flex-col gap-4 p-4 md:hidden z-50">
+          <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-11/12 bg-white rounded-xl flex flex-col gap-4 p-4 lg:hidden z-50">
             <Link href="/" onClick={() => setIsMobileMenuOpen(false)}>
               Home
             </Link>
@@ -191,17 +196,17 @@ export default function Navbar() {
             <div className="flex flex-col gap-2">
               <button
                 type="button"
-                onClick={() => setIsServiceOpen((prev) => !prev)}
+                onClick={() => setIsServiceOpenMobile((prev) => !prev)}
                 className="flex items-center justify-between"
               >
                 <span>Service</span>
                 <ChevronDown
                   size={16}
-                  className={`${isServiceOpen ? "rotate-180" : ""}`}
+                  className={`${isServiceOpenMobile ? "rotate-180" : ""}`}
                 />
               </button>
 
-              {isServiceOpen && (
+              {isServiceOpenMobile && (
                 <ul className="flex flex-col gap-2 pl-4 text-sm text-gray-600">
                   {services.map((item) => (
                     <li key={item.href}>
@@ -242,15 +247,11 @@ export default function Navbar() {
             onClick={() => setIsNotificationsOpen(false)}
           />
 
-          <div
-            className="fixed top-26 right-2 md:right-3 w-full max-w-md lg:max-w-xl max-h-[90vh] overflow-y-auto rounded-xl bg-white shadow-2xl border border-gray-100 z-[60] scrollbar-notifications hidden sm:block notification-panel-enter"
-          >
+          <div className="fixed top-26 right-2 md:right-3 w-full max-w-md lg:max-w-xl max-h-[90vh] overflow-y-auto rounded-xl bg-white shadow-2xl border border-gray-100 z-[60] scrollbar-notifications hidden sm:block notification-panel-enter">
             <Notifactions />
           </div>
 
-          <div
-            className="fixed inset-x-4 top-26 w-auto max-w-md mx-auto max-h-[70vh] overflow-y-auto rounded-xl bg-white border border-gray-100 z-[60] scrollbar-notifications sm:hidden notification-panel-enter"
-          >
+          <div className="fixed inset-x-4 top-26 w-auto max-w-md mx-auto max-h-[70vh] overflow-y-auto rounded-xl bg-white border border-gray-100 z-[60] scrollbar-notifications sm:hidden notification-panel-enter">
             <Notifactions />
           </div>
         </>
