@@ -31,3 +31,29 @@ export type User = {
   createdAt?: string;         
   updatedAt?: string;          
 };
+
+export type ApiResponse<T> = {
+  success: boolean;
+  message: string;
+  data: T;
+};
+
+export type MePayload = {
+  user: {
+    id: string;
+    email: string;
+    fullName: string;
+    phone: string;
+    role: string;
+    status: string;
+    defaultCurrencyId: string;
+    currentBalance: string;
+    points: string;
+    avatarAssetId: unknown;
+    provider: string;
+    providerId: unknown;
+    createdAt: string;
+    updatedAt: string;
+  };
+  token: string;
+};

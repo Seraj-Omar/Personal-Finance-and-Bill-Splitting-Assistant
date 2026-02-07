@@ -1,21 +1,14 @@
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-
-import { LoginPayload, RegisterPayload } from "../type";
+import { apiFetch } from "@/src/lib/api";
+import { LoginPayload, RegisterPayload ,MePayload, ApiResponse } from "../type";
 
 export async function loginUser(payload: LoginPayload) {
-  if (!BASE_URL) throw new Error("Missing NEXT_PUBLIC_BASE_URL");
-
-  const url = `${BASE_URL}/auth/sign-in`;
-
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-
-  const data = await res.json().catch(() => ({}));
-
-  if (!res.ok) throw new Error(data?.message || "Login failed");
+  const data = await apiFetch<{ data: { token: string; user: any } }>(
+    "/auth/sign-in",
+    {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }
+  );
 
   const token = data?.data?.token;
   const user = data?.data?.user;
@@ -23,44 +16,26 @@ export async function loginUser(payload: LoginPayload) {
   if (token) sessionStorage.setItem("token", token);
   if (user) sessionStorage.setItem("user", JSON.stringify(user));
 
+  window.dispatchEvent(new Event("auth:changed"));
+
   return data;
 }
 
 export async function registerUser(payload: RegisterPayload) {
-  if (!BASE_URL) throw new Error("Missing NEXT_PUBLIC_BASE_URL");
-
-  const url = `${BASE_URL}/auth/sign-up`;
-
-  const res = await fetch(url, {
+  return apiFetch("/auth/sign-up", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
-
-  const data = await res.json().catch(() => ({}));
-
-  if (!res.ok) {
-    const message = data?.message || `Register failed (${res.status})`;
-    throw new Error(message);
-  }
-
-  return data;
 }
+
 export async function logoutUser() {
   sessionStorage.removeItem("token");
   sessionStorage.removeItem("user");
-    window.dispatchEvent(new Event("auth:changed")); 
+  window.dispatchEvent(new Event("auth:changed"));
 }
-
 
 
 
 export async function fetchMe() {
-  const token = sessionStorage.getItem("token");
-  const res = await fetch( `${BASE_URL}/auth/me`, { 
-    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-    credentials: "include",
-  });
-  if (!res.ok) throw new Error("Unauthenticated");
-  return res.json();
+  return apiFetch<ApiResponse<MePayload>>("/auth/revalidate", { withCredentials: true });
 }

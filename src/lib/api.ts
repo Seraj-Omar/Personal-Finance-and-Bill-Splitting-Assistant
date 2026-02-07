@@ -1,20 +1,22 @@
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL; 
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 function getToken() {
   if (typeof window === "undefined") return null;
   return sessionStorage.getItem("token");
 }
 
-export async function apiFetch<T>(
-  path: string,
-  options: RequestInit = {}
-): Promise<T> {
+type ApiFetchOptions = RequestInit & {
+  withCredentials?: boolean
+};; 
+
+export async function apiFetch<T>(path: string, options: ApiFetchOptions = {}): Promise<T> {
   if (!BASE_URL) throw new Error("Missing NEXT_PUBLIC_BASE_URL in env");
 
   const token = getToken();
 
   const res = await fetch(`${BASE_URL}${path}`, {
     ...options,
+    credentials: options.withCredentials ? "include" : "same-origin",
     headers: {
       "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -23,12 +25,10 @@ export async function apiFetch<T>(
     cache: "no-store",
   });
 
-  // لو السيرفر برجع JSON
   const text = await res.text();
   const data = text ? JSON.parse(text) : null;
 
   if (!res.ok) {
-    // خلي الخطأ مفهوم لـ React Query
     const message = data?.message || `Request failed (${res.status})`;
     const err: any = new Error(message);
     err.status = res.status;
