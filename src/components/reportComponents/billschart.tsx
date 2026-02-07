@@ -173,7 +173,7 @@ export default function DonutChart() {
     <div
       className="
   w-full 
-  lg:w-[751px] 
+  lg:w-[60%] 
   h-auto 
   bg-[#F6F6F757] 
   rounded-[16px] 

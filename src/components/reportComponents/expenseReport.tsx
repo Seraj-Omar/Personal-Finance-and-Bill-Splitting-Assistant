@@ -9,7 +9,7 @@ export default function ExpenseReport() {
     <div
       className="
   w-full 
-  lg:w-[505px]
+  lg:w-[40%]
   h-auto 
   bg-[#F6F6F757] 
   rounded-[16px] 

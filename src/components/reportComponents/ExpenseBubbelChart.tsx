@@ -41,7 +41,7 @@ export default function PackedBubbleChart() {
     if (!svgRef.current) return;
 
     const width = 440;
-    const height = 200;
+    const height = 217;
     const padding = 20;
     const gap = 10;
 

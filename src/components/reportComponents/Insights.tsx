@@ -116,8 +116,8 @@ Last month: $142.30
   ];
 
   return (
-    <div className="flex items-center justify-center w-[89%] mb-[63px] gap-[63px]">
-      <div className="flex flex-col   lg:w-[597px] gap-[16px]">
+    <div className="flex items-center justify-center w-[89%] mb-[63px] gap-[5%]">
+      <div className="flex flex-col w-full lg:w-[50%] gap-[16px]">
         <div>
           <h5 className="text-[24px] font-medium">Insights</h5>
           <div className="w-[88px] h-[2px] rounded-[16px] hero-gradient"></div>
@@ -133,7 +133,7 @@ Last month: $142.30
             <div
               key={index}
               onClick={() => setSelectedAlert(index)}
-              className={`flex items-center justify-between w-full max-w-[597px] h-[97px] ${alert.bg} rounded-[16px] p-4 cursor-pointer hover:opacity-90 transition-opacity border border-transparent hover:border-gray-200`}
+              className={`flex items-center justify-between w-full  h-[97px] ${alert.bg} rounded-[16px] p-4 cursor-pointer hover:opacity-90 transition-opacity border border-transparent hover:border-gray-200`}
             >
               <div className="flex gap-3">
                 {alert.icon}
@@ -168,7 +168,7 @@ Last month: $142.30
         </div>
       </div>
 
-      <div className="relative w-full lg:w-[620px] h-[444px] rounded-[16px] hidden lg:block overflow-hidden">
+      <div className="relative w-full lg:w-[50%] h-[444px] rounded-[16px] hidden lg:block overflow-hidden">
         <Image
           src="/Insights.jpg"
           alt="Insights illustration - woman with tablet and financial dashboard"

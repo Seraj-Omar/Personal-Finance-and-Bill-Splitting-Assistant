@@ -8,7 +8,7 @@ export default function ReportPage() {
     <div className="flex flex-col items-center justify-center gap-[63px]">
       <FinancialOverview />
 
-      <div className="flex flex-col justify-center lg:flex-row w-[89%] gap-[24px]">
+      <div className="flex flex-col justify-center lg:flex-row w-[89%] mx-[11%] gap-[24px]">
         <ExpenseReport />
         <DonutChart />
       </div>
