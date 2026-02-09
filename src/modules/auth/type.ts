@@ -57,3 +57,33 @@ export type MePayload = {
   };
   token: string;
 };
+
+//rest password
+
+export type PasswordResetRequestPayload = {
+  email: string;
+};
+
+export type PasswordResetVerifyPayload = {
+  email: string;
+  code: string;
+};
+
+export type PasswordResetConfirmPayload = {
+  password: string;
+  confirmPassword?: string; // لو بدك تتحقق بالفرونت
+  resetToken: string;
+};
+
+export type PasswordResetRequestRes = {
+  success: true;
+};
+
+export type PasswordResetVerifyRes = {
+  success: true;
+  resetToken?: string; // ✅ لو الباك بيرجعه
+};
+
+export type PasswordResetConfirmRes = {
+  success: true;
+};

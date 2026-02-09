@@ -6,32 +6,44 @@ import { useState, useRef, useEffect, useMemo } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Search, ChevronDown, User, Menu, X, Bell } from "lucide-react";
 import Notifactions from "./Notifactions";
+import { useSession } from "../modules/auth/hooks/useSession";
 
-import { logoutUser } from "../modules/auth/services/auth.api";
-import { useMe } from "../modules/auth/hooks/useMe";
-import { useQueryClient } from "@tanstack/react-query";
+type CachedUser = { fullName?: string } | null;
 
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
-  const queryClient = useQueryClient();
 
   const serviceRef = useRef<HTMLLIElement | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isServiceOpen, setIsServiceOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
-  const { data, isLoading: meLoading } = useMe();
+  const [mounted, setMounted] = useState(false);
+  const [cachedUser, setCachedUser] = useState<CachedUser>(null);
 
-  const user = data?.data?.user ?? null;
+  // ✅ session من السيرفر (كوكيز)
+  const { data: sessionData } = useSession();
+  const serverUser = sessionData?.data?.user ?? null;
+
+  // ✅ أول ما نعمل mount نقرأ cached user مرة واحدة
+  useEffect(() => {
+    setMounted(true);
+    try {
+      const raw = sessionStorage.getItem("cached_user");
+      setCachedUser(raw ? JSON.parse(raw) : null);
+    } catch {
+      setCachedUser(null);
+    }
+  }, []);
+
+  // ✅ لو إجى user من السيرفر، خليه يغطي على cached
+  const user = serverUser ?? cachedUser;
+
+  // ✅ لا تنتظر الشبكة: جاهز فورًا بعد mount
+  const authReady = mounted;
 
   const isAuthedFinal = !!user;
-  const readyFinal = !meLoading;
-const [mounted, setMounted] = useState(false);
-
-useEffect(() => {
-  setMounted(true);
-}, []);
 
   const isActiveExact = (path: string) =>
     pathname === path
@@ -76,7 +88,6 @@ useEffect(() => {
     };
   }, [isNotificationsOpen]);
 
-  
   return (
     <>
       <nav
@@ -116,7 +127,7 @@ useEffect(() => {
           <li ref={serviceRef} className="relative">
             <button
               onClick={() => setIsServiceOpen((p) => !p)}
-              className={`flex items-center gap-1 ${isActiveGroup("/service")}`}
+              className={`flex items-center gap-1 ${isActiveGroup("/services")}`}
               type="button"
             >
               Service
@@ -176,25 +187,25 @@ useEffect(() => {
             <span>Search</span>
           </button>
 
-{!mounted ? null : !isAuthedFinal ? (
-  <Link
-    href="/register"
-    className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition text-lg"
-  >
-    <User size={20} className="fill-current" />
-    <span>Sign up</span>
-  </Link>
-) : (
-  <div className="flex items-center gap-3">
-    <Link
-      href="/settings/profile"
-      className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition text-lg"
-    >
-      <User size={20} className="fill-current" />
-      <span>{user?.fullName || "Account"}</span>
-    </Link>
-  </div>
-)}
+          {!authReady ? null : !isAuthedFinal ? (
+            <Link
+              href="/register"
+              className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition text-lg"
+            >
+              <User size={20} className="fill-current" />
+              <span>Sign up</span>
+            </Link>
+          ) : (
+            <div className="flex items-center gap-3">
+              <Link
+                href="/settings/profile"
+                className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition text-lg"
+              >
+                <User size={20} className="fill-current" />
+                <span>{user?.fullName || "Account"}</span>
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* Mobile Right */}
@@ -258,25 +269,27 @@ useEffect(() => {
               Budget
             </Link>
 
-          {!mounted ? null : !isAuthedFinal ? (
-  <Link
-    href="/register"
-    className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition text-lg"
-  >
-    <User size={20} className="fill-current" />
-    <span>Sign up</span>
-  </Link>
-) : (
-  <div className="flex items-center gap-3">
-    <Link
-      href="/settings/profile"
-      className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition text-lg"
-    >
-      <User size={20} className="fill-current" />
-      <span>{user?.fullName || "Account"}</span>
-    </Link>
-  </div>
-)}
+            {!authReady ? null : !isAuthedFinal ? (
+              <Link
+                href="/register"
+                className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition text-lg"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <User size={20} className="fill-current" />
+                <span>Sign up</span>
+              </Link>
+            ) : (
+              <div className="flex items-center gap-3">
+                <Link
+                  href="/settings/profile"
+                  className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition text-lg"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <User size={20} className="fill-current" />
+                  <span>{user?.fullName || "Account"}</span>
+                </Link>
+              </div>
+            )}
           </div>
         )}
       </nav>

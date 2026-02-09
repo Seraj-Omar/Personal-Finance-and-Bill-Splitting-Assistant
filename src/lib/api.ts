@@ -16,7 +16,9 @@ export async function apiFetch<T>(path: string, options: ApiFetchOptions = {}): 
 
   const res = await fetch(`${BASE_URL}${path}`, {
     ...options,
-    credentials: options.withCredentials ? "include" : "same-origin",
+      // credentials: "include", 
+     credentials: options.withCredentials ? "include" : "same-origin",
+
     headers: {
       "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -24,9 +26,10 @@ export async function apiFetch<T>(path: string, options: ApiFetchOptions = {}): 
     },
     cache: "no-store",
   });
-
   const text = await res.text();
   const data = text ? JSON.parse(text) : null;
+  
+  console.log("TOKEN:", token);
 
   if (!res.ok) {
     const message = data?.message || `Request failed (${res.status})`;
@@ -38,3 +41,65 @@ export async function apiFetch<T>(path: string, options: ApiFetchOptions = {}): 
 
   return data as T;
 }
+
+
+
+// src/lib/api.ts
+
+// const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+
+// export type ApiFetchOptions = RequestInit & {
+//   rawText?: boolean;
+// };
+
+// export async function apiFetch<T>(
+//   path: string,
+//   options: ApiFetchOptions = {}
+// ): Promise<T> {
+//   if (!BASE_URL) {
+//     throw new Error("Missing NEXT_PUBLIC_BASE_URL in env");
+//   }
+
+//   const { rawText = false, headers, ...rest } = options;
+
+//   const res = await fetch(`${BASE_URL}${path}`, {
+//     ...rest,
+//     credentials: "include", // ✅ مهم لإرسال الكوكي
+//     headers: {
+//       "Content-Type": "application/json",
+//       ...(headers || {}),
+//     },
+//     cache: "no-store",
+//   });
+
+//   const contentType = res.headers.get("content-type") || "";
+//   const text = await res.text();
+
+//   let data: any = null;
+
+//   if (rawText) {
+//     data = text;
+//   } else if (text) {
+//     if (contentType.includes("application/json")) {
+//       try {
+//         data = JSON.parse(text);
+//       } catch {
+//         data = text;
+//       }
+//     } else {
+//       data = text;
+//     }
+//   }
+
+//     if (!res.ok) {
+//       const message =
+//         data?.message || `Request failed (${res.status})`;
+  
+//       const err: any = new Error(message);
+//       err.status = res.status;
+//       err.data = data;
+//       throw err;
+//     }
+  
+//     return data as T;
+//   }

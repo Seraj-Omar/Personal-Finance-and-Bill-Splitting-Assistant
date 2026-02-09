@@ -56,18 +56,16 @@ export async function requestResetCode(email: string) {
 
 
 // export function confirmResetPassword(newPassword: string) {
-//   return apiFetch<ApiResponse<{ success: true }>>(
-//     "/auth/password-reset/confirm",
-//     {
-//       method: "PATCH",
-//     withCredentials: true,  
-//       body: JSON.stringify({ newPassword }),
-//     }
-//   );
+//   return apiFetch<ApiResponse<{ success: true }>>("/auth/password-reset/confirm", {
+//     method: "PATCH",
+//     credentials: "include",
+//     body: JSON.stringify({ newPassword }),
+//   });
 // }
+
 export function confirmResetPassword(newPassword: string) {
   return  fetch(
-    "https://190d-212-14-245-97.ngrok-free.app",
+    "https://gsg-project-group-5.vercel.app/api/v1/auth/password-reset/confirm",
     {
       method: "PATCH",
       headers: {
