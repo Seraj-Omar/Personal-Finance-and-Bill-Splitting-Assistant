@@ -7,7 +7,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { Search, ChevronDown, User, Menu, X, Bell } from "lucide-react";
 import Notifactions from "./Notifactions";
 
-import { useAuthStatus } from "../modules/auth/hooks/useAuthStatus";
 import { logoutUser } from "../modules/auth/services/auth.api";
 import { useMe } from "../modules/auth/hooks/useMe";
 import { useQueryClient } from "@tanstack/react-query";
@@ -22,15 +21,17 @@ export default function Navbar() {
   const [isServiceOpen, setIsServiceOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
-  const { data, isLoading: meLoading, isError: meError } = useMe();
-  const user = data?.data?.user || data?.user || data;
-  const authedByMe = !!user;
+  const { data, isLoading: meLoading } = useMe();
 
-  const { isAuthed: authedByStorage, ready } = useAuthStatus();
+  const user = data?.data?.user ?? null;
 
-  const isAuthedFinal = authedByMe || authedByStorage;
+  const isAuthedFinal = !!user;
+  const readyFinal = !meLoading;
+const [mounted, setMounted] = useState(false);
 
-  const readyFinal = ready || meLoading === false;
+useEffect(() => {
+  setMounted(true);
+}, []);
 
   const isActiveExact = (path: string) =>
     pathname === path
@@ -75,45 +76,24 @@ export default function Navbar() {
     };
   }, [isNotificationsOpen]);
 
-  // ✅ Logout: امسحي التخزين + امسحي كاش me عشان الهيدر يتحدث فورًا
-  const handleLogout = async () => {
-    try {
-      // إذا عندكم endpoint logout بالباك (كوكيز) استدعِيه
-      // لو logoutUser بس localStorage/sessionStorage، برضو تمام
-      await logoutUser?.();
-    } catch (e) {
-      // تجاهلي الخطأ، المهم ننضف محليًا
-      console.error(e);
-    } finally {
-      sessionStorage.removeItem("token");
-      sessionStorage.removeItem("user");
-      sessionStorage.removeItem("pendingEmail");
-      sessionStorage.removeItem("pendingCurrency");
-
-      // مهم جدًا: عشان ينعكس بالهيدر فورًا
-      queryClient.removeQueries({ queryKey: ["me"] });
-
-      router.push("/login");
-    }
-  };
-
+  
   return (
     <>
       <nav
         className="
-        absolute top-5 left-1/2 -translate-x-1/2
-        w-[90%] max-w-[1306px]
-        flex items-center justify-between
-        py-[1%] px-[5%]
-        bg-white
-        rounded-[30px]
-        z-50
-        h-[77.55px]
-        gap-5
+          absolute top-5 left-1/2 -translate-x-1/2
+          w-[90%] max-w-[1306px]
+          flex items-center justify-between
+          py-[1%] px-[5%]
+          bg-white
+          rounded-[30px]
+          z-50
+          h-[77.55px]
+          gap-5
         "
       >
         <Link href="/">
-          <div className="flex  items-center gap-[8px] cursor-pointer">
+          <div className="flex items-center gap-[8px] cursor-pointer">
             <Image
               src="/logo.png"
               width={62}
@@ -126,7 +106,7 @@ export default function Navbar() {
           </div>
         </Link>
 
-        <ul className="hidden md:flex gap-[24px] items-center text-sm font-medium  text-[18px]">
+        <ul className="hidden md:flex gap-[24px] items-center text-sm font-medium text-[18px]">
           <li>
             <Link href="/" className={isActiveExact("/")}>
               Home
@@ -137,6 +117,7 @@ export default function Navbar() {
             <button
               onClick={() => setIsServiceOpen((p) => !p)}
               className={`flex items-center gap-1 ${isActiveGroup("/service")}`}
+              type="button"
             >
               Service
               <ChevronDown
@@ -146,7 +127,7 @@ export default function Navbar() {
             </button>
 
             {isServiceOpen && (
-              <ul className="absolute left-0 top-full mt-2 bg-white shadow-lg rounded-xl flex flex-col min-w-[120px]  text-lg">
+              <ul className="absolute left-0 top-full mt-2 bg-white shadow-lg rounded-xl flex flex-col min-w-[120px] text-lg">
                 {services.map((item) => (
                   <li key={item.href}>
                     <Link
@@ -175,7 +156,8 @@ export default function Navbar() {
           </li>
         </ul>
 
-        <div className="hidden md:flex items-center gap-[12px]  text-[18px] font-medium">
+        {/* Desktop Right */}
+        <div className="hidden md:flex items-center gap-[12px] text-[18px] font-medium">
           <div className="relative">
             <button
               type="button"
@@ -186,33 +168,36 @@ export default function Navbar() {
             </button>
           </div>
 
-          <button className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition  text-lg">
+          <button
+            className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition text-lg"
+            type="button"
+          >
             <Search size={20} />
             <span>Search</span>
           </button>
 
-          {readyFinal && !isAuthedFinal ? (
-            <Link
-              href="/register"
-              className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition  text-lg"
-            >
-              <User size={20} className="fill-current" />
-              <span>Sign up</span>
-            </Link>
-          ) : readyFinal && isAuthedFinal ? (
-            <div className="flex items-center gap-3">
-              <Link
-                href="/settings/profile"
-                className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition  text-lg"
-              >
-                <User size={20} className="fill-current" />
-                <span>{user?.fullName || "Account"}</span>
-              </Link>
-
-            </div>
-          ) : null}
+{!mounted ? null : !isAuthedFinal ? (
+  <Link
+    href="/register"
+    className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition text-lg"
+  >
+    <User size={20} className="fill-current" />
+    <span>Sign up</span>
+  </Link>
+) : (
+  <div className="flex items-center gap-3">
+    <Link
+      href="/settings/profile"
+      className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition text-lg"
+    >
+      <User size={20} className="fill-current" />
+      <span>{user?.fullName || "Account"}</span>
+    </Link>
+  </div>
+)}
         </div>
 
+        {/* Mobile Right */}
         <div className="md:hidden flex items-center gap-3">
           <div className="relative">
             <button
@@ -224,14 +209,19 @@ export default function Navbar() {
             </button>
           </div>
 
-          <button className="w-[40px] h-[40px] flex items-center justify-center rounded-full bg-[#f9f9fa] text-gray-700 hover:text-[#3447aaee] transition">
+          <button
+            className="w-[40px] h-[40px] flex items-center justify-center rounded-full bg-[#f9f9fa] text-gray-700 hover:text-[#3447aaee] transition"
+            type="button"
+          >
             <Search size={20} />
           </button>
-          <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+
+          <button type="button" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
 
+        {/* Mobile Menu */}
         {isMobileMenuOpen && (
           <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-11/12 bg-white rounded-xl flex flex-col gap-4 p-4 md:hidden z-50">
             <Link href="/" onClick={() => setIsMobileMenuOpen(false)}>
@@ -268,29 +258,30 @@ export default function Navbar() {
               Budget
             </Link>
 
-            {readyFinal && !isAuthedFinal ? (
-              <Link
-                href="/register"
-                className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition  text-lg"
-              >
-                <User size={20} className="fill-current" />
-                <span>Sign up</span>
-              </Link>
-            ) : readyFinal && isAuthedFinal ? (
-              <div className="flex items-center gap-3">
-                <Link
-                  href="/settings/profile"
-                  className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition  text-lg"
-                >
-                  <User size={20} className="fill-current" />
-                  <span>{user?.fullName || user?.name || "Account"}</span>
-                </Link>
-              </div>
-            ) : null}
+          {!mounted ? null : !isAuthedFinal ? (
+  <Link
+    href="/register"
+    className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition text-lg"
+  >
+    <User size={20} className="fill-current" />
+    <span>Sign up</span>
+  </Link>
+) : (
+  <div className="flex items-center gap-3">
+    <Link
+      href="/settings/profile"
+      className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition text-lg"
+    >
+      <User size={20} className="fill-current" />
+      <span>{user?.fullName || "Account"}</span>
+    </Link>
+  </div>
+)}
           </div>
         )}
       </nav>
 
+      {/* Notifications Panel */}
       {isNotificationsOpen && (
         <>
           <div

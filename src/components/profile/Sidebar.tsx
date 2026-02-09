@@ -126,7 +126,7 @@ const logout = useLogout();
             </svg>
           }
           danger
-            onClick={logout}
+onClick={() => logout.mutate()}
         />
       </div>
     </div>
