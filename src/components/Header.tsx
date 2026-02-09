@@ -2,18 +2,49 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useRef, useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { useState, useRef, useEffect, useMemo } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { Search, ChevronDown, User, Menu, X, Bell } from "lucide-react";
 import Notifactions from "./Notifactions";
+import { useSession } from "../modules/auth/hooks/useSession";
+
+type CachedUser = { fullName?: string } | null;
 
 export default function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
+
   const serviceRef = useRef<HTMLLIElement | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isServiceOpenMobile, setIsServiceOpenMobile] = useState(false);
   const [isServiceOpen, setIsServiceOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+
+  const [mounted, setMounted] = useState(false);
+  const [cachedUser, setCachedUser] = useState<CachedUser>(null);
+
+  // ✅ session من السيرفر (كوكيز)
+  const { data: sessionData } = useSession();
+  const serverUser = sessionData?.data?.user ?? null;
+
+  // ✅ أول ما نعمل mount نقرأ cached user مرة واحدة
+  useEffect(() => {
+    setMounted(true);
+    try {
+      const raw = sessionStorage.getItem("cached_user");
+      setCachedUser(raw ? JSON.parse(raw) : null);
+    } catch {
+      setCachedUser(null);
+    }
+  }, []);
+
+  // ✅ لو إجى user من السيرفر، خليه يغطي على cached
+  const user = serverUser ?? cachedUser;
+
+  // ✅ لا تنتظر الشبكة: جاهز فورًا بعد mount
+  const authReady = mounted;
+
+  const isAuthedFinal = !!user;
 
   const isActiveExact = (path: string) =>
     pathname === path
@@ -25,18 +56,19 @@ export default function Navbar() {
       ? "text-[#3447aaee] font-semibold"
       : "hover:text-[#3447aaee] transition";
 
-  const services = [
-    { name: "Debt", href: "/services/debts" },
-    { name: "Bill", href: "/services/bills" },
-    { name: "Expenses", href: "/services/expenses" },
-    { name: "Income", href: "/services/incomes" },
-  ];
+  const services = useMemo(
+    () => [
+      { name: "Debt", href: "/services/debts" },
+      { name: "Bill", href: "/services/bills" },
+      { name: "Expenses", href: "/services/expenses" },
+      { name: "Income", href: "/services/incomes" },
+    ],
+    []
+  );
+
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (
-        serviceRef.current &&
-        !serviceRef.current.contains(event.target as Node)
-      ) {
+      if (serviceRef.current && !serviceRef.current.contains(event.target as Node)) {
         setIsServiceOpen(false);
       }
     }
@@ -45,17 +77,13 @@ export default function Navbar() {
       document.addEventListener("mousedown", handleClickOutside);
     }
 
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isServiceOpen, isMobileMenuOpen]);
 
   useEffect(() => {
     if (!isNotificationsOpen) return;
-
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-
     return () => {
       document.body.style.overflow = originalOverflow;
     };
@@ -65,19 +93,19 @@ export default function Navbar() {
     <>
       <nav
         className="
-        absolute top-5 left-1/2 -translate-x-1/2
-        w-[90%] max-w-[1306px]
-        flex items-center justify-between
-        py-[1%] px-[5%]
-        bg-white
-        rounded-[30px]
-        z-50
-        h-[77.55px]
-        gap-5
+          absolute top-5 left-1/2 -translate-x-1/2
+          w-[90%] max-w-[1306px]
+          flex items-center justify-between
+          py-[1%] px-[5%]
+          bg-white
+          rounded-[30px]
+          z-50
+          h-[77.55px]
+          gap-5
         "
       >
         <Link href="/">
-          <div className="flex  items-center gap-[8px] cursor-pointer">
+          <div className="flex items-center gap-[8px] cursor-pointer">
             <Image
               src="/logo.png"
               width={62}
@@ -90,7 +118,7 @@ export default function Navbar() {
           </div>
         </Link>
 
-        <ul className="hidden lg:flex gap-[24px] items-center text-sm font-medium  text-[18px]">
+        <ul className="hidden md:flex gap-[24px] items-center text-sm font-medium text-[18px]">
           <li>
             <Link href="/" className={isActiveExact("/")}>
               Home
@@ -100,7 +128,8 @@ export default function Navbar() {
           <li ref={serviceRef} className="relative">
             <button
               onClick={() => setIsServiceOpen((p) => !p)}
-              className={`flex items-center gap-1 ${isActiveGroup("/service")}`}
+              className={`flex items-center gap-1 ${isActiveGroup("/services")}`}
+              type="button"
             >
               Service
               <ChevronDown
@@ -110,7 +139,7 @@ export default function Navbar() {
             </button>
 
             {isServiceOpen && (
-              <ul className="absolute left-0 top-full mt-2 bg-white shadow-lg rounded-xl flex flex-col min-w-[120px]  text-lg">
+              <ul className="absolute left-0 top-full mt-2 bg-white shadow-lg rounded-xl flex flex-col min-w-[120px] text-lg">
                 {services.map((item) => (
                   <li key={item.href}>
                     <Link
@@ -139,7 +168,8 @@ export default function Navbar() {
           </li>
         </ul>
 
-        <div className="hidden lg:flex items-center gap-[12px]  text-[18px] font-medium">
+        {/* Desktop Right */}
+        <div className="hidden md:flex items-center gap-[12px] text-[18px] font-medium">
           <div className="relative">
             <button
               type="button"
@@ -150,21 +180,37 @@ export default function Navbar() {
             </button>
           </div>
 
-          <button className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition  text-lg">
+          <button
+            className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition text-lg"
+            type="button"
+          >
             <Search size={20} />
             <span>Search</span>
           </button>
 
-          <Link
-            href="/login"
-            className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition  text-lg"
-          >
-            <User className="w-[15px] h-[15px] md:w-[20px] md:h-[20px] fill-current" />
-            <span>Sign In</span>
-          </Link>
+          {!authReady ? null : !isAuthedFinal ? (
+            <Link
+              href="/register"
+              className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition text-lg"
+            >
+              <User size={20} className="fill-current" />
+              <span>Sign up</span>
+            </Link>
+          ) : (
+            <div className="flex items-center gap-3">
+              <Link
+                href="/settings/profile"
+                className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition text-lg"
+              >
+                <User size={20} className="fill-current" />
+                <span>{user?.fullName || "Account"}</span>
+              </Link>
+            </div>
+          )}
         </div>
 
-        <div className="lg:hidden flex items-center gap-1 lg:gap-3">
+        {/* Mobile Right */}
+        <div className="md:hidden flex items-center gap-3">
           <div className="relative">
             <button
               className="w-[30px] h-[30px] md:w-[40px] md:h-[40px]  flex items-center justify-center rounded-full bg-[#f9f9fa] text-gray-700 hover:text-[#3447aaee] transition"
@@ -175,18 +221,19 @@ export default function Navbar() {
             </button>
           </div>
 
-          <button className="w-[30px] h-[30px] md:w-[40px] md:h-[40px] flex items-center justify-center rounded-full bg-[#f9f9fa] text-gray-700 hover:text-[#3447aaee] transition">
-            <Search className="w-[15px] h-[15px] md:w-[20px] md:h-[20px]  " />
+          <button
+            className="w-[40px] h-[40px] flex items-center justify-center rounded-full bg-[#f9f9fa] text-gray-700 hover:text-[#3447aaee] transition"
+            type="button"
+          >
+            <Search size={20} />
           </button>
-          <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-            {isMobileMenuOpen ? (
-              <X className="w-[17px] h-[17px] md:w-[20px] md:h-[20px]" />
-            ) : (
-              <Menu className="w-[17px] h-[17px] md:w-[20px] md:h-[20px]" />
-            )}
+
+          <button type="button" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
 
+        {/* Mobile Menu */}
         {isMobileMenuOpen && (
           <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-11/12 bg-white rounded-xl flex flex-col gap-4 p-4 lg:hidden z-50">
             <Link href="/" onClick={() => setIsMobileMenuOpen(false)}>
@@ -200,20 +247,14 @@ export default function Navbar() {
                 className="flex items-center justify-between"
               >
                 <span>Service</span>
-                <ChevronDown
-                  size={16}
-                  className={`${isServiceOpenMobile ? "rotate-180" : ""}`}
-                />
+                <ChevronDown size={16} className={`${isServiceOpen ? "rotate-180" : ""}`} />
               </button>
 
               {isServiceOpenMobile && (
                 <ul className="flex flex-col gap-2 pl-4 text-sm text-gray-600">
                   {services.map((item) => (
                     <li key={item.href}>
-                      <Link
-                        href={item.href}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                      >
+                      <Link href={item.href} onClick={() => setIsMobileMenuOpen(false)}>
                         {item.name}
                       </Link>
                     </li>
@@ -229,17 +270,32 @@ export default function Navbar() {
               Budget
             </Link>
 
-            <Link
-              href="/login"
-              className="text-gray-700 hover:text-[#3447aaee] transition"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Sign In
-            </Link>
+            {!authReady ? null : !isAuthedFinal ? (
+              <Link
+                href="/register"
+                className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition text-lg"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <User size={20} className="fill-current" />
+                <span>Sign up</span>
+              </Link>
+            ) : (
+              <div className="flex items-center gap-3">
+                <Link
+                  href="/settings/profile"
+                  className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition text-lg"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <User size={20} className="fill-current" />
+                  <span>{user?.fullName || "Account"}</span>
+                </Link>
+              </div>
+            )}
           </div>
         )}
       </nav>
 
+      {/* Notifications Panel */}
       {isNotificationsOpen && (
         <>
           <div
