@@ -213,7 +213,6 @@ export default function BillsClient() {
         </Tabs>
       </Box>
 
-      {/* حافظنا على نفس تصميم الزر تماماً */}
       <Box className="w-full bg-white flex justify-between items-center py-4">
         <Typography variant="h6" className="font-extrabold text-[#374151]">
           {activeTab === 0 ? "Individual Bills." : "Group Bills."}
