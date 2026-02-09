@@ -1,21 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  Box,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  Button,
-  Typography,
-} from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { User, DollarSign, Calendar } from "lucide-react";
 import BillModalWrapper from "./ui/BillModalWrapper";
 import BillInput from "./ui/BillInput";
 import ReminderToggle from "./ui/ReminderToggle";
 import ReminderFrequency from "./ui/ReminderFrequency";
 import ConfirmationModal from "./ui/ConfirmationModal";
-
+import PaymentStatusGroup from "./ui/PaymentStatusGroup";
 interface Props {
   onClose: () => void;
 }
@@ -62,68 +55,10 @@ export default function AddIndividualClient({ onClose }: Props) {
           type="number"
           placeholder="0.00"
         />
-
-        {/* Payment Status */}
-        <Box>
-          <Typography className="text-[14px] font-bold text-gray-700 mb-2 ml-1">
-            Payment Status
-          </Typography>
-
-          <RadioGroup
-            row
-            value={paymentStatus ?? ""}
-            onChange={handleStatusChange}
-            className="gap-10"
-          >
-            <FormControlLabel
-              value="paid"
-              control={
-                <Radio
-                  size="small"
-                  sx={{
-                    color: "#94A3B8",
-                    "&.Mui-checked": { color: "#3F51B5" },
-                  }}
-                />
-              }
-              label={
-                <Typography
-                  sx={{
-                    fontSize: "14px",
-                    fontWeight: paymentStatus === "paid" ? 700 : 500,
-                    color: paymentStatus === "paid" ? "#1E293B" : "#64748B",
-                  }}
-                >
-                  Paid
-                </Typography>
-              }
-            />
-
-            <FormControlLabel
-              value="unpaid"
-              control={
-                <Radio
-                  size="small"
-                  sx={{
-                    color: "#94A3B8",
-                    "&.Mui-checked": { color: "#3F51B5" },
-                  }}
-                />
-              }
-              label={
-                <Typography
-                  sx={{
-                    fontSize: "14px",
-                    fontWeight: paymentStatus === "unpaid" ? 700 : 500,
-                    color: paymentStatus === "unpaid" ? "#1E293B" : "#64748B",
-                  }}
-                >
-                  Unpaid
-                </Typography>
-              }
-            />
-          </RadioGroup>
-        </Box>
+        <PaymentStatusGroup
+          value={paymentStatus}
+          onChange={(val) => setPaymentStatus(val)}
+        />
 
         <BillInput
           label="Due date"

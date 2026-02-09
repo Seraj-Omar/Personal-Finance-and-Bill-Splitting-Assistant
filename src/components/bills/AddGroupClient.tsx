@@ -12,11 +12,12 @@ import {
   Checkbox,
   IconButton,
 } from "@mui/material";
-import { User, Calendar, Plus, Trash2 } from "lucide-react";
+import { User, Calendar, DollarSign, Plus, Trash2 } from "lucide-react";
 import BillModalWrapper from "./ui/BillModalWrapper";
 import BillInput from "./ui/BillInput";
 import ReminderToggle from "./ui/ReminderToggle";
 import ReminderFrequency from "./ui/ReminderFrequency";
+import PaymentStatusGroup from "./ui/PaymentStatusGroup";
 
 interface Participant {
   id: string;
@@ -38,7 +39,9 @@ export default function AddGroupClient({ onClose }: Props) {
     { id: "1", name: "Anas AbuJaber", amount: 50.0, isMe: true },
     { id: "2", name: "Yara Nael", amount: 30.0, isMe: false },
   ]);
-
+  const [paymentStatus, setPaymentStatus] = useState<"paid" | "unpaid" | null>(
+    null,
+  );
   const handleAddParticipant = () => {
     if (newName && newAmount) {
       setParticipants([
@@ -67,46 +70,10 @@ export default function AddGroupClient({ onClose }: Props) {
     <BillModalWrapper onClose={onClose} title="Add Group Bills">
       <BillInput label="Bill Name" icon={User} placeholder="Bill name" />
 
-      <Box>
-        <Typography className="text-[12px] font-bold text-gray-600 mb-1 ml-1">
-          Payment Status
-        </Typography>
-        <RadioGroup row defaultValue="unpaid" className="gap-6">
-          <FormControlLabel
-            value="paid"
-            control={
-              <Radio
-                size="small"
-                sx={{ color: "#CBD5E1", "&.Mui-checked": { color: "#3B82F6" } }}
-              />
-            }
-            label="Paid"
-            sx={{
-              "& .MuiFormControlLabel-label": {
-                fontSize: "13px",
-                color: "#94A3B8",
-              },
-            }}
-          />
-          <FormControlLabel
-            value="unpaid"
-            control={
-              <Radio
-                size="small"
-                sx={{ color: "#3B82F6", "&.Mui-checked": { color: "#3B82F6" } }}
-              />
-            }
-            label="Unpaid"
-            sx={{
-              "& .MuiFormControlLabel-label": {
-                fontSize: "13px",
-                color: "#94A3B8",
-              },
-            }}
-          />
-        </RadioGroup>
-      </Box>
-
+      <PaymentStatusGroup
+        value={paymentStatus}
+        onChange={(val) => setPaymentStatus(val)}
+      />
       <BillInput
         label="Due date"
         icon={Calendar}
