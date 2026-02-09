@@ -16,6 +16,7 @@ export default function Navbar() {
 
   const serviceRef = useRef<HTMLLIElement | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isServiceOpenMobile, setIsServiceOpenMobile] = useState(false);
   const [isServiceOpen, setIsServiceOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
@@ -113,7 +114,7 @@ export default function Navbar() {
               alt="Trackly Logo"
               priority
             />
-            <h3 className="font-bold text-[24px]">Trackly</h3>
+            <h3 className="font-bold text-[18px] md:text-[24px]">Trackly</h3>
           </div>
         </Link>
 
@@ -212,11 +213,11 @@ export default function Navbar() {
         <div className="md:hidden flex items-center gap-3">
           <div className="relative">
             <button
-              className="w-[40px] h-[40px] flex items-center justify-center rounded-full bg-[#f9f9fa] text-gray-700 hover:text-[#3447aaee] transition"
+              className="w-[30px] h-[30px] md:w-[40px] md:h-[40px]  flex items-center justify-center rounded-full bg-[#f9f9fa] text-gray-700 hover:text-[#3447aaee] transition"
               type="button"
               onClick={() => setIsNotificationsOpen((prev) => !prev)}
             >
-              <Bell size={20} className="fill-current" />
+              <Bell className="w-[15px] h-[15px] md:w-[20px] md:h-[20px] fill-current" />
             </button>
           </div>
 
@@ -234,7 +235,7 @@ export default function Navbar() {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-11/12 bg-white rounded-xl flex flex-col gap-4 p-4 md:hidden z-50">
+          <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-11/12 bg-white rounded-xl flex flex-col gap-4 p-4 lg:hidden z-50">
             <Link href="/" onClick={() => setIsMobileMenuOpen(false)}>
               Home
             </Link>
@@ -242,14 +243,14 @@ export default function Navbar() {
             <div className="flex flex-col gap-2">
               <button
                 type="button"
-                onClick={() => setIsServiceOpen((prev) => !prev)}
+                onClick={() => setIsServiceOpenMobile((prev) => !prev)}
                 className="flex items-center justify-between"
               >
                 <span>Service</span>
                 <ChevronDown size={16} className={`${isServiceOpen ? "rotate-180" : ""}`} />
               </button>
 
-              {isServiceOpen && (
+              {isServiceOpenMobile && (
                 <ul className="flex flex-col gap-2 pl-4 text-sm text-gray-600">
                   {services.map((item) => (
                     <li key={item.href}>
