@@ -11,8 +11,19 @@ export function useLogout() {
   return useMutation({
     mutationFn: logoutUser,
     onSuccess: () => {
-      queryClient.setQueryData(["me"], null);
+      sessionStorage.removeItem("cached_user");
+      sessionStorage.removeItem("token"); // اختياري إذا بتخزني token
+
       queryClient.removeQueries({ queryKey: ["me"] });
+      queryClient.removeQueries({ queryKey: ["session"] });
+
+      router.push("/login");
+    },
+    onError: () => {
+      sessionStorage.removeItem("cached_user");
+      sessionStorage.removeItem("token");
+      queryClient.removeQueries({ queryKey: ["me"] });
+      queryClient.removeQueries({ queryKey: ["session"] });
       router.push("/login");
     },
   });
