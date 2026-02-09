@@ -1,15 +1,26 @@
 import { Box, Button } from "@mui/material";
 import React from "react";
 
-function BillFoter({ onClose }: { onClose: () => void }) {
+function BillFoter({
+  onClose,
+  disabled,
+}: {
+  onClose: () => void;
+  disabled?: boolean;
+}) {
   return (
     <Box className="flex gap-4 mt-4">
       <Button
         fullWidth
         variant="contained"
+        disabled={disabled}
         sx={{
           backgroundColor: "#3F51B5",
           "&:hover": { backgroundColor: "#303F9F" },
+          "&.Mui-disabled": {
+            backgroundColor: "#E5E7EB",
+            color: "#9CA3AF",
+          },
           borderRadius: "12px",
           py: 1.6,
           textTransform: "none",
