@@ -5,9 +5,6 @@ import {
   Box,
   Typography,
   Button,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
   Avatar,
   Checkbox,
   IconButton,
@@ -16,8 +13,8 @@ import { User, Calendar, DollarSign, Plus, Trash2 } from "lucide-react";
 import BillModalWrapper from "./ui/BillModalWrapper";
 import BillInput from "./ui/BillInput";
 import ReminderToggle from "./ui/ReminderToggle";
-import ReminderFrequency from "./ui/ReminderFrequency";
 import PaymentStatusGroup from "./ui/PaymentStatusGroup";
+import BillFoter from "./ui/BillFoter";
 
 interface Participant {
   id: string;
@@ -69,6 +66,12 @@ export default function AddGroupClient({ onClose }: Props) {
   return (
     <BillModalWrapper onClose={onClose} title="Add Group Bills">
       <BillInput label="Bill Name" icon={User} placeholder="Bill name" />
+      <BillInput
+        label="Amount"
+        icon={DollarSign}
+        type="number"
+        placeholder="0.00"
+      />
 
       <PaymentStatusGroup
         value={paymentStatus}
@@ -80,9 +83,6 @@ export default function AddGroupClient({ onClose }: Props) {
         type="date"
         defaultValue="2026-01-12"
       />
-
-      <ReminderFrequency defaultValue="weekly" />
-
       <Box>
         <Typography className="text-[12px] font-bold text-gray-600 mb-1 ml-1">
           Group Participants
@@ -213,23 +213,7 @@ export default function AddGroupClient({ onClose }: Props) {
 
       <ReminderToggle checked={reminder} onChange={setReminder} />
 
-      <Box className="flex gap-4 mt-2">
-        <Button
-          fullWidth
-          variant="outlined"
-          onClick={onClose}
-          className="border-[#3B82F6] text-[#3B82F6] rounded-[14px] py-2.5 font-bold normal-case"
-        >
-          Cancel
-        </Button>
-        <Button
-          fullWidth
-          variant="contained"
-          className="bg-[#3B5998] hover:bg-[#2D4373] text-white rounded-[14px] py-2.5 font-bold shadow-none normal-case"
-        >
-          Save Expense
-        </Button>
-      </Box>
+      <BillFoter onClose={onClose} />
     </BillModalWrapper>
   );
 }
