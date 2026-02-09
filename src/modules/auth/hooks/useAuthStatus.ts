@@ -2,39 +2,42 @@
 
 import { useEffect, useState } from "react";
 
-type StoredUser = any; 
+type StoredUser = any;
+
+function readAuth() {
+  if (typeof window === "undefined") {
+    return { token: null as string | null, user: null as StoredUser | null };
+  }
+
+  const token = sessionStorage.getItem("token");
+  const raw = sessionStorage.getItem("user");
+  const user = raw ? JSON.parse(raw) : null;
+
+  return { token, user };
+}
 
 export function useAuthStatus() {
-  const [token, setToken] = useState<string | null>(null);
-  const [user, setUser] = useState<StoredUser | null>(null);
-  const [ready, setReady] = useState(false);
+  // ✅ قراءة فورية أول رندر (بتمنع الفليكر)
+  const [{ token, user }, setAuth] = useState(() => readAuth());
+  const [ready, setReady] = useState(true); // ✅ جاهز من أول لحظة
 
   useEffect(() => {
-    const read = () => {
-      const t = sessionStorage.getItem("token");
-      const uRaw = sessionStorage.getItem("user");
-      const u = uRaw ? JSON.parse(uRaw) : null;
+    const sync = () => setAuth(readAuth());
 
-      setToken(t);
-      setUser(u);
-      setReady(true);
-    };
+    // بين التابات (بس)
+    window.addEventListener("storage", sync);
 
-    read();
-
-    // ✅ يتحدث بين التابات
-    const onStorage = () => read();
-    window.addEventListener("storage", onStorage);
-
-    // ✅ يتحدث بنفس التاب لما نطلق event مخصص (بنستخدمه بالـ logout)
-    const onAuthChanged = () => read();
-    window.addEventListener("auth:changed", onAuthChanged as any);
+    // بنفس التاب (login/logout)
+    window.addEventListener("auth:changed", sync as any);
 
     return () => {
-      window.removeEventListener("storage", onStorage);
-      window.removeEventListener("auth:changed", onAuthChanged as any);
+      window.removeEventListener("storage", sync);
+      window.removeEventListener("auth:changed", sync as any);
     };
   }, []);
 
-  return { token, user, isAuthed: !!token, ready };
+  // ✅ خلي isAuthed يعتمد على token OR user
+  const isAuthed = !!token || !!user;
+
+  return { token, user, isAuthed, ready };
 }

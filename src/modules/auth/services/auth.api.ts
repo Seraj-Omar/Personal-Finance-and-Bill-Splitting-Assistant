@@ -1,25 +1,24 @@
 import { apiFetch } from "@/src/lib/api";
 import { LoginPayload, RegisterPayload ,MePayload, ApiResponse } from "../type";
 
+
 export async function loginUser(payload: LoginPayload) {
-  const data = await apiFetch<{ data: { token: string; user: any } }>(
-    "/auth/sign-in",
-    {
-      method: "POST",
-      body: JSON.stringify(payload),
-    }
-  );
+  const res = await apiFetch<ApiResponse<MePayload>>("/auth/sign-in", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
 
-  const token = data?.data?.token;
-  const user = data?.data?.user;
+  const token = res.data.token;
+  const user = res.data.user;
 
-  if (token) sessionStorage.setItem("token", token);
-  if (user) sessionStorage.setItem("user", JSON.stringify(user));
-
+if (typeof window !== "undefined") {
+  sessionStorage.setItem("token", token);
+  sessionStorage.setItem("user", JSON.stringify(user));
   window.dispatchEvent(new Event("auth:changed"));
-
-  return data;
 }
+  return res;
+}
+
 
 export async function registerUser(payload: RegisterPayload) {
   return apiFetch("/auth/sign-up", {
@@ -29,13 +28,53 @@ export async function registerUser(payload: RegisterPayload) {
 }
 
 export async function logoutUser() {
+if (typeof window !== "undefined") {
   sessionStorage.removeItem("token");
   sessionStorage.removeItem("user");
   window.dispatchEvent(new Event("auth:changed"));
+}
 }
 
 
 
 export async function fetchMe() {
-  return apiFetch<ApiResponse<MePayload>>("/auth/revalidate", { withCredentials: true });
+  return apiFetch<ApiResponse<MePayload>>("/auth/me", {  });
+}
+
+export async function revalidate() {
+  return apiFetch<ApiResponse<MePayload>>("/auth/revalidate", { });
+}
+
+
+export async function requestResetCode(email: string) {
+  return apiFetch<ApiResponse<MePayload>>("/auth/password-reset/request", {
+    method: "POST",
+    body: JSON.stringify({ email }),
+  });
+}
+
+
+
+// export function confirmResetPassword(newPassword: string) {
+//   return apiFetch<ApiResponse<{ success: true }>>(
+//     "/auth/password-reset/confirm",
+//     {
+//       method: "PATCH",
+//     withCredentials: true,  
+//       body: JSON.stringify({ newPassword }),
+//     }
+//   );
+// }
+export function confirmResetPassword(newPassword: string) {
+  return  fetch(
+    "https://190d-212-14-245-97.ngrok-free.app",
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({ newPassword }),
+    }
+  );
 }
