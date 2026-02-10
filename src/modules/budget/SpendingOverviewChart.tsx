@@ -69,11 +69,11 @@ export default function SpendingOverviewChart() {
                 },
               ]}
               series={[
-                {
-                  data: bars,
-                  barWidth: 18,
-                  color: "#3447AA",
-                },
+  {
+    data: bars,
+minBarSize: 18,
+    color: "#3447AA",
+  },
               ]}
               height={280}
               margin={{ top: 10, bottom: 40, left: 45, right: 20 }}

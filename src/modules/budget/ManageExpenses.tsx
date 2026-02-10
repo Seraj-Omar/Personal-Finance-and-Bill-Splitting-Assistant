@@ -121,23 +121,21 @@ export default function ManageExpenses() {
   return (
     <Paper
       elevation={0}
-     sx={{
-    width: "100%",
-    height: "699px",
-    opacity: 1,
- 
-    gap: "10px",
-    borderRadius: "16px",
-    border: "1px solid",
-    borderColor: "divider",
-    backgroundColor: "#F5F5F5",
-    display: "flex",
-    justifyContent: "center",
-    flexDirection: { xs: "column", md: "row" },
+   sx={{
+  width: "100%",
+  opacity: 1,
+  gap: "10px",
+  borderRadius: "16px",
+  border: "1px solid",
+  borderColor: "divider",
+  backgroundColor: "#F5F5F5",
+  display: "flex",
+  justifyContent: "center",
+  flexDirection: { xs: "column", md: "row" },
+  maxWidth: "100%",
+  height: { xs: "auto", md: "699px" },
+}}
 
-    maxWidth: "100%",
-    height: { xs: "auto", md: "699px" },
-  }}
     >
 <Box
   sx={{

@@ -224,7 +224,7 @@ export default function AddGroupClient({ onClose }: { onClose: () => void }) {
         </Typography>
         <SplitMethodTabs
           activeTab={splitMethod}
-          onChange={(t) => setSplitMethod(t)}
+          onChange={setSplitMethod}
         />
 
         <Box mt={3} display="flex" flexDirection="column" >

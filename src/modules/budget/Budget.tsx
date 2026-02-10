@@ -71,7 +71,7 @@ const Budget = () => {
           mt: 5,
         }}
       >
-        <TableBudget activeFilter={activeFilter} onChange={setActiveFilter} filter={activeFilter}/>
+<TableBudget />
       </Box>
 
       <Box sx={{       mt: 5,}} ><ManageExpenses /></Box>

@@ -148,14 +148,14 @@ export default function DonutChart() {
       type: "doughnut",
       data: {
         labels: ["Paid", "Unpaid", "Overdue"],
-        datasets: [
-          {
-            data: values,
-            cutout: "40%",
-            backgroundColor: ["#16C087", "#FF5050", "#FFC100"],
-            borderWidth: 2,
-          },
-        ],
+      datasets: [
+  {
+    data: values,
+    backgroundColor: ["#16C087", "#FF5050", "#FFC100"],
+    borderWidth: 2,
+  }
+]
+
       },
       options: {
         responsive: true,
