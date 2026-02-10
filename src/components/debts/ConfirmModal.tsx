@@ -27,7 +27,7 @@ export default function ConfirmModal({
         {/* Icon */}
         <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-yellow-400">
           <svg width="70" height="70" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
-<circle cx="35" cy="35" r="33.5" fill="#FFCC00" stroke="white" stroke-width="3"/>
+<circle cx="35" cy="35" r="33.5" fill="#FFCC00" stroke="white" strokeWidth="3"/>
  <svg width={70} height={70} viewBox={"0 0 70 70"}>
   <circle
     cx={35}

@@ -8,19 +8,21 @@ import UploadBox from "../addDebts/UploadBox";
 import ReminderToggle from "../addDebts/ReminderToggle";
 import { IoClose } from "react-icons/io5";
 import { HiChevronDown } from "react-icons/hi";
+import { Debt } from "@/src/types/debt";
 
-type Debt = {
-  personName: string;
-  amount: string;
-  dueDate: string;
-  description: string;
-  status: string;
-  reminder?: boolean| undefined;
-};
+
+// type Debt = {
+//   personName: string;
+//   amount: string;
+//   dueDate: string;
+//   description: string;
+//   status: string;
+//   reminder?: boolean| undefined;
+// };
 
 type Props = {
   isOpen: boolean;
-  defaultData: Debt | null;
+  defaultData: Partial<Debt> | null;
   onClose: () => void;
 };
 
@@ -31,13 +33,13 @@ export default function UpdateDebtForm({
 }: Props) {
   const [reminder, setReminder] = useState(true);
 
-  const [formData, setFormData] = useState<Debt>({
-    personName: "",
+  const [formData, setFormData] = useState<Partial<Debt>>({
+    personalName: "",
     amount: "",
     dueDate: "",
     description: "",
     status: "",
-    reminder: false,
+    reminderEnabled: false,
   });
 
   // 🔒 Disable background scroll
@@ -49,12 +51,12 @@ export default function UpdateDebtForm({
   useEffect(() => {
     if (defaultData && isOpen) {
       setFormData({
-        personName: defaultData.personName ?? "",
+        personalName: defaultData.personalName ?? "",
         amount: defaultData.amount ?? "",
         dueDate: defaultData.dueDate ?? "",
         description: defaultData.description ?? "",
         status: defaultData.status ?? "",
-        reminder: defaultData.reminder ?? false,
+        reminderEnabled: defaultData.reminderEnabled ?? false,
       });
     }
   }, [defaultData, isOpen]);
@@ -63,11 +65,12 @@ export default function UpdateDebtForm({
   useEffect(() => {
     if (!isOpen) {
       setFormData({
-        personName: "",
+        personalName: "",
         amount: "",
         dueDate: "",
         description: "",
         status: "",
+        reminderEnabled: false,
       });
     }
   }, [isOpen]);
@@ -104,9 +107,9 @@ export default function UpdateDebtForm({
             icon={<FaUser fill="#AEAEAE" />}
             label="Personal Name"
             placeholder="Personal Name"
-            value={formData.personName}
+            value={formData.personalName}
             onChange={(e) =>
-              setFormData({ ...formData, personName: e.target.value })
+              setFormData({ ...formData, personalName: e.target.value })
             }
           />
 
@@ -142,9 +145,9 @@ export default function UpdateDebtForm({
           />
           <div className="relative">
           <select
-    value={formData.status}
+    value={(formData.status ?? "")[0]?.toUpperCase() + (formData.status ?? "").slice(1).toLowerCase()}
     onChange={(e) =>
-      setFormData({ ...formData, status: e.target.value })
+      setFormData({ ...formData, status: e.target.value as "" | "Unpaid" | "Paid" | "Overdue" })
     }
     className="
       w-full p-4 pr-12 rounded-2xl
@@ -167,7 +170,7 @@ export default function UpdateDebtForm({
   />
 </div>
 
-          <ReminderToggle enabled={formData.reminder ?? false} setEnabled={setReminder}  />
+          <ReminderToggle enabled={formData.reminderEnabled ?? false} setEnabled={setReminder}  />
 
           {/* Actions */}
           <div className="flex gap-4 pt-4">
