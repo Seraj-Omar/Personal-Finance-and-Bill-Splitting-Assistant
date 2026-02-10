@@ -4,16 +4,21 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../context/AuthContext";
 
-export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
+export default function ProtectedRoute({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const { isAuthed, loading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && !isAuthed) router.replace("/login");
+    if (!loading && !isAuthed) {
+      router.replace("/login");
+    }
   }, [loading, isAuthed, router]);
 
   if (loading) return null;
-  if (!isAuthed) return null;
 
-  return <>{children}</>;
+  return isAuthed ? <>{children}</> : null;
 }
