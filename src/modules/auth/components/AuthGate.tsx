@@ -1,28 +1,38 @@
 "use client";
-import { useEffect } from "react";
+
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useMe } from "../hooks/useMe";
+import { useSession } from "../hooks/useSession";
 
 export default function AuthGate({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
-  const token = typeof window !== "undefined" ? sessionStorage.getItem("token") : null;
-  const { data, isLoading, error } = useMe();
+  const [token, setToken] = useState<string | null>(null);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    if (!token) router.replace("/login");
-  }, [token, router]);
+    setToken(sessionStorage.getItem("token"));
+    setReady(true);
+  }, []);
+
+  const { isLoading, error, data } = useSession(ready && !!token);
+
+  useEffect(() => {
+    if (ready && !token) router.replace("/login");
+  }, [ready, token, router]);
 
   useEffect(() => {
     const anyErr: any = error;
     if (anyErr?.status === 401) {
       sessionStorage.removeItem("token");
       sessionStorage.removeItem("user");
+      sessionStorage.removeItem("cached_user");
       router.replace("/login");
     }
   }, [error, router]);
 
-  if (!token) return null;
+  if (!ready) return null;          
+  if (!token) return null;          
   if (isLoading) return <div>Loading...</div>;
 
   return <>{children}</>;

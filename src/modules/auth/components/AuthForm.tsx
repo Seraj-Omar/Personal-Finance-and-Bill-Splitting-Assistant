@@ -196,7 +196,7 @@ export default function AuthForm({ type }: { type: AuthType }) {
         <button
           type="submit"
           disabled={loading}
-          className="w-full mt-2 rounded-xl main-blue-color hover:bg-indigo-700 transition py-3 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full mt-2 rounded-xl main-bg-blue-color  transition py-3 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? "Loading..." : isRegister ? "Sign up" : "Log in"}
         </button>
