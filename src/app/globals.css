@@ -64,7 +64,10 @@ body {
 .main-bg-color {
   background-color:#3447aaee;
 }
+.main-bg-blue-color{
+    background:#3447aaee;
 
+}
 .main-gradient {
   background: linear-gradient(
     135deg,

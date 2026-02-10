@@ -1,7 +1,7 @@
 "use client";
 import { Box, Typography } from "@mui/material";
 import { Check } from "lucide-react";
-import ContactUsForm from "./ContactUsForm";
+// import ContactUsForm from "./ContactUsForm";
 const featuresList = [
     "Secure wallet storage",
     "Real-time portfolio tracking",
@@ -111,7 +111,7 @@ export default function WhyChooseUs() {
                         
                     <Box className="absolute inset-0 bg-[#3447AA]/90" />
                         <Box className="relative z-10">
-                        <ContactUsForm />
+                        {/* <ContactUsForm /> */}
                             </Box>
                     </Box>
                 </Box>

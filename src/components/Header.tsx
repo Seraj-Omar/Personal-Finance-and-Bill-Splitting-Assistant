@@ -23,11 +23,9 @@ export default function Navbar() {
   const [mounted, setMounted] = useState(false);
   const [cachedUser, setCachedUser] = useState<CachedUser>(null);
 
-  // ✅ session من السيرفر (كوكيز)
-  const { data: sessionData } = useSession();
+const { data: sessionData } = useSession(true);
   const serverUser = sessionData?.data?.user ?? null;
 
-  // ✅ أول ما نعمل mount نقرأ cached user مرة واحدة
   useEffect(() => {
     setMounted(true);
     try {

@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { revalidate } from "../services/auth.api";
 
-export function useSession() {
+export function useSession(p0: boolean) {
   const q = useQuery({
     queryKey: ["session"],
     queryFn: revalidate,

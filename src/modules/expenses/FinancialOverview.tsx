@@ -3,7 +3,7 @@ import Card from "@/src/components/debts/Card";
 
 export default function FinancialOverview() {
   return (
-    <div className=" p-8">
+    <div className=" p-8 bg-gray-50">
       <h1 className="relative text-lg font-bold mb-4 w-fit ">
         Financial Overview
         <span className="mt-5 absolute left-0 bottom-0 w-full h-1  bg-gradient-to-r from-[#EFA5B6] to-[#3447AA]"></span>
