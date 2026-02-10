@@ -37,7 +37,7 @@ export default function HelpSolutionsSection() {
             className="absolute inset-0 w-full h-full object-cover"
           />
 
-
+          {/* ✅ الشعاع الزهري (أقوى + ممتد لليمين أكثر) */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
@@ -46,7 +46,7 @@ export default function HelpSolutionsSection() {
             }}
           />
 
-          
+          {/* ✅ شعاع إضافي من اليمين لتقويته */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
@@ -55,7 +55,7 @@ export default function HelpSolutionsSection() {
             }}
           />
 
-         
+          {/* ✅ نعومة إضافية */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{

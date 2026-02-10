@@ -4,7 +4,7 @@ type Avatar =
       src: string;
       alt: string;
       scale?: number;
-      pos?: string; 
+      pos?: string; // object-position
     }
   | { type: "txt"; text: string; bg: string };
 
@@ -151,7 +151,7 @@ export default function AboutUsSection() {
                   }}
                 />
 
-                {/*  TOP avatars */}
+                {/* ✅ TOP avatars */}
                 <div
                   className="absolute"
                   style={{
@@ -208,7 +208,7 @@ export default function AboutUsSection() {
                   })}
                 </div>
 
-                {/*  BOTTOM avatars */}
+                {/* ✅ BOTTOM avatars */}
                 <div
                   className="absolute"
                   style={{
@@ -332,7 +332,7 @@ export default function AboutUsSection() {
               </div>
             </div>
 
-            {/*  RIGHT CONTENT  */}
+            {/* ✅✅ RIGHT CONTENT (التعديل الوحيد هون) */}
             <div
               className="
                 mt-8

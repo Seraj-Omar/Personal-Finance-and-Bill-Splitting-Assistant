@@ -16,7 +16,7 @@ const PageHero = ({ title, breadcrumb, bgImage = "/hero-image.jpg" }: PageHeroPr
           alt="hero background"
           fill
           priority
-          quality={75}
+          quality={100}
           className="object-cover scale-[1.15]"
           style={{
             objectPosition: "85% 75%",
@@ -24,7 +24,8 @@ const PageHero = ({ title, breadcrumb, bgImage = "/hero-image.jpg" }: PageHeroPr
         />
       </div>
 
-
+      {/* Overlay */}
+      {/* <div className="absolute inset-0 bg-[#0B1D5B]/30" /> */}
 
       {/*  Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-8 py-24 text-center">
