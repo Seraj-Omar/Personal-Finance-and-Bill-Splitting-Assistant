@@ -3,7 +3,7 @@ import AuthForm from "../components/AuthForm";
 
 export default function LoginPageUI() {
   return (
-    <section className="min-h-screen w-full bg-[#f5f5f7] flex items-center justify-center px-[80px] py-[20px]">
+    <section className="min-h-screen w-full bg-[#f5f5f7] flex items-center justify-center p-6">
       <div
         className="w-[1280px] h-[921px] rounded-[16px] overflow-hidden shadow-lg"
         style={{

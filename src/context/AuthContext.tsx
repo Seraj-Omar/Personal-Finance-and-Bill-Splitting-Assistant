@@ -1,68 +1,53 @@
 "use client";
 
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { LoginPayload, User } from "../modules/auth/type";
-import { loginUser } from "../modules/auth/services/auth.api";
-
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { User } from "../modules/auth/type";
+import { fetchMe } from "../modules/auth/services/auth.api"; 
 type AuthContextValue = {
   user: User | null;
-  token: string | null;
   isAuthed: boolean;
   loading: boolean;
-  login: (payload: LoginPayload) => Promise<void>;
   logout: () => void;
-  refreshFromStorage: () => void;
+  refetchMe: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-function getStoredAuth() {
-  if (typeof window === "undefined") return { token: null as string | null, user: null as User | null };
-
-  const token = sessionStorage.getItem("token") || null;
-  const userRaw = sessionStorage.getItem("user");
-  const user = userRaw ? (JSON.parse(userRaw) as User) : null;
-
-  return { token, user };
-}
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const queryClient = useQueryClient();
 
-  const [token, setToken] = useState<string | null>(() => getStoredAuth().token);
-  const [user, setUser] = useState<User | null>(() => getStoredAuth().user);
-  const [loading, setLoading] = useState(false);
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ["me"],
+    queryFn: fetchMe,
+    retry: false,
+    // مهم: لا تعمل fetch على السيرفر لأنه sessionStorage
+    enabled: typeof window !== "undefined" && !!sessionStorage.getItem("token"),
+  });
 
-  const refreshFromStorage = () => {
-    const stored = getStoredAuth();
-    setToken(stored.token);
-    setUser(stored.user);
-  };
-
-  const login = async (payload: LoginPayload) => {
-    await loginUser(payload);
-
-    refreshFromStorage();
-  };
+  const user = (data as any)?.data?.user ?? null; // عدّلي حسب شكل response عندك
 
   const logout = () => {
     sessionStorage.removeItem("token");
     sessionStorage.removeItem("user");
-    setToken(null);
-    setUser(null);
-    router.push("/login"); 
+    queryClient.setQueryData(["me"], null);
+    router.push("/login");
   };
 
-  const value: AuthContextValue = {
-    user,
-    token,
-    isAuthed: !!token,
-    loading,
-    login,
-    logout,
-    refreshFromStorage,
-  };
+  const value = useMemo<AuthContextValue>(
+    () => ({
+      user,
+      isAuthed: !!user,
+      loading: isLoading,
+      logout,
+      refetchMe: async () => {
+        await refetch();
+      },
+    }),
+    [user, isLoading, refetch]
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

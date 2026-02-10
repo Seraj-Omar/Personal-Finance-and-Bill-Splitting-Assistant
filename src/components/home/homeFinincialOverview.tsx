@@ -207,9 +207,9 @@ export default function HomeFinancialOverview() {
             aria-labelledby="financial-overview-heading"
             className="flex w-full flex-col items-start justify-between bg-[#F6F6F7B2] px-4 py-8 sm:px-6 md:px-10 lg:px-24 lg:py-12"
         >
-                <Box className ="w-fit">
-                    <TitleWithGradient title="Financial Overview" id="financial-overview-heading" />
-                </Box>
+		        <Box className ="w-fit">
+		            <TitleWithGradient title="Financial Overview" id="financial-overview-heading" text_size="md" />
+		        </Box>
                 <Box
                     component="ul"
                     className="mt-6 grid w-full gap-4 sm:gap-5 md:gap-6 md:grid-cols-2 xl:grid-cols-4"

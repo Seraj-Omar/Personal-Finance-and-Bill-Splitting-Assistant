@@ -17,19 +17,37 @@ import {
 } from "@mui/material";
 
 import SearchIcon from "@mui/icons-material/Search";
+import { useCurrencies } from "../hooks/useCurrencies";
 
-const currencies = [
-  { code: "USD", name: "United States (US Dollar)", flag: "🇺🇸" },
-  { code: "GBP", name: "United Kingdom (British Pound Sterling)", flag: "🇬🇧" },
-  { code: "EUR", name: "European Union (Euro)", flag: "🇪🇺" },
-  { code: "SAR", name: "Saudi Arabia (Saudi Riyal)", flag: "🇸🇦" },
-  { code: "AED", name: "United Arab Emirates (UAE Dirham)", flag: "🇦🇪" },
-  { code: "JOD", name: "Jordan (Jordanian Dinar)", flag: "🇯🇴" },
-  { code: "JPY", name: "Japan (Japanese Yen)", flag: "🇯🇵" },
-];
+function currencyCodeToFlag(code: string) {
+  const map: Record<string, string> = {
+    USD: "US",
+    GBP: "GB",
+    EUR: "EU",
+    SAR: "SA",
+    AED: "AE",
+    JOD: "JO",
+    JPY: "JP",
+  };
+
+  const country = map[code?.toUpperCase()] || "";
+  if (!country) return "🏳️";
+
+  const A = 0x1f1e6;
+  const base = "A".charCodeAt(0);
+
+  return country
+    .toUpperCase()
+    .split("")
+    .map((ch) => String.fromCodePoint(A + ch.charCodeAt(0) - base))
+    .join("");
+}
 
 export default function CurrencyPage() {
   const router = useRouter();
+
+  const { data, isLoading, error } = useCurrencies();
+  const currenciesFromApi = data?.data ?? [];
 
   const [selectedCurrency, setSelectedCurrency] = useState("AED");
   const [query, setQuery] = useState("");
@@ -43,19 +61,28 @@ export default function CurrencyPage() {
     }
   }, [router]);
 
+  useEffect(() => {
+    if (!currenciesFromApi.length) return;
+
+    const exists = currenciesFromApi.some((c: any) => c.code === selectedCurrency);
+    if (!exists) setSelectedCurrency(currenciesFromApi[0].code);
+  }, [currenciesFromApi, selectedCurrency]);
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return currencies;
-    return currencies.filter(
-      (c) =>
-        c.code.toLowerCase().includes(q) || c.name.toLowerCase().includes(q)
+    if (!q) return currenciesFromApi;
+
+    return currenciesFromApi.filter(
+      (c: any) =>
+        String(c.code).toLowerCase().includes(q) ||
+        String(c.name).toLowerCase().includes(q)
     );
-  }, [query]);
+  }, [query, currenciesFromApi]);
 
   const handleContinue = (e: React.FormEvent) => {
     e.preventDefault();
     sessionStorage.setItem("pendingCurrency", selectedCurrency);
-    router.push("/login");
+    router.push("/");
   };
 
   return (
@@ -95,6 +122,25 @@ export default function CurrencyPage() {
                     This currency will be used across the platform
                   </Typography>
 
+                  {/* (اختياري) Loading / Error بدون ستايل جديد قوي */}
+                  {isLoading && (
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "white", opacity: 0.9, mb: 1.5 }}
+                    >
+                      Loading currencies...
+                    </Typography>
+                  )}
+
+                  {error && (
+                    <Typography
+                      variant="body2"
+                      sx={{ color: "white", opacity: 0.9, mb: 1.5 }}
+                    >
+                      Failed to load currencies
+                    </Typography>
+                  )}
+
                   {/* Search */}
                   <TextField
                     value={query}
@@ -131,11 +177,11 @@ export default function CurrencyPage() {
                     }}
                   >
                     <List dense disablePadding>
-                      {filtered.map((cur) => {
+                      {filtered.map((cur: any) => {
                         const active = cur.code === selectedCurrency;
                         return (
                           <ListItemButton
-                            key={cur.code}
+                            key={cur.id || cur.code}
                             onClick={() => setSelectedCurrency(cur.code)}
                             sx={{
                               px: 2,
@@ -151,7 +197,11 @@ export default function CurrencyPage() {
                               },
                             }}
                           >
-                            <span style={{ fontSize: 16 }}>{cur.flag}</span>
+                            {/* ✅ العلم */}
+                            <span style={{ fontSize: 16 }}>
+                              {currencyCodeToFlag(cur.code)}
+                            </span>
+
                             <ListItemText
                               primary={` ${cur.name}`}
                               sx={{

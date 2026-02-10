@@ -4,7 +4,7 @@ export type LoginPayload = {
 };
 
 export type RegisterPayload = {
-  name: string;
+  fullName: string;
   email: string;
   password: string;
 };
@@ -30,4 +30,60 @@ export type User = {
 
   createdAt?: string;         
   updatedAt?: string;          
+};
+
+export type ApiResponse<T> = {
+  success: boolean;
+  message: string;
+  data: T;
+};
+
+export type MePayload = {
+  user: {
+    id: string;
+    email: string;
+    fullName: string;
+    phone: string;
+    role: string;
+    status: string;
+    defaultCurrencyId: string;
+    currentBalance: string;
+    points: string;
+    avatarAssetId: unknown;
+    provider: string;
+    providerId: unknown;
+    createdAt: string;
+    updatedAt: string;
+  };
+  token: string;
+};
+
+//rest password
+
+export type PasswordResetRequestPayload = {
+  email: string;
+};
+
+export type PasswordResetVerifyPayload = {
+  email: string;
+  code: string;
+};
+
+export type PasswordResetConfirmPayload = {
+  password: string;
+  confirmPassword?: string; // لو بدك تتحقق بالفرونت
+  resetToken: string;
+};
+
+export type PasswordResetRequestRes = {
+  success: true;
+};
+
+export type PasswordResetVerifyRes = {
+  success: true;
+  resetToken?: string; // ✅ لو الباك بيرجعه
+};
+
+export type PasswordResetConfirmRes = {
+  success: true;
 };

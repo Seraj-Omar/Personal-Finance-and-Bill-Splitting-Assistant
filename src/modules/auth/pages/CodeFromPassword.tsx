@@ -2,28 +2,75 @@
 
 import React from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Box, Typography, Button } from "@mui/material";
+import { useMutation } from "@tanstack/react-query";
+
+import { apiFetch } from "@/src/lib/api";
+import type { ApiResponse, PasswordResetVerifyRes } from "@/src/modules/auth/type";
+
+type VerifyPayload = { email: string; code: string };
+
+async function verifyResetCode(payload: VerifyPayload) {
+  return apiFetch<ApiResponse<PasswordResetVerifyRes>>("/auth/password-reset/verify", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
 
 const ForgetPasswordCode = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const length = 4;
   const [value, setValue] = React.useState("");
   const inputRef = React.useRef<HTMLInputElement | null>(null);
 
+  const [errorMsg, setErrorMsg] = React.useState<string>("");
+
+  const email =
+    (typeof window !== "undefined" && sessionStorage.getItem("reset_email")) ||
+    searchParams.get("email") ||
+    "";
+
   const digits = Array.from({ length }, (_, i) => value[i] || "");
 
+  const { mutateAsync, isPending } = useMutation({
+    mutationFn: verifyResetCode,
+    onSuccess: (res) => {
+      const resetToken = (res as any)?.data?.resetToken;
+
+      if (resetToken && typeof window !== "undefined") {
+        sessionStorage.setItem("reset_token", resetToken);
+      }
+
+      router.push("/reset-password");
+    },
+    onError: (err: any) => {
+      setErrorMsg(err?.message || "Invalid code. Please try again.");
+    },
+  });
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setErrorMsg("");
     const onlyNums = e.target.value.replace(/\D/g, "").slice(0, length);
     setValue(onlyNums);
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (value.length < length) return;
 
-    router.push("/reset-password");
+    if (!email) {
+      setErrorMsg("Missing email. Please go back and enter your email again.");
+      return;
+    }
+
+    if (value.length < length) {
+      setErrorMsg("Please enter the 4-digit code.");
+      return;
+    }
+
+    await mutateAsync({ email, code: value });
   };
 
   return (
@@ -36,8 +83,8 @@ const ForgetPasswordCode = () => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        px: 3,
-        py: 3, 
+        px: { xs: 2, sm: 3 },
+        py: { xs: 2, sm: 3 },
       }}
     >
       <Box
@@ -49,26 +96,22 @@ const ForgetPasswordCode = () => {
           boxShadow: "0 20px 45px rgba(0,0,0,0.15)",
           background:
             "linear-gradient(292.39deg, rgba(246, 227, 231, 0.84) 1.98%, rgba(52, 71, 170, 0.87) 98.11%)",
-
-          height: {
-            xs: "auto",
-            lg: "min(921px, calc(100vh - 48px))",
-          },
-
-          
-          p: "24px",
+          height: "min(921px, calc(100vh - 48px))",
+          p: { xs: 2, sm: 3 },
           display: "grid",
-          gap: "89px",
+          gap: { xs: 4, sm: 6, lg: "89px" },
           gridTemplateColumns: { xs: "1fr", lg: "1fr 1fr" },
+          alignItems: "center",
         }}
       >
         <Box
           sx={{
             display: "flex",
             alignItems: "center",
-            justifyContent: { xs: "center", lg: "flex-start" },
+            // ✅ توسيط كامل على الموبايل
             color: "white",
-            px: { xs: 2, lg: 4 },
+            px: { xs: 0, sm: 2, lg: 4 },
+            py: { xs: 2, lg: 0 },
           }}
         >
           <Box
@@ -76,7 +119,8 @@ const ForgetPasswordCode = () => {
             onSubmit={handleSubmit}
             sx={{
               width: "100%",
-              maxWidth: 430,
+              // ✅ نفس روح maxWidth بتاعة forgot
+              maxWidth: { xs: 480, sm: 430 },
               display: "flex",
               flexDirection: "column",
               gap: 3,
@@ -93,15 +137,23 @@ const ForgetPasswordCode = () => {
               Enter the 4-digit verification code we sent to your email.
             </Typography>
 
+            {email ? (
+              <Typography sx={{ color: "rgba(255,255,255,0.85)", fontSize: 14 }}>
+                Sent to: <strong>{email}</strong>
+              </Typography>
+            ) : null}
+
             {/* OTP */}
             <Box
               onClick={() => inputRef.current?.focus()}
               sx={{
                 display: "flex",
                 justifyContent: "center",
-                gap: 2.5,
+                gap: { xs: 1.5, sm: 2.5 },
                 cursor: "text",
                 userSelect: "none",
+                // ✅ يمنع اللف الغريب على شاشات ضيقة جدًا
+                flexWrap: "nowrap",
               }}
             >
               <input
@@ -123,8 +175,8 @@ const ForgetPasswordCode = () => {
                 <Box
                   key={i}
                   sx={{
-                    width: 56,
-                    height: 56,
+                    width: { xs: "clamp(48px, 14vw, 56px)", sm: 56 },
+                    height: { xs: "clamp(48px, 14vw, 56px)", sm: 56 },
                     borderRadius: "10px",
                     display: "flex",
                     alignItems: "center",
@@ -133,7 +185,9 @@ const ForgetPasswordCode = () => {
                     fontWeight: 700,
                     color: "white",
                     backgroundColor: "rgba(255,255,255,0.05)",
-                    border: "1px solid rgba(255,255,255,0.45)",
+                    border: errorMsg
+                      ? "1px solid rgba(255,120,120,0.9)"
+                      : "1px solid rgba(255,255,255,0.45)",
                   }}
                 >
                   {d}
@@ -141,10 +195,23 @@ const ForgetPasswordCode = () => {
               ))}
             </Box>
 
+            {errorMsg ? (
+              <Typography
+                sx={{
+                  color: "rgba(255,220,220,0.95)",
+                  fontSize: 14,
+                  textAlign: "center",
+                }}
+              >
+                {errorMsg}
+              </Typography>
+            ) : null}
+
             <Button
               type="submit"
               variant="contained"
               fullWidth
+              disabled={isPending}
               sx={{
                 backgroundColor: "#3447AADE",
                 height: "50px",
@@ -153,41 +220,42 @@ const ForgetPasswordCode = () => {
                 textTransform: "none",
                 fontWeight: 600,
                 "&:hover": { backgroundColor: "#3447AA", boxShadow: "none" },
+                "&:disabled": { opacity: 0.7 },
               }}
             >
-              Confirm
+              {isPending ? "Verifying..." : "Confirm"}
+            </Button>
+
+            <Button
+              type="button"
+              variant="text"
+              onClick={() => router.push("/auth/forgot-password")}
+              sx={{
+                color: "rgba(255,255,255,0.9)",
+                textTransform: "none",
+                "&:hover": { backgroundColor: "rgba(255,255,255,0.08)" },
+              }}
+            >
+              Back
             </Button>
           </Box>
         </Box>
 
-        {/* ✅ RIGHT IMAGE */}
+        {/* RIGHT IMAGE */}
         <Box
           sx={{
             position: "relative",
             display: { xs: "none", lg: "block" },
             borderRadius: "16px",
             overflow: "hidden",
+            height: "100%",
+            minHeight: 420,
           }}
         >
-          <Image
-            src="/authImage.jpg"
-            alt="Auth"
-            fill
-            style={{ objectFit: "cover" }}
-            priority
-          />
-
+          <Image src="/authImage.jpg" alt="Auth" fill style={{ objectFit: "cover" }} priority />
           <Box sx={{ position: "absolute", inset: 0, bgcolor: "rgba(0,0,0,0.3)" }} />
 
-          <Box
-            sx={{
-              position: "absolute",
-              inset: 0,
-              p: "24px",
-              mt: "64px",
-              color: "white",
-            }}
-          >
+          <Box sx={{ position: "absolute", inset: 0, p: "24px", mt: "64px", color: "white" }}>
             <Typography variant="h4" fontWeight={700} sx={{ mb: 1 }}>
               Building clarity into your daily work.
             </Typography>
@@ -203,3 +271,5 @@ const ForgetPasswordCode = () => {
 };
 
 export default ForgetPasswordCode;
+
+
