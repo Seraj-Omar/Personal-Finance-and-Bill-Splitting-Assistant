@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { IconBell, IconChevronDown, IconSearch, IconSettings } from "./icons";
 
-export default function AdminHeader() {
+export default function DashboardsHeader() {
   return (
     <header className="flex w-full items-center justify-between bg-white px-4 py-4 lg:h-[104px] lg:p-6">
      

@@ -15,10 +15,18 @@ import {
 
 const nav = [
   { label: "Dashboard", href: "/dashboard", icon: IconCategory },
-  { label: "Users Activity", href: "/users-activity", icon: IconUsersActivity },
-  { label: "Notifications", href: "/notifications", icon: IconNotification },
-  { label: "Profile", href: "/profile", icon: IconUser },
-  { label: "Setting", href: "/settings", icon: IconSettingActive },
+  {
+    label: "Users Activity",
+    href: "/dashboard/users-activity",
+    icon: IconUsersActivity,
+  },
+  {
+    label: "Notifications",
+    href: "/dashboard/notifications",
+    icon: IconNotification,
+  },
+  { label: "Profile", href: "/dashboard/profile", icon: IconUser },
+  { label: "Setting", href: "/dashboard/settings", icon: IconSettingActive },
 ];
 
 function SidebarContent() {
@@ -26,7 +34,7 @@ function SidebarContent() {
 
   return (
     <div className="bg-white pt-8 pb-8">
-    
+      {/* Logo */}
       <div className="px-12">
         <div className="text-[32px] font-extrabold leading-none">
           <span className="text-[#355FC7]">Fin</span>
@@ -34,10 +42,14 @@ function SidebarContent() {
         </div>
       </div>
 
-     
+      {/* Navigation */}
       <div className="mt-12 flex flex-col">
         {nav.map((item) => {
-          const active = pathname === item.href;
+          const active =
+            item.href === "/dashboard"
+              ? pathname === "/dashboard"
+              : pathname === item.href || pathname.startsWith(item.href + "/");
+
           const Icon = item.icon;
 
           return (
@@ -51,18 +63,17 @@ function SidebarContent() {
                     : "font-semibold text-[#1C1A1A]",
                 ].join(" ")}
               >
-                {active ? (
+                {active && (
                   <span className="absolute left-0 top-0 h-12 w-[18px] rounded-r bg-[#3447AA]" />
-                ) : null}
+                )}
 
                 <Icon className="h-[24px] w-[24px] shrink-0" />
                 <span className="tracking-[0.3px]">{item.label}</span>
               </Link>
 
-             
-              {item.href === "/notifications" ? (
+              {item.href === "/dashboard/notifications" && (
                 <div className="mt-2 border-t border-[#AEAEAE]" />
-              ) : null}
+              )}
             </div>
           );
         })}
@@ -79,40 +90,44 @@ function SidebarContent() {
         </Link>
       </div>
 
-     
+      {/* Divider */}
       <div className="mt-2 border-t border-[#AEAEAE]" />
 
-     
-      <div className="mt-2">
-        <Link
-          href="/logout"
-          className="flex h-[49px] items-center gap-4 pl-12 pr-6 text-sm font-semibold text-[#FF5050]"
-        >
-          <IconLogout className="h-[17px] w-[17px] shrink-0" />
-          <span className="tracking-[0.3px]">Logout</span>
-        </Link>
-      </div>
+    {/* Logout */}
+<div className="mt-2">
+  <button
+    type="button"
+    onClick={() => {
+      localStorage.removeItem("token");
+
+      window.location.href = "/"; 
+    }}
+    className="flex h-[49px] w-full items-center gap-4 pl-12 pr-6 text-sm font-semibold text-[#FF5050]"
+  >
+    <IconLogout className="h-[17px] w-[17px] shrink-0" />
+    <span className="tracking-[0.3px]">Logout</span>
+  </button>
+</div>
     </div>
   );
 }
 
-export default function AdminSidebar() {
+export default function DashboardsSidebar() {
   const pathname = usePathname();
   const [open, setOpen] = React.useState(false);
 
-  
   React.useEffect(() => {
     setOpen(false);
   }, [pathname]);
 
   return (
     <>
-     
+      {/* Desktop */}
       <aside className="hidden h-[1185px] w-[236px] shrink-0 bg-white md:block">
         <SidebarContent />
       </aside>
 
-     
+      {/* Mobile toggle */}
       <button
         type="button"
         onClick={() => setOpen(true)}
@@ -122,7 +137,7 @@ export default function AdminSidebar() {
         ☰
       </button>
 
-    
+      {/* Overlay */}
       <div
         className={[
           "fixed inset-0 z-40 bg-black/30 transition-opacity md:hidden",
@@ -132,7 +147,7 @@ export default function AdminSidebar() {
         aria-hidden="true"
       />
 
-      
+      {/* Mobile sidebar */}
       <aside
         className={[
           "fixed left-0 top-0 z-50 h-dvh w-[260px] bg-white shadow-lg transition-transform md:hidden",

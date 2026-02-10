@@ -1,17 +1,18 @@
-import PageHero from "../../shared/ui/page-hero/PageHero"
 import Footer from "../../components/footer/Footer";
 import Header from "../../components/Header";
+import PageHeroWrapper from "../../shared/ui/page-hero/PageHeroWrapper";
+
 export default function MainLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <>
       <Header />
-      <PageHero title="Services" breadcrumb={["Home", "Service"]} />
+      <PageHeroWrapper />
       {children}
       <Footer />
     </>
-  )
+  );
 }
