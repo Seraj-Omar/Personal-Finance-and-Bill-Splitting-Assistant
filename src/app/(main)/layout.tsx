@@ -7,7 +7,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   return (
     <AuthGateWrapper>
       <Header />
-      <PageHero title="Services" breadcrumb={["Home", "Service"]} />
+      <PageHeroWrapper />
       {children}
       <Footer />
     </AuthGateWrapper>
