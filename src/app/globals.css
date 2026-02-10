@@ -35,9 +35,14 @@ body {
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    /* --background: #0a0a0a; */
     --foreground: #ededed;
   }
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
 }
 
 body {
@@ -45,12 +50,12 @@ body {
   color: var(--foreground);
     font-family: "Roboto", sans-serif;
 }
-
 .hero-gradient {
   background: linear-gradient(
     90deg,
-#f39bab63 0%,
-#2c42af6e 100%  );
+    #f39baba6 0%,
+    #2c42af99 100%
+  );
 }
 
 .main-text-color {

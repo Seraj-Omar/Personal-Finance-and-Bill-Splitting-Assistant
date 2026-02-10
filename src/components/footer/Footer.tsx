@@ -1,3 +1,4 @@
+import Link from "next/link"
 import FooterBackground from "./FooterBackground"
 import {
   Mail,
@@ -10,7 +11,7 @@ import {
 
 const Footer = () => {
   return (
-    <footer className="relative overflow-hidden text-white main-blue-color rounded-2xl ">
+<footer className="relative overflow-hidden text-white main-blue-color rounded-t-2xl">
 
       {/* Background */}
       <FooterBackground />
@@ -21,10 +22,9 @@ const Footer = () => {
         {/* Logo & About */}
         <div>
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-15 h-15   flex items-center justify-center text-lg">
+            <div className="w-25 h-25   flex items-center justify-center text-lg">
               <img src="/logo.png" alt="Smart Finance Logo" />
             </div>
-            <h3 className="text-xl font-bold">Smart Finance</h3>
           </div>
 
           <p className="text-sm opacity-90 mb-6">
@@ -43,27 +43,82 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Quick Links */}
-        <div>
-          <h4 className="font-semibold mb-4">Quick Links</h4>
-          <ul className="space-y-3 text-sm opacity-90">
-            <li className="cursor-pointer hover:opacity-100">Service</li>
-            <li className="cursor-pointer hover:opacity-100">Home</li>
-            <li className="cursor-pointer hover:opacity-100">Reminder</li>
-            <li className="cursor-pointer hover:opacity-100">Pages</li>
-          </ul>
-        </div>
+      <div>
+  <h4 className="font-semibold mb-4">Quick Links</h4>
+  <ul className="space-y-3 text-sm opacity-90">
+    <li>
+      <Link
+        href="/"
+        className="cursor-pointer hover:opacity-100"
+      >
+        Service
+      </Link>
+    </li>
+    <li>
+      <Link
+        href="/"
+        className="cursor-pointer hover:opacity-100"
+      >
+        Home
+      </Link>
+    </li>
+    <li>
+      <Link
+        href="/reminder"
+        className="cursor-pointer hover:opacity-100"
+      >
+        Reminder
+      </Link>
+    </li>
+    <li>
+      <Link
+        href="/pages"
+        className="cursor-pointer hover:opacity-100"
+      >
+        Pages
+      </Link>
+    </li>
+  </ul>
+</div>
 
-        {/* Featured Service */}
-        <div>
-          <h4 className="font-semibold mb-4">Featured Service</h4>
-          <ul className="space-y-3 text-sm opacity-90">
-            <li className="cursor-pointer hover:opacity-100">Budget</li>
-            <li className="cursor-pointer hover:opacity-100">Debts</li>
-            <li className="cursor-pointer hover:opacity-100">Expense</li>
-            <li className="cursor-pointer hover:opacity-100">Invoice</li>
-          </ul>
-        </div>
+{/* Featured Service */}
+<div>
+  <h4 className="font-semibold mb-4">Featured Service</h4>
+  <ul className="space-y-3 text-sm opacity-90">
+    <li>
+      <Link
+        href="/service/budget"
+        className="cursor-pointer hover:opacity-100"
+      >
+        Budget
+      </Link>
+    </li>
+    <li>
+      <Link
+        href="/service/debts"
+        className="cursor-pointer hover:opacity-100"
+      >
+        Debts
+      </Link>
+    </li>
+    <li>
+      <Link
+        href="/service/expense"
+        className="cursor-pointer hover:opacity-100"
+      >
+        Expense
+      </Link>
+    </li>
+    <li>
+      <Link
+        href="/"
+        className="cursor-pointer hover:opacity-100"
+      >
+        Invoice
+      </Link>
+    </li>
+  </ul>
+</div>
 
         {/* Newsletter */}
         <div>
