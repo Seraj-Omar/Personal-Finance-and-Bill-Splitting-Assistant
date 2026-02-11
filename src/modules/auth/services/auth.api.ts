@@ -55,24 +55,34 @@ export async function requestResetCode(email: string) {
 
 
 
-// export function confirmResetPassword(newPassword: string) {
-//   return apiFetch<ApiResponse<{ success: true }>>("/auth/password-reset/confirm", {
-//     method: "PATCH",
-//     credentials: "include",
-//     body: JSON.stringify({ newPassword }),
-//   });
-// }
-
-export function confirmResetPassword(newPassword: string) {
-  return  fetch(
-    "https://gsg-project-group-5.vercel.app/api/v1/auth/password-reset/confirm",
-    {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify({ newPassword }),
-    }
-  );
+export async function confirmResetPassword(newPassword: string, resetToken: string) {
+  return apiFetch("/auth/password-reset/confirm", {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${resetToken}`,
+    },
+    body: JSON.stringify({ newPassword }),
+  });
 }
+
+
+
+
+// export function confirmResetPassword(newPassword: string) {
+//   const token =
+//     typeof window !== "undefined"
+//       ? sessionStorage.getItem("token")
+//       : null;
+
+//   return fetch(
+//     "https://gsg-project-group-5.vercel.app/api/v1/auth/password-reset/confirm",
+//     {
+//       method: "PATCH",
+//       headers: {
+//         "Content-Type": "application/json",
+//         ...(token ? { Authorization: `Bearer ${token}` } : {}),
+//       },
+//       body: JSON.stringify({ newPassword }),
+//     }
+//   );
+// }
