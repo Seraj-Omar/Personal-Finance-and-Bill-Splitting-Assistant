@@ -19,11 +19,10 @@ export default function Navbar() {
   const [isServiceOpenMobile, setIsServiceOpenMobile] = useState(false);
   const [isServiceOpen, setIsServiceOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
-
   const [mounted, setMounted] = useState(false);
   const [cachedUser, setCachedUser] = useState<CachedUser>(null);
 
-const { data: sessionData } = useSession(true);
+  const { data: sessionData } = useSession(true);
   const serverUser = sessionData?.data?.user ?? null;
 
   useEffect(() => {
@@ -61,12 +60,15 @@ const { data: sessionData } = useSession(true);
       { name: "Expenses", href: "/services/expenses" },
       { name: "Income", href: "/services/incomes" },
     ],
-    []
+    [],
   );
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (serviceRef.current && !serviceRef.current.contains(event.target as Node)) {
+      if (
+        serviceRef.current &&
+        !serviceRef.current.contains(event.target as Node)
+      ) {
         setIsServiceOpen(false);
       }
     }
@@ -116,7 +118,7 @@ const { data: sessionData } = useSession(true);
           </div>
         </Link>
 
-        <ul className="hidden md:flex gap-[24px] items-center text-sm font-medium text-[18px]">
+        <ul className="hidden lg:flex gap-[24px] items-center text-sm font-medium text-[18px]">
           <li>
             <Link href="/" className={isActiveExact("/")}>
               Home
@@ -167,7 +169,7 @@ const { data: sessionData } = useSession(true);
         </ul>
 
         {/* Desktop Right */}
-        <div className="hidden md:flex items-center gap-[12px] text-[18px] font-medium">
+        <div className="hidden lg:flex items-center gap-[12px] text-[18px] font-medium">
           <div className="relative">
             <button
               type="button"
@@ -208,10 +210,10 @@ const { data: sessionData } = useSession(true);
         </div>
 
         {/* Mobile Right */}
-        <div className="md:hidden flex items-center gap-3">
+        <div className="lg:hidden flex items-center gap-1 md:gap-3">
           <div className="relative">
             <button
-              className="w-[30px] h-[30px] md:w-[40px] md:h-[40px]  flex items-center justify-center rounded-full bg-[#f9f9fa] text-gray-700 hover:text-[#3447aaee] transition"
+              className="w-[35px] h-[35px] md:w-[40px] md:h-[40px]  flex items-center justify-center rounded-full bg-[#f9f9fa] text-gray-700 hover:text-[#3447aaee] transition"
               type="button"
               onClick={() => setIsNotificationsOpen((prev) => !prev)}
             >
@@ -220,13 +222,16 @@ const { data: sessionData } = useSession(true);
           </div>
 
           <button
-            className="w-[40px] h-[40px] flex items-center justify-center rounded-full bg-[#f9f9fa] text-gray-700 hover:text-[#3447aaee] transition"
+            className="w-[35px] h-[35px] md:w-[40px] md:h-[40px] flex items-center justify-center rounded-full bg-[#f9f9fa] text-gray-700 hover:text-[#3447aaee] transition"
             type="button"
           >
-            <Search size={20} />
+            <Search className="w-[15px] h-[15px] md:w-[20px] md:h-[20px]" />
           </button>
 
-          <button type="button" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+          <button
+            type="button"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
@@ -245,14 +250,20 @@ const { data: sessionData } = useSession(true);
                 className="flex items-center justify-between"
               >
                 <span>Service</span>
-                <ChevronDown size={16} className={`${isServiceOpen ? "rotate-180" : ""}`} />
+                <ChevronDown
+                  size={16}
+                  className={`${isServiceOpen ? "rotate-180" : ""}`}
+                />
               </button>
 
               {isServiceOpenMobile && (
                 <ul className="flex flex-col gap-2 pl-4 text-sm text-gray-600">
                   {services.map((item) => (
                     <li key={item.href}>
-                      <Link href={item.href} onClick={() => setIsMobileMenuOpen(false)}>
+                      <Link
+                        href={item.href}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
                         {item.name}
                       </Link>
                     </li>
