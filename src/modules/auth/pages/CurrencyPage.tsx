@@ -71,10 +71,10 @@ export default function CurrencyPage() {
 
   useEffect(() => {
     if (meLoading) return;
+const hasCurrency = !!meRes?.data?.user?.defaultCurrencyId;
+if (hasCurrency) {
+  router.replace("/");
 
-    if (meRes?.data?.user?.currency
-) {
-      router.replace("/");
     }
   }, [meRes, meLoading, router]);
 
