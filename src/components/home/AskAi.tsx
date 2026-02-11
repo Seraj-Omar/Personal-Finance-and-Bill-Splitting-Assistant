@@ -66,7 +66,7 @@ export default function AskAi() {
                             ))}
                         </Box>
                         <button 
-                        onClick={() => {router.push("/ask-ai")}}
+                        onClick={() => {router.push("/chat")}}
                         type="button" className="mt-6 px-6 py-3 rounded-xl w-full text-white text-sm bg-[#3447AA] hover:bg-[#2a3a8c] hover:cursor-pointer transition-colors duration-300 ease-in-out">
                             Ask AI
                         </button>
