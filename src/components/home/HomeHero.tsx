@@ -44,8 +44,8 @@ export default function HomeHero() {
 
                 <Box component="header" className="flex flex-col gap-5 my-4 w-full lg:w-auto">
                     <Box className="w-fit">
-                        <TitleWithGradient title="Financial Service" text_size="16px" text_color="#FFFFFF"/>
-                    </Box>
+	                        <TitleWithGradient title="Financial Service" text_size="sm" text_color="#FFFFFF"/>
+	                    </Box>
                     <Typography id="home-hero-heading" component="h1" fontWeight="700" fontSize="48px" color="#FFFFFF" className="max-w-lg">
                         How to Manage Your Finances
                     </Typography>
@@ -78,7 +78,7 @@ export default function HomeHero() {
                         </Typography>
                     </Box>
                     <button
-                    onClick={() => {router.push("/expenses")}}
+                    onClick={() => {router.push("/services/expenses")}}
                     type="button"
                     className="text-[#3447AA] bg-[#FFFFFF] w-fit px-3 py-4 rounded-2xl text-[18px] font-[500] hover:bg-[#f0f0f0] hover:cursor-pointer transition-colors duration-300 ease-in-out"
                     >
