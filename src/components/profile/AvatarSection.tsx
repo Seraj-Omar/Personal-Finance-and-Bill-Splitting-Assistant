@@ -3,10 +3,11 @@ import { IconCamera, IconX } from "@tabler/icons-react";
 import { useState, useRef, useEffect } from "react";
 import UploadPictureModal from "./UploadPictureModal";
 
-export default function AvatarSection() {
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL
+export default function AvatarSection({ avatarAssetId }: { avatarAssetId: string| null }) {
   const [open, setOpen] = useState(false);
   const [cameraOpen, setCameraOpen] = useState(false);
-  const [avatar, setAvatar] = useState("/profile.jpg");
+  const [avatar, setAvatar] = useState(avatarAssetId!=null? BASE_URL + "/"+avatarAssetId : "/profile.jpg");
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);

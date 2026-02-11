@@ -4,4 +4,5 @@ export interface UserProfile {
   email: string;
   phone?: string | null;
   avatarAssetId?: string | null;
+  defaultCurrencyId?: string | null;
 }

@@ -11,7 +11,8 @@ import { useEffect } from "react";
 import {UserProfile} from "@/src/types/profile";
 import { profileService } from "@/src/services/profile-service";
 import { useCallback } from "react";
-import { User } from "lucide-react";
+//import { User } from "lucide-react";
+import { User } from "@/src/modules/auth/type";
 
 export default function ProfileLayout() {
   const searchParams = useSearchParams();
@@ -27,10 +28,13 @@ export default function ProfileLayout() {
   const fetchUserProfile = useCallback(async () => {
     try {
       setLoading(true);
-      const profile = await profileService.getProfile(
-      
-      );
-      setUser(profile);
+      const profile = await profileService.getProfile();
+      if (profile) {
+        setUser(profile);
+        console.log("USER PROFILE:", profile);
+        return;
+      }
+      setUser(null);
     } catch (err) {
       console.error(err);
     } finally {
@@ -40,6 +44,7 @@ export default function ProfileLayout() {
 
   useEffect(() => {
     fetchUserProfile();
+ 
   }, [fetchUserProfile]);
 
   useEffect(() => {
@@ -54,7 +59,7 @@ export default function ProfileLayout() {
         data
        
       );
-      //  await fetchUserProfile();
+        await fetchUserProfile();
     } catch (err) {
       console.error("Update failed", err);
     }
@@ -73,13 +78,13 @@ export default function ProfileLayout() {
       />
 
       <div className="flex-1 bg-white rounded-2xl p-6 ml-6">
-        <AvatarSection />
+        <AvatarSection avatarAssetId={user?.avatarAssetId ?? null} />
         <Divider />
 
         {activeTab === "info" && user && (
           <PersonalInfoForm user={user} onSubmit={handleUpdate} />
         )}
-        {activeTab === "password" && <PasswordForm />}
+        {activeTab === "password" && <PasswordForm defaultCurrencyId={user?.defaultCurrencyId ?? ""} onChange={handleUpdate} />}
       </div>
     </div>
   );

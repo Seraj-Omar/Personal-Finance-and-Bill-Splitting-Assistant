@@ -8,6 +8,7 @@ const HERO_MAP: Record<string, { title: string; breadcrumb: string[] }> = {
   "/services": { title: "Services", breadcrumb: ["Home", "Service"] },
   "/services/bills": { title: "Bills", breadcrumb: ["Home", "Service", "Bills"] },
   "/services/debts": { title: "Debts", breadcrumb: ["Home", "Service", "Debts"] },
+  "/settings/profile": { title: "My Profile", breadcrumb: [ "Settings", "My Profile"] },
 };
 
 export default function PageHeroWrapper() {
