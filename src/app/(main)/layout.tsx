@@ -1,4 +1,4 @@
-import PageHero from "../../shared/ui/page-hero/PageHero";
+import PageHeroWrapper from "../../shared/ui/page-hero/PageHeroWrapper";
 import Footer from "../../components/footer/Footer";
 import Header from "../../components/Header";
 import AuthGateWrapper from "@/src/modules/auth/components/AuthGateWrapper";
@@ -7,7 +7,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   return (
     <AuthGateWrapper>
       <Header />
-      <PageHero title="Services" breadcrumb={["Home", "Service"]} />
+      <PageHeroWrapper />
       {children}
       <Footer />
     </AuthGateWrapper>

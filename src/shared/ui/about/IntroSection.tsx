@@ -1,19 +1,19 @@
 export default function IntroSection() {
-  // ✅ التحكم النهائي (مظبوط على الفيجما - Desktop)
+
   const IMG_MAX_W = 1040;
   const IMG_HEIGHT = 385;
   const IMG_OVERLAP = 225;
 
-  // ⬅️ قص الرؤوس (مظبوط، لا تغيّريه)
+
   const IMG_Y = -30;
 
-  // ⬅️ الميلان (يمين أعلى / يسار أوطى)
+
   const IMG_SKEW_DEG = -6;
 
-  // ✅ Responsive values (بدون ما نكسر الديسكتوب)
-  const RESPONSIVE_IMG_H = "clamp(240px, 38vw, 385px)";        // موبايل → ديسكتوب
-  const RESPONSIVE_OVERLAP = "clamp(120px, 18vw, 225px)";      // موبايل → ديسكتوب
-  const RESPONSIVE_MAX_W = `min(100%, ${IMG_MAX_W}px)`;        // ما يطلع برا الشاشة
+
+  const RESPONSIVE_IMG_H = "clamp(240px, 38vw, 385px)";        
+  const RESPONSIVE_OVERLAP = "clamp(120px, 18vw, 225px)";      
+  const RESPONSIVE_MAX_W = `min(100%, ${IMG_MAX_W}px)`;        
 
   return (
     <section className="w-full">
@@ -25,7 +25,7 @@ export default function IntroSection() {
             style={{
               fontFamily: "Roboto, sans-serif",
               fontWeight: 600,
-              fontSize: "clamp(18px, 2.2vw, 24px)", // ✅ responsive بدون ما يغير الديسكتوب
+              fontSize: "clamp(18px, 2.2vw, 24px)", 
               lineHeight: "clamp(30px, 3.4vw, 42px)",
               background: "linear-gradient(90.04deg, #3447AA 7.34%, #EFA5B6 32.61%)",
               WebkitBackgroundClip: "text",
@@ -37,7 +37,7 @@ export default function IntroSection() {
 
           <div
             style={{
-              width: "min(306px, 85vw)", // ✅ underline ما يطلع برا الشاشة
+              width: "min(306px, 85vw)",
               height: "4px",
               borderRadius: "16px",
               background:
@@ -62,7 +62,7 @@ export default function IntroSection() {
                   <path d="M41.8855 400.291C19.0343 401.223 0 382.95 0 360.08V40.2448C0 18.0182 18.0182 0 40.2448 0H1239.76C1261.98 0 1280 18.0182 1280 40.2448V311.137C1280 332.725 1262.97 350.468 1241.4 351.348L41.8855 400.291Z" />
                 </clipPath>
 
-                {/* ✅ Gradient الكارد الأساسي زي فيجما */}
+
                 <linearGradient
                   id="cardGradFigma"
                   x1="0"
@@ -76,7 +76,7 @@ export default function IntroSection() {
                   <stop offset="1" stopColor="#3447AA" />
                 </linearGradient>
 
-                {/* ✅ زهري خفيف بس تحت/شمال */}
+
                 <radialGradient
                   id="cardPinkCorner"
                   cx="0"
@@ -104,8 +104,8 @@ export default function IntroSection() {
               <p
                 style={{
                   fontFamily: "Roboto, sans-serif",
-                  fontSize: "clamp(16px, 2vw, 24px)", // ✅ responsive
-                  lineHeight: "clamp(28px, 3.2vw, 48px)", // ✅ responsive
+                  fontSize: "clamp(16px, 2vw, 24px)", 
+                  lineHeight: "clamp(28px, 3.2vw, 48px)", 
                   color: "#fff",
                   margin: 0,
                 }}
@@ -120,13 +120,13 @@ export default function IntroSection() {
           {/* ===== Image ===== */}
           <div
             className="relative z-20 flex justify-center"
-            style={{ marginTop: `calc(-1 * ${RESPONSIVE_OVERLAP})` }} // ✅ responsive overlap
+            style={{ marginTop: `calc(-1 * ${RESPONSIVE_OVERLAP})` }} 
           >
             <div
               className="w-full rounded-[32.49px] overflow-hidden"
               style={{
-                maxWidth: RESPONSIVE_MAX_W,              // ✅ ما يطلع برا الشاشة
-                height: RESPONSIVE_IMG_H,                // ✅ responsive height
+                maxWidth: RESPONSIVE_MAX_W,             
+                height: RESPONSIVE_IMG_H,               
                 boxShadow:
                   "40.61px 154.32px 162.44px rgba(38,38,38,0.07), 40.61px 52.35px 67.86px rgba(38,38,38,0.05)",
               }}
