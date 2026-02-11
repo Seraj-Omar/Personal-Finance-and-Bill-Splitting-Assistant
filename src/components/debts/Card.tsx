@@ -3,28 +3,30 @@ export default function Card({
   amount,
   icon,
   iconBg,
+  meta,
   amountColor = "text-gray-900",
 }: {
-  title: string;
-  amount: string;
-  icon: React.ReactNode;
-  iconBg: string;
-  amountColor?: string;
+  title: string
+  amount: string
+  icon: React.ReactNode
+  iconBg: string
+  meta?: React.ReactNode
+  amountColor?: string
 }) {
   return (
-    <div className="bg-white rounded-2xl p-5 shadow-sm flex flex-col items-start gap-3">
-      {/* Icon */}
-      <div
-        className={`w-12 h-12 flex items-center justify-center rounded-xl ${iconBg}`}
-      >
+    <div className="p-6 flex flex-col gap-3 bg-white rounded-lg shadow-sm">
+      <div className={`w-10 h-10 flex items-center justify-center rounded-xl ${iconBg}`}>
         {icon}
       </div>
 
       {/* Title */}
       <p className="text-sm text-gray-400">{title}</p>
 
-      {/* Amount */}
-      <p className={`text-lg font-semibold ${amountColor}`}>{amount}</p>
+      {/* Amount + meta */}
+      <div className="flex items-center gap-3 flex-wrap">
+        <p className={`text-lg font-semibold ${amountColor}`}>{amount}</p>
+        {meta}
+      </div>
     </div>
-  );
+  )
 }
