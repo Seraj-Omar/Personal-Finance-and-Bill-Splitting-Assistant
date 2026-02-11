@@ -41,7 +41,7 @@ export default function MissionSection() {
         className="w-full"
         style={{
           maxWidth: "1278px",
-          // ✅ على الموبايل لا تثبتي height
+
           height: "auto",
           padding: "24px",
           display: "flex",
@@ -103,7 +103,7 @@ export default function MissionSection() {
         <div
           style={{
             width: "100%",
-            // ✅ بدال 1230 ثابت
+
             maxWidth: "1230px",
             height: "auto",
             display: "flex",
@@ -127,7 +127,7 @@ export default function MissionSection() {
               <div
                 style={{
                   width: "100%",
-                  maxWidth: `${r.titleW}px`, // ✅ نفس الديسكتوب
+                  maxWidth: `${r.titleW}px`, 
                   height: "32px",
                   fontFamily: r.titleFontFamily ?? "Roboto, sans-serif",
                   fontWeight: 600,
@@ -144,7 +144,7 @@ export default function MissionSection() {
               <div
                 style={{
                   width: "100%",
-                  maxWidth: `${r.descW}px`, // ✅ نفس الديسكتوب
+                  maxWidth: `${r.descW}px`, 
                   fontFamily: "Roboto, sans-serif",
                   fontWeight: 400,
                   fontSize: "20px",
