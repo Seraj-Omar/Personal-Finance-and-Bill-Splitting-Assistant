@@ -90,7 +90,7 @@ export default function DebtsView() {
           <>
           <PaymentsTable debts={filteredDebts} filter={activeFilter} />
           {/* Show pagination only if there's more than 1 page */}
-            { (
+            {  totalPages > 1 && (
               <Pagination 
                 currentPage={currentPage} 
                 totalPages={totalPages} 
