@@ -8,7 +8,7 @@ export const profileService = {
     const token = localStorage.getItem("token");
     if (!token) throw new Error("No token found");
 
-    const res = await fetch(`${BASE_URL}/api/v1/users/${userId}`, {
+    const res = await fetch(`${BASE_URL}/users/${userId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
