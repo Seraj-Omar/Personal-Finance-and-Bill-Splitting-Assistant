@@ -3,7 +3,7 @@
 import { Box, Typography } from "@mui/material";
 export default function DashboardTitle({ title, width }: { title: string, width?: number }) {
     return (
-        <Box className="flex flex-col gap-1 rounded-2xl w-full overflow-hidden">
+        <Box className="flex flex-col gap-1  w-full overflow-hidden">
             <Typography component="h2" className="!text-[18px] !font-[500] px-2 pt-2  w-fit">
                 {title}
                 <Box sx={{ filter: "drop-shadow(0 3px 5px rgba(63,81,181,0.5))" }}>
