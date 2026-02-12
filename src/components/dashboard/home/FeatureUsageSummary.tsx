@@ -1,6 +1,6 @@
 "use client";
 import { Box, Typography } from "@mui/material";
-import DashboardTitle from "./home/DashboardTitle";
+import DashboardTitle from "./DashboardTitle";
 
 const groupBillsIcon=<svg width="45" height="45" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect width="45" height="45" rx="8" fill="#FFBDBC" fillOpacity="0.1"/>
