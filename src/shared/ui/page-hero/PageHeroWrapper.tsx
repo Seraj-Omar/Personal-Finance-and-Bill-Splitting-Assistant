@@ -8,7 +8,7 @@ const HERO_MAP: Record<string, { title: string; breadcrumb: string[] }> = {
   "/report": { title: "Report", breadcrumb: ["Profile", "Report"] },
   "/settings/profile": {
     title: "My Profile",
-    breadcrumb: ["settings", "My Profile"],
+    breadcrumb: ["Settings", "My Profile"],
   },
   "/services": { title: "Services", breadcrumb: ["Home", "Service"] },
   "/services/bills": {
