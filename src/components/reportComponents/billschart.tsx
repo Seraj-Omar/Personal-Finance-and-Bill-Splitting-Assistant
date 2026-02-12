@@ -121,14 +121,14 @@ export default function DonutChart() {
         const centerX = (chart.chartArea.left + chart.chartArea.right) / 2;
         const centerY = (chart.chartArea.top + chart.chartArea.bottom) / 2;
 
-        const radius = 37;
+        const radius = 45;
         ctx.save();
         ctx.beginPath();
         ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-        ctx.fillStyle = "#ffffff0f";
+        ctx.fillStyle = "#ffffff00";
         ctx.fill();
         ctx.lineWidth = 0.5;
-        ctx.strokeStyle = "rgb(215, 214, 214)";
+        ctx.strokeStyle = "rgba(215, 214, 214, 0.69)";
         ctx.stroke();
         ctx.restore();
 
@@ -148,14 +148,13 @@ export default function DonutChart() {
       type: "doughnut",
       data: {
         labels: ["Paid", "Unpaid", "Overdue"],
-      datasets: [
-  {
-    data: values,
-    backgroundColor: ["#16C087", "#FF5050", "#FFC100"],
-    borderWidth: 2,
-  }
-]
-
+        datasets: [
+          {
+            data: values,
+            backgroundColor: ["#16C087", "#FF5050", "#FFC100"],
+            borderWidth: 2,
+          },
+        ],
       },
       options: {
         responsive: true,

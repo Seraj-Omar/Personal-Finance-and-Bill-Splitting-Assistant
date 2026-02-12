@@ -17,7 +17,7 @@ const nav = [
   { label: "Dashboard", href: "/dashboard", icon: IconCategory },
   {
     label: "Users Activity",
-    href: "/dashboard/users-activity",
+    href: "/dashboard/userManagement",
     icon: IconUsersActivity,
   },
   {
@@ -93,21 +93,21 @@ function SidebarContent() {
       {/* Divider */}
       <div className="mt-2 border-t border-[#AEAEAE]" />
 
-    {/* Logout */}
-<div className="mt-2">
-  <button
-    type="button"
-    onClick={() => {
-      localStorage.removeItem("token");
+      {/* Logout */}
+      <div className="mt-2">
+        <button
+          type="button"
+          onClick={() => {
+            localStorage.removeItem("token");
 
-      window.location.href = "/"; 
-    }}
-    className="flex h-[49px] w-full items-center gap-4 pl-12 pr-6 text-sm font-semibold text-[#FF5050]"
-  >
-    <IconLogout className="h-[17px] w-[17px] shrink-0" />
-    <span className="tracking-[0.3px]">Logout</span>
-  </button>
-</div>
+            window.location.href = "/";
+          }}
+          className="flex h-[49px] w-full items-center gap-4 pl-12 pr-6 text-sm font-semibold text-[#FF5050]"
+        >
+          <IconLogout className="h-[17px] w-[17px] shrink-0" />
+          <span className="tracking-[0.3px]">Logout</span>
+        </button>
+      </div>
     </div>
   );
 }
