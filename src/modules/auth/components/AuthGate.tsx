@@ -1,41 +1,103 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useSession } from "../hooks/useSession";
-import { Box, Container, Skeleton, Stack } from "@mui/material";
+import React, { useEffect, useMemo, useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import { revalidate, fetchMe } from "../services/auth.api";
+import { Container, Skeleton, Stack, Box } from "@mui/material";
+
+type Provider = "LOCAL" | "GOOGLE" | null;
+
+function readProvider(): Provider {
+  if (typeof window === "undefined") return null;
+  const p = sessionStorage.getItem("auth_provider");
+  return p === "LOCAL" || p === "GOOGLE" ? p : null;
+}
+
+function readToken(): string | null {
+  if (typeof window === "undefined") return null;
+  return sessionStorage.getItem("token");
+}
 
 export default function AuthGate({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const pathname = usePathname();
 
-  const [token, setToken] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
+  const [provider, setProvider] = useState<Provider>(null);
+  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
-    setToken(sessionStorage.getItem("token"));
-    setReady(true);
+    const sync = () => {
+      setProvider(readProvider());
+      setToken(readToken());
+      setReady(true);
+    };
+
+    sync();
+    window.addEventListener("auth:changed", sync);
+    return () => window.removeEventListener("auth:changed", sync);
   }, []);
 
-  const { isLoading, error } = useSession(ready && !!token);
+  const sessionQ = useQuery({
+    queryKey: ["session"],
+    queryFn: revalidate,
+    enabled: ready && provider === "LOCAL" && !!token,
+    retry: false,
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
+
+  // GOOGLE: me (Cookie)
+  const meQ = useQuery({
+    queryKey: ["me"],
+    queryFn: fetchMe,
+    enabled: ready && provider === "GOOGLE",
+    retry: false,
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
+
+  const loading =
+    !ready ||
+    (provider === "LOCAL" && sessionQ.isLoading) ||
+    (provider === "GOOGLE" && meQ.isLoading);
+
+  const authed =
+    provider === "LOCAL"
+      ? !!(sessionQ.data as any)?.data?.user
+      : provider === "GOOGLE"
+      ? !!(meQ.data as any)?.data?.user
+      : false;
 
   useEffect(() => {
-    if (ready && !token) router.replace("/login");
-  }, [ready, token, router]);
+    if (!ready) return;
 
-  useEffect(() => {
-    const anyErr: any = error;
-    if (anyErr?.status === 401) {
-      sessionStorage.removeItem("token");
-      sessionStorage.removeItem("user");
-      sessionStorage.removeItem("cached_user");
-      router.replace("/login");
+    if (!provider) {
+      router.replace(`/login?next=${encodeURIComponent(pathname)}`);
+      return;
     }
-  }, [error, router]);
 
-  if (!ready) return null;
-  if (!token) return null;
+    if (provider === "LOCAL" && !token) {
+      router.replace(`/login?next=${encodeURIComponent(pathname)}`);
+      return;
+    }
 
-  if (isLoading) {
+    const status =
+      (sessionQ.error as any)?.status || (meQ.error as any)?.status;
+
+    if (status === 401) {
+      sessionStorage.removeItem("token");
+      sessionStorage.removeItem("cached_user");
+      sessionStorage.removeItem("auth_provider");
+      window.dispatchEvent(new Event("auth:changed"));
+      router.replace(`/login?next=${encodeURIComponent(pathname)}`);
+    }
+  }, [ready, provider, token, sessionQ.error, meQ.error, router, pathname]);
+
+  if (loading) {
     return (
       <Container
         maxWidth={false}
@@ -43,11 +105,8 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
         sx={{ py: 5, px: { xs: "10px", sm: "12px", md: "16px", lg: "100px" } }}
       >
         <Stack spacing={3}>
-          {/* Top area (header / title) */}
           <Skeleton variant="text" width={220} height={36} />
           <Skeleton variant="text" width={320} />
-
-          {/* Two columns section */}
           <Box
             sx={{
               display: "flex",
@@ -70,13 +129,14 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
             </Stack>
           </Box>
 
-          {/* Table/List section */}
           <Skeleton variant="text" width={180} height={28} />
           <Skeleton variant="rounded" height={360} />
         </Stack>
       </Container>
     );
   }
+
+  if (!authed) return null;
 
   return <>{children}</>;
 }
