@@ -19,6 +19,11 @@ const HERO_MAP: Record<string, { title: string; breadcrumb: string[] }> = {
     title: "Debts",
     breadcrumb: ["Home", "Service", "Debts"],
   },
+  "/settings/profile/rewards": {
+    title: "Rewards",
+    breadcrumb: ["Profile", "Rewards"],
+    bgImage: "/Rewards.png",
+  },
 };
 
 export default function PageHeroWrapper() {
@@ -26,7 +31,14 @@ export default function PageHeroWrapper() {
 
   const hero = HERO_MAP[pathname];
 
-  if (hero) return <PageHero title={hero.title} breadcrumb={hero.breadcrumb} />;
+  if (hero)
+    return (
+      <PageHero
+        title={hero.title}
+        breadcrumb={hero.breadcrumb}
+        bgImage={hero.bgImage}
+      />
+    );
 
   if (pathname.startsWith("/services")) {
     return <PageHero title="Services" breadcrumb={["Home", "Service"]} />;
