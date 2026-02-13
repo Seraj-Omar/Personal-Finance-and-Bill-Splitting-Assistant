@@ -17,21 +17,20 @@ const Budget = () => {
   const [activeFilter, setActiveFilter] = useState<FilterType>("All");
 
   return (
-<Container
-  maxWidth={false}
-  disableGutters
-  sx={{
-    py: 5,
-    px: { xs: "10px", sm: "12px", md: "16px", lg: "100px" }, 
-  }}
->
-
+    <Container
+      maxWidth={false}
+      disableGutters
+      sx={{
+        py: 5,
+        px: { xs: "10px", sm: "12px", md: "16px", lg: "100px" },
+      }}
+    >
       <PadgetComponent />
 
       <Box
         sx={{
           display: "flex",
-                flexDirection: { xs: "column", md: "row" },
+          flexDirection: { xs: "column", md: "row" },
 
           gap: 5,
           boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
@@ -71,10 +70,12 @@ const Budget = () => {
           mt: 5,
         }}
       >
-<TableBudget />
+        <TableBudget />
       </Box>
 
-      <Box sx={{       mt: 5,}} ><ManageExpenses /></Box>
+      <Box sx={{ mt: 5 }}>
+        <ManageExpenses />
+      </Box>
     </Container>
   );
 };
