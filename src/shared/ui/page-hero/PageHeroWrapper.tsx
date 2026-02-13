@@ -3,34 +3,25 @@
 import { usePathname } from "next/navigation";
 import PageHero from "./PageHero";
 
-const HERO_MAP: Record<string, { title: string; breadcrumb: string[] }> = {
-  "/about-us": { title: "About Us", breadcrumb: ["Home", "About Us"] },
-  "/report": { title: "Report", breadcrumb: ["Profile", "Report"] },
-  "/settings/profile": {
-    title: "My Profile",
-    breadcrumb: ["settings", "My Profile"],
-  },
-  "/services": { title: "Services", breadcrumb: ["Home", "Service"] },
-  "/services/bills": {
-    title: "Bills",
-    breadcrumb: ["Home", "Service", "Bills"],
-  },
-  "/services/debts": {
-    title: "Debts",
-    breadcrumb: ["Home", "Service", "Debts"],
-  },
-};
+function formatSegment(segment: string) {
+  if (!segment) return "";
+  return segment
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
 
 export default function PageHeroWrapper() {
   const pathname = usePathname();
+  
+  if (!pathname || pathname === "/") return null;
 
-  const hero = HERO_MAP[pathname];
+  const segments = pathname.split("/").filter(Boolean);
 
-  if (hero) return <PageHero title={hero.title} breadcrumb={hero.breadcrumb} />;
+  if (segments.length === 0) return null;
 
-  if (pathname.startsWith("/services")) {
-    return <PageHero title="Services" breadcrumb={["Home", "Service"]} />;
-  }
+  const title = formatSegment(segments[segments.length - 1]);
+  const breadcrumb = ["Home", ...segments.map(formatSegment)];
 
-  return null;
+  return <PageHero title={title} breadcrumb={breadcrumb} />;
 }
