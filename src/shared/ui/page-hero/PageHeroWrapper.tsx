@@ -3,7 +3,10 @@
 import { usePathname } from "next/navigation";
 import PageHero from "./PageHero";
 
-const HERO_MAP: Record<string, { title: string; breadcrumb: string[] }> = {
+const HERO_MAP: Record<
+  string,
+  { title: string; breadcrumb: string[]; bgImage?: string }
+> = {
   "/about-us": { title: "About Us", breadcrumb: ["Home", "About Us"] },
   "/report": { title: "Report", breadcrumb: ["Profile", "Report"] },
   "/settings/profile": {
