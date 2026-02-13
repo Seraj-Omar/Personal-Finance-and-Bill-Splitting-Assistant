@@ -65,7 +65,7 @@ const usageData = [
 ];
 export default function FeatureUsageSummary(){
     return(
-        <Box className="bg-[#FFFFFF] rounded-xl p-6 pb-0 flex flex-col gap-6 w-full">
+        <Box className="bg-[#FFFFFF] rounded-xl p-6 pb-0 flex flex-col gap-10 w-full">
             <DashboardTitle title="Feature Usage Summary" />
             <Box className="flex flex-col gap-5">
                 {usageData.map((item, index) => (

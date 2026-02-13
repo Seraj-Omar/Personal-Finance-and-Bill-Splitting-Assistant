@@ -114,7 +114,7 @@ export default function PeakUsageHours() {
                 {width > 0 && (
                     <BarChart
                         width={width}
-                        height={350}
+                        height={400}
                     xAxis={[
                         {
                             scaleType: "band",
