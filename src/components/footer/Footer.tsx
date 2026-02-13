@@ -1,5 +1,7 @@
-import Link from "next/link"
-import FooterBackground from "./FooterBackground"
+"use client";
+
+import Link from "next/link";
+import FooterBackground from "./FooterBackground";
 import {
   Mail,
   Phone,
@@ -7,18 +9,23 @@ import {
   Twitter,
   Instagram,
   ArrowUp,
-} from "lucide-react"
+} from "lucide-react";
+
+const scrollToTop = () => {
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+};
 
 const Footer = () => {
   return (
-<footer className="relative overflow-hidden text-white main-blue-color rounded-t-2xl">
-
+    <footer className="relative overflow-hidden text-white main-blue-color rounded-t-2xl">
       {/* Background */}
       <FooterBackground />
 
       {/* Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-8 py-16 grid grid-cols-1 md:grid-cols-4 gap-12">
-
         {/* Logo & About */}
         <div>
           <div className="flex items-center gap-3 mb-4">
@@ -28,7 +35,8 @@ const Footer = () => {
           </div>
 
           <p className="text-sm opacity-90 mb-6">
-            Smart tools to track, manage, and control your finances with confidence.
+            Smart tools to track, manage, and control your finances with
+            confidence.
           </p>
 
           <div className="space-y-3 text-sm">
@@ -43,82 +51,70 @@ const Footer = () => {
           </div>
         </div>
 
-      <div>
-  <h4 className="font-semibold mb-4">Quick Links</h4>
-  <ul className="space-y-3 text-sm opacity-90">
-    <li>
-      <Link
-        href="/"
-        className="cursor-pointer hover:opacity-100"
-      >
-        Service
-      </Link>
-    </li>
-    <li>
-      <Link
-        href="/"
-        className="cursor-pointer hover:opacity-100"
-      >
-        Home
-      </Link>
-    </li>
-    <li>
-      <Link
-        href="/reminder"
-        className="cursor-pointer hover:opacity-100"
-      >
-        Reminder
-      </Link>
-    </li>
-    <li>
-      <Link
-        href="/pages"
-        className="cursor-pointer hover:opacity-100"
-      >
-        Pages
-      </Link>
-    </li>
-  </ul>
-</div>
+        <div>
+          <h4 className="font-semibold mb-4">Quick Links</h4>
+          <ul className="space-y-3 text-sm opacity-90">
+            <li>
+              <Link href="/" className="cursor-pointer hover:opacity-100">
+                Service
+              </Link>
+            </li>
+            <li>
+              <Link href="/" className="cursor-pointer hover:opacity-100">
+                Home
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/reminder"
+                className="cursor-pointer hover:opacity-100"
+              >
+                Reminder
+              </Link>
+            </li>
+            <li>
+              <Link href="/pages" className="cursor-pointer hover:opacity-100">
+                Pages
+              </Link>
+            </li>
+          </ul>
+        </div>
 
-{/* Featured Service */}
-<div>
-  <h4 className="font-semibold mb-4">Featured Service</h4>
-  <ul className="space-y-3 text-sm opacity-90">
-    <li>
-      <Link
-        href="/service/budget"
-        className="cursor-pointer hover:opacity-100"
-      >
-        Budget
-      </Link>
-    </li>
-    <li>
-      <Link
-        href="/service/debts"
-        className="cursor-pointer hover:opacity-100"
-      >
-        Debts
-      </Link>
-    </li>
-    <li>
-      <Link
-        href="/service/expense"
-        className="cursor-pointer hover:opacity-100"
-      >
-        Expense
-      </Link>
-    </li>
-    <li>
-      <Link
-        href="/"
-        className="cursor-pointer hover:opacity-100"
-      >
-        Invoice
-      </Link>
-    </li>
-  </ul>
-</div>
+        {/* Featured Service */}
+        <div>
+          <h4 className="font-semibold mb-4">Featured Service</h4>
+          <ul className="space-y-3 text-sm opacity-90">
+            <li>
+              <Link
+                href="/service/budget"
+                className="cursor-pointer hover:opacity-100"
+              >
+                Budget
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/service/debts"
+                className="cursor-pointer hover:opacity-100"
+              >
+                Debts
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/service/expense"
+                className="cursor-pointer hover:opacity-100"
+              >
+                Expense
+              </Link>
+            </li>
+            <li>
+              <Link href="/" className="cursor-pointer hover:opacity-100">
+                Invoice
+              </Link>
+            </li>
+          </ul>
+        </div>
 
         {/* Newsletter */}
         <div>
@@ -154,12 +150,14 @@ const Footer = () => {
       </div>
 
       {/* Scroll To Top */}
-      <button className="absolute bottom-6 right-6 w-10 h-10 rounded-full border border-white/40 flex items-center justify-center hover:bg-white/20 transition">
+      <button
+        onClick={scrollToTop}
+        className="absolute bottom-6 right-6 w-10 h-10 rounded-full border border-white/40 flex items-center justify-center hover:bg-white/20 transition"
+      >
         <ArrowUp size={16} />
       </button>
-
     </footer>
-  )
-}
+  );
+};
 
-export default Footer
+export default Footer;
