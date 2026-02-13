@@ -24,6 +24,7 @@ export default function Dashboard() {
                     <ExpensesVsRevenues />
                 </Box>
                 <Box className="col-span-1">
+                    <MonthlyOverview />
                 </Box>
             </Box>
         </Box>
