@@ -1,4 +1,5 @@
 "use client";
+import React, { useEffect, useRef, useState } from "react";
 import { Typography, Box } from "@mui/material";
 import { BarChart } from "@mui/x-charts/BarChart";
 import DashboardTitle from "./DashboardTitle";
@@ -8,14 +9,11 @@ const hours = [
 "10:00","12:00","14:00","16:00","18:00","24:00",
 ];
 
-const data = [
-9000, 8800, 2500, 14000, 2300,
-7300, 22500, 3500, 23000, 11000, 19500,
-];
+const data = [9000, 8800, 2500, 14000, 2300, 7300, 22500, 3500, 23000, 11000, 19500];
 
 const mostActiveHours = "9 AM - 5 PM";
 
-// Custom bar shape: flat top, rounded bottom corners
+// Custom bar shape: rounded both ends
 type BottomRoundedBarProps = {
     x: number;
     xOrigin: number;
@@ -77,14 +75,43 @@ const BottomRoundedBar = (props: BottomRoundedBarProps) => {
 };
 
 export default function PeakUsageHours() {
+    const containerRef = useRef<HTMLDivElement | null>(null);
+    const [width, setWidth] = useState(0);
+
+    useEffect(() => {
+        if (!containerRef.current) return;
+
+        const element = containerRef.current;
+
+        const updateWidth = () => {
+            const newWidth = element.getBoundingClientRect().width;
+            if (newWidth > 0) {
+                setWidth(newWidth);
+            }
+        };
+
+        updateWidth();
+
+        const resizeObserver = new ResizeObserver(() => {
+            updateWidth();
+        });
+
+        resizeObserver.observe(element);
+
+        return () => {
+            resizeObserver.disconnect();
+        };
+    }, []);
+
     return (
-        <Box className="flex flex-col h-full bg-[#ffffff] w-full justify-start items-center gap-4 p-6 rounded-2xl">
+        <Box className="flex flex-col h-full bg-[#ffffff] w-full justify-start items-center gap-3 p-6 rounded-2xl">
             <DashboardTitle title="Peak Usage Hours" />
 
-            <Box className="w-full flex items-center justify-center mr-6">
-                <BarChart
-                    width={400}
-                    height={350}
+            <Box ref={containerRef} className="w-full flex items-center justify-center mr-6">
+                {width > 0 && (
+                    <BarChart
+                        width={width}
+                        height={350}
                     xAxis={[
                         {
                             scaleType: "band",
@@ -96,7 +123,6 @@ export default function PeakUsageHours() {
                                 fill: "#666",
                             },
                             disableTicks: true,
-                            disableLine: true,
                         },
                     ]}
                     yAxis={[
@@ -111,23 +137,21 @@ export default function PeakUsageHours() {
                                 value >= 1000 ? `${value / 1000}k` : `${value}`,
                         },
                     ]}
-                    series={[
-                        {
-                            data,
-                            color: "#3447AA",
-                        },
-                    ]}
-                    grid={{ horizontal: true, vertical: true }}
-                    sx={{
-                        '& .MuiChartsGrid-line': {
-                            strokeDasharray: '4 4',
-                        },
-                        '& .MuiChartsAxis-line': {
-                            strokeDasharray: '4 4',
-                        },
-                    }}
-                    slots={{ bar: BottomRoundedBar }}
-                />
+                        series={[
+                            {
+                                data,
+                                color: "#3448aacf",
+                            },
+                        ]}
+                        grid={{ horizontal: true, vertical: true }}
+                        sx={{
+                            "& .MuiChartsGrid-line": {
+                                strokeDasharray: "4 4",
+                            },
+                        }}
+                        slots={{ bar: BottomRoundedBar }}
+                    />
+                )}
             </Box>
 
             <Typography
