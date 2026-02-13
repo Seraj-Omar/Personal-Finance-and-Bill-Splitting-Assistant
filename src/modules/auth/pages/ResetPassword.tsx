@@ -2,14 +2,16 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import KeyOutlinedIcon from "@mui/icons-material/KeyOutlined";
 import { TextField, InputAdornment, Typography, Button } from "@mui/material";
 import { useConfirmResetPassword } from "../hooks/useConfirmResetPassword";
 
 const ResetPassword = () => {
-  const router = useRouter();
+ const router = useRouter();
+  const searchParams = useSearchParams();
+  const resetToken = searchParams.get("token") || "";
 
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -21,17 +23,16 @@ const ResetPassword = () => {
     event.preventDefault();
     setLocalError(null);
 
-    if (!newPassword || !confirmPassword) {
-      setLocalError("Please fill both fields.");
-      return;
-    }
-    if (newPassword !== confirmPassword) {
-      setLocalError("Passwords do not match.");
+    if (!newPassword || !confirmPassword) return setLocalError("Please fill both fields.");
+    if (newPassword !== confirmPassword) return setLocalError("Passwords do not match.");
+
+    if (!resetToken) {
+      setLocalError("Reset token is missing. Please open the link from your email again.");
       return;
     }
 
     try {
-      await mutateAsync(newPassword);
+      await mutateAsync({ newPassword, resetToken });
       router.push("/login");
     } catch (e: any) {
       setLocalError(e?.message || "Failed to reset password.");
