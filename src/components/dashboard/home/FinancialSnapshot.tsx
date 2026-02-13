@@ -44,7 +44,7 @@
     const labelRadius = size * 0.55;
 
     return (
-        <Box className="flex flex-col h-full bg-[#ffffff] w-full justify-between items-start gap-4 p-6 rounded-2xl">
+        <Box className="flex flex-col h-full bg-[#ffffff] w-full justify-between items-center gap-4 p-6 rounded-2xl">
         <Box className="flex flex-col gap-8 w-full">
             <DashboardTitle title="Financial snapshot" />
 
@@ -110,7 +110,7 @@
             </Box>
         </Box>
 
-        <Box className="flex flex-col gap-4 w-full mt-2">
+        <Box className="flex flex-col gap-4 w-full mt-2 max-w-[400px]">
             {data.map((item) => (
             <Box
                 key={item.id}
