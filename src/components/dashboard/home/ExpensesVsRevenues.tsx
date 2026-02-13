@@ -104,7 +104,7 @@ export default function ExpensesVsRevenues() {
 
     return (
         <Box className="bg-[#FFFFFF] rounded-xl p-6 pb-0 flex flex-col gap-3 w-full">
-            <DashboardTitle title="Expenses vs Revenues" width={30} />
+            <DashboardTitle title="Expenses vs Revenues" width={20} />
             <Box
                 ref={containerRef}
                 className="relative w-[calc(100%+3rem)] -mx-12"
