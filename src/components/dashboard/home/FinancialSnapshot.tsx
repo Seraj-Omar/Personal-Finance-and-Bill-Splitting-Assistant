@@ -90,21 +90,21 @@
                 width={size + 85}
                 height={size + 30}
                 margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
-                slotProps={{
-                root: {
-                    sx: {
+                sx={{
                     position: "relative",
                     zIndex: 1,
+                }}
+                slotProps={{
+                    legend: {
+                        sx: { display: "none" },
                     },
-                },
-                legend: { hidden: true },
-                pieArcLabel: {
-                    style: {
-                    fill: "#AEAEAE",
-                    fontSize: 14,
-                    fontWeight: 400,
+                    pieArcLabel: {
+                        style: {
+                            fill: "#AEAEAE",
+                            fontSize: 14,
+                            fontWeight: 400,
+                        },
                     },
-                },
                 }}
             />
             </Box>
