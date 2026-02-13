@@ -8,6 +8,7 @@ import FeatureUsageSummary from "./FeatureUsageSummary";
 import PeakUsageHours from "./PeakUsageHours";
 import ExpensesVsRevenues from "./ExpensesVsRevenues";
 import MonthlyOverview from "./MonthlyOverview";
+import Users from "../../userManagement/users";
 export default function Dashboard() {
     return (
         <Box className="flex flex-col h-screen bg-[#f9f9fa] gap-4 pt-4">
@@ -27,6 +28,7 @@ export default function Dashboard() {
                     <MonthlyOverview />
                 </Box>
             </Box>
+            <Users />
         </Box>
     );
 }
