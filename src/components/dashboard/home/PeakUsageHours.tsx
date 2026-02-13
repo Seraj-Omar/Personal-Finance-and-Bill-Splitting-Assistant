@@ -107,7 +107,10 @@ export default function PeakUsageHours() {
         <Box className="flex flex-col h-full bg-[#ffffff] w-full justify-start items-center gap-3 p-6 rounded-2xl">
             <DashboardTitle title="Peak Usage Hours" />
 
-            <Box ref={containerRef} className="w-full flex items-center justify-center mr-6">
+			<Box
+				ref={containerRef}
+				className="w-[calc(100%+3rem)] -mx-6 flex items-center justify-center"
+			>
                 {width > 0 && (
                     <BarChart
                         width={width}
