@@ -19,7 +19,9 @@ export default function Navbar() {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
   const isActiveExact = (path: string) =>
-    pathname === path ? "text-[#3447aaee] font-semibold" : "hover:text-[#3447aaee] transition";
+    pathname === path
+      ? "text-[#3447aaee] font-semibold"
+      : "hover:text-[#3447aaee] transition";
 
   const isActiveGroup = (path: string) =>
     pathname.startsWith(path)
@@ -33,12 +35,15 @@ export default function Navbar() {
       { name: "Expenses", href: "/services/expenses" },
       { name: "Income", href: "/services/incomes" },
     ],
-    []
+    [],
   );
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (serviceRef.current && !serviceRef.current.contains(event.target as Node)) {
+      if (
+        serviceRef.current &&
+        !serviceRef.current.contains(event.target as Node)
+      ) {
         setIsServiceOpen(false);
       }
     }
@@ -151,17 +156,17 @@ export default function Navbar() {
           </div>
 
           <button
-            className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition text-lg"
+            className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee]  transition "
             type="button"
           >
             <Search size={20} />
             <span>Search</span>
           </button>
 
-{loading ? null : !isAuthed ? (
-              <Link
+          {loading ? null : !isAuthed ? (
+            <Link
               href="/register"
-              className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition text-lg"
+              className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] transition "
             >
               <User size={20} className="fill-current" />
               <span>Sign up</span>
@@ -170,7 +175,7 @@ export default function Navbar() {
             <div className="flex items-center gap-3">
               <Link
                 href="/settings/profile"
-                className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition text-lg"
+                className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee]  transition "
               >
                 <User size={20} className="fill-current" />
                 <span>{user?.fullName || "Account"}</span>
@@ -249,23 +254,21 @@ export default function Navbar() {
               Budget
             </Link>
 
-{loading ? null : !isAuthed ? (
-                <Link
+            {loading ? null : !isAuthed ? (
+              <Link
                 href="/register"
-                className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition text-lg"
+                className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee]  transition "
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                <User size={20} className="fill-current" />
                 <span>Sign up</span>
               </Link>
             ) : (
               <div className="flex items-center gap-3">
                 <Link
                   href="/settings/profile"
-                  className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition text-lg"
+                  className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee]  transition "
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  <User size={20} className="fill-current" />
                   <span>{user?.fullName || "Account"}</span>
                 </Link>
               </div>
