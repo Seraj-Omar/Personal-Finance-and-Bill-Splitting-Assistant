@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
 import { Trash2 } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 type UserStatus = "ACTIVE" | "INACTIVE";
 
@@ -72,6 +72,11 @@ export default function Users() {
       alert("An error occurred while deleting the user");
     }
   };
+  const itemsPerPage = 7;
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.ceil(da.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentUsers = da.slice(startIndex, startIndex + itemsPerPage);
 
   return (
     <div className="p-4 bg-white rounded-[16px] ">
@@ -181,7 +186,7 @@ export default function Users() {
           </thead>
 
           <tbody className="divide-y divide-gray-50">
-            {da.map((user, index) => (
+            {currentUsers.map((user, index) => (
               <tr
                 key={`${user.id}-${index}`}
                 className="group transition-colors"
@@ -296,6 +301,37 @@ export default function Users() {
             ))}
           </tbody>
         </table>
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center gap-4 mt-6">
+            <button
+              onClick={() => setCurrentPage((prev) => prev - 1)}
+              disabled={currentPage === 1}
+              className={`w-9 h-9 flex items-center justify-center rounded-full transition
+        ${
+          currentPage === 1
+            ? "text-gray-300 pointer-events-none"
+            : "cursor-pointer"
+        }
+      `}
+            >
+              <ChevronLeft size={18} />
+            </button>
+
+            <span className="text-sm text-gray-500 font-medium">
+              {currentPage} / {totalPages}
+            </span>
+
+            <button
+              onClick={() => setCurrentPage((prev) => prev + 1)}
+              disabled={currentPage === totalPages}
+              className={`
+        ${currentPage === totalPages ? "text-gray-300 pointer-events-none" : "cursor-pointer"}
+      `}
+            >
+              <ChevronRight size={18} />
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

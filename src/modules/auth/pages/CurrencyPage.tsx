@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-
+import { MePayload } from "../type";
 import {
   Typography,
   TextField,
@@ -18,6 +18,7 @@ import {
 
 import SearchIcon from "@mui/icons-material/Search";
 import { useCurrencies } from "../hooks/useCurrencies";
+import { useMe } from "@/src/modules/auth/hooks/useMe";
 
 function currencyCodeToFlag(code: string) {
   const map: Record<string, string> = {
@@ -46,8 +47,15 @@ function currencyCodeToFlag(code: string) {
 export default function CurrencyPage() {
   const router = useRouter();
 
-  const { data, isLoading, error } = useCurrencies();
-  const currenciesFromApi = data?.data ?? [];
+  const {
+    data: currenciesRes,
+    isLoading: currenciesLoading,
+    error,
+  } = useCurrencies();
+
+  const currenciesFromApi = currenciesRes?.data ?? [];
+
+  const { data: meRes, isLoading: meLoading } = useMe();
 
   const [selectedCurrency, setSelectedCurrency] = useState("AED");
   const [query, setQuery] = useState("");
@@ -62,9 +70,20 @@ export default function CurrencyPage() {
   }, [router]);
 
   useEffect(() => {
+    if (meLoading) return;
+const hasCurrency = !!meRes?.data?.user?.defaultCurrencyId;
+if (hasCurrency) {
+  router.replace("/");
+
+    }
+  }, [meRes, meLoading, router]);
+
+  useEffect(() => {
     if (!currenciesFromApi.length) return;
 
-    const exists = currenciesFromApi.some((c: any) => c.code === selectedCurrency);
+    const exists = currenciesFromApi.some(
+      (c: any) => c.code === selectedCurrency
+    );
     if (!exists) setSelectedCurrency(currenciesFromApi[0].code);
   }, [currenciesFromApi, selectedCurrency]);
 
@@ -122,8 +141,8 @@ export default function CurrencyPage() {
                     This currency will be used across the platform
                   </Typography>
 
-                  {/* (اختياري) Loading / Error بدون ستايل جديد قوي */}
-                  {isLoading && (
+                  {/* Loading / Error */}
+                  {currenciesLoading && (
                     <Typography
                       variant="body2"
                       sx={{ color: "white", opacity: 0.9, mb: 1.5 }}

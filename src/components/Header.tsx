@@ -3,45 +3,20 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useRef, useEffect, useMemo } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Search, ChevronDown, User, Menu, X, Bell } from "lucide-react";
 import Notifactions from "./Notifactions";
-import { useSession } from "../modules/auth/hooks/useSession";
-
-type CachedUser = { fullName?: string } | null;
+import { useAuth } from "../context/AuthContext";
 
 export default function Navbar() {
   const pathname = usePathname();
-  const router = useRouter();
+  const { user, isAuthed, loading } = useAuth();
 
   const serviceRef = useRef<HTMLLIElement | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isServiceOpenMobile, setIsServiceOpenMobile] = useState(false);
   const [isServiceOpen, setIsServiceOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
-  const [cachedUser, setCachedUser] = useState<CachedUser>(null);
-
-  const { data: sessionData } = useSession(true);
-  const serverUser = sessionData?.data?.user ?? null;
-
-  useEffect(() => {
-    setMounted(true);
-    try {
-      const raw = sessionStorage.getItem("cached_user");
-      setCachedUser(raw ? JSON.parse(raw) : null);
-    } catch {
-      setCachedUser(null);
-    }
-  }, []);
-
-  // ✅ لو إجى user من السيرفر، خليه يغطي على cached
-  const user = serverUser ?? cachedUser;
-
-  // ✅ لا تنتظر الشبكة: جاهز فورًا بعد mount
-  const authReady = mounted;
-
-  const isAuthedFinal = !!user;
 
   const isActiveExact = (path: string) =>
     pathname === path
@@ -188,7 +163,7 @@ export default function Navbar() {
             <span>Search</span>
           </button>
 
-          {!authReady ? null : !isAuthedFinal ? (
+          {loading ? null : !isAuthed ? (
             <Link
               href="/register"
               className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] transition "
@@ -279,7 +254,7 @@ export default function Navbar() {
               Budget
             </Link>
 
-            {!authReady ? null : !isAuthedFinal ? (
+            {loading ? null : !isAuthed ? (
               <Link
                 href="/register"
                 className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee]  transition "

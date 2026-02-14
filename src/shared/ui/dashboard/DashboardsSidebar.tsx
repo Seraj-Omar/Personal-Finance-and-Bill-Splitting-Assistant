@@ -16,7 +16,7 @@ import {
 const nav = [
   { label: "Dashboard", href: "/dashboard", icon: IconCategory },
   {
-    label: "Users Activity",
+    label: "User Management",
     href: "/dashboard/userManagement",
     icon: IconUsersActivity,
   },
