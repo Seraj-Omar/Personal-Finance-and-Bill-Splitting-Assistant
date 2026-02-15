@@ -20,7 +20,6 @@ const Budget = () => {
 
 const { data: summaryRes, isLoading, error } = useBudgetSummary(true);
 
-// ✅ هذا هو المتغير اللي كان ناقص/مش موجود عندك
 const summary = summaryRes?.data ?? {};
 
 const totalBudget = Number(summary.totalAllocated ?? 0);
@@ -30,6 +29,8 @@ const currency = "$";
 
 
   return (
+    <>
+    <PadgetComponent />
     <Container
       maxWidth={false}
       disableGutters
@@ -38,7 +39,6 @@ const currency = "$";
         px: { xs: "10px", sm: "12px", md: "16px", lg: "100px" },
       }}
     >
-      <PadgetComponent />
 
       <Box
         sx={{
@@ -95,6 +95,7 @@ const currency = "$";
         <ManageExpenses />
       </Box>
     </Container>
+      </>
   );
 };
 

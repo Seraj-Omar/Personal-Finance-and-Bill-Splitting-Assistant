@@ -41,3 +41,36 @@ export async function fetchBills(params?: {
   const qs = sp.toString();
   return apiFetch(`/bills${qs ? `?${qs}` : ""}`, { method: "GET" });
 }
+
+
+export type ExpensesOverview = {
+  totalExpenses: string;
+  totalRevenues: string;
+  balance: string;
+};
+
+export function fetchExpensesOverview() {
+  return apiFetch<{ data: ExpensesOverview }>(
+    "/expenses/overview",
+    { method: "GET" }
+  );
+}
+
+/* ---------- DEBTS ---------- */
+export type DebtSummary = {
+  totalDebt: string;
+  totalOwedToYou: string;
+  totalYouOwe: string;
+};
+
+export function fetchDebtSummary() {
+  return apiFetch<{ data: DebtSummary }>(
+    "/debts/summary",
+    { method: "GET" }
+  );
+}
+
+/* ---------- BUDGETS ---------- */
+export function fetchBudgets() {
+  return apiFetch("/budgets", { method: "GET" });
+}
