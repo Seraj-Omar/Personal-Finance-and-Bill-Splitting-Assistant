@@ -19,7 +19,7 @@ function toQuery(params?: GetBudgetsParams) {
 
 export function getBudgets(params?: GetBudgetsParams) {
   const qs = toQuery(params);
-  const path = qs ? `/budgets?${qs}` : `/budgets`; // لو apiFetch ما بضيف /api/v1 عدليها
+  const path = qs ? `/budgets?${qs}` : `/budgets`; 
   return apiFetch<ApiListResponse<Budget>>(path);
 }
 
@@ -28,7 +28,16 @@ export function getBudgetSummary() {
   return apiFetch<ApiResponse<BudgetSummary>>("/budgets/summary");
 }
   
+export async function fetchBills(params?: {
+  page?: number;
+  limit?: number;
+  type?: "individual" | "group";
+}) {
+  const sp = new URLSearchParams();
+  if (params?.page) sp.set("page", String(params.page));
+  if (params?.limit) sp.set("limit", String(params.limit));
+  if (params?.type) sp.set("type", params.type);
 
-// export  function updateBudget(id, payload) {
-
-// }
+  const qs = sp.toString();
+  return apiFetch(`/bills${qs ? `?${qs}` : ""}`, { method: "GET" });
+}
