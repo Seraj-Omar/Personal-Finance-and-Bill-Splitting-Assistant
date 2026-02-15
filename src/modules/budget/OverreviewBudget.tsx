@@ -6,6 +6,7 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 import { PieChart } from '@mui/x-charts/PieChart';
+import { useBudgets } from './hooks/useBudgets';
 
 const data = [
   { label: 'Group A', value: 400, color: '#3146B6' },
@@ -18,8 +19,23 @@ const data = [
 const total = data.reduce((sum, item) => sum + item.value, 0);
 
 const OverreviewBudget = () => {
-  const availableBudget = 1800;
   const totalBudget = 5000;
+
+  const { data: budgetsRes, isLoading } = useBudgets();
+
+const budgets = budgetsRes?.data ?? [];
+
+const totalAllocated = budgets.reduce(
+  (sum: number, b: any) => sum + Number(b.allocatedAmount),
+  0
+);
+
+const totalSpent = budgets.reduce(
+  (sum: number, b: any) => sum + Number(b.spentAmount),
+  0
+);
+
+const availableBudget = totalAllocated - totalSpent;
 
   return (
     <Box>
@@ -30,7 +46,6 @@ const OverreviewBudget = () => {
         Created On: Dec 16, 2024
       </Typography>
 
-      {/* ===== Chart ===== */}
       <Stack width="100%" height={300} position="relative" alignItems="center">
         <PieChart
           series={[
@@ -67,7 +82,7 @@ const OverreviewBudget = () => {
             $
           </Typography>
           <Typography variant="h5" fontWeight={800}>
-            {availableBudget.toFixed(2)}
+{availableBudget.toFixed(2)}
           </Typography>
           <Typography variant="body2" color="text.secondary">
             Available Budget
