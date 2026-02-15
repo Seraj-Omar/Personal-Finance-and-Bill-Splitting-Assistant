@@ -3,6 +3,7 @@ import FilterButton from "../../components/debts/FilterButton";
 import Table from "@/src/components/Table";
 import { HiMiniTrash } from "react-icons/hi2";
 import { BiSolidPencil } from "react-icons/bi";
+import { useBills } from "./hooks/useBills";
 
 type FilterType = "All" | "Paid" | "Unpaid" | "Overdue";
 
@@ -13,40 +14,31 @@ type Column<T> = {
 };
 
 type Payment = {
+  id: string;
   date: string;
   member: number | "-";
   type: "Group" | "Individual";
   amount: string;
   billName: string;
-  status: Exclude<FilterType, "All">; // Paid | Unpaid | Overdue
+  status: Exclude<FilterType, "All">;
 };
 
-const payments: Payment[] = [
-  {
-    date: "10 Oct 2025",
-    member: 1,
-    type: "Group",
-    amount: "$55.6",
-    billName: "Rent",
-    status: "Paid",
-  },
-  {
-    date: "10 Oct 2025",
-    member: 2,
-    type: "Group",
-    amount: "$55.6",
-    billName: "Internet",
-    status: "Unpaid",
-  },
-  {
-    date: "10 Oct 2025",
-    member: "-",
-    type: "Individual",
-    amount: "$55.6",
-    billName: "Transport",
-    status: "Overdue",
-  },
-];
+function toUIType(t: string): "Group" | "Individual" {
+  return t?.toLowerCase() === "group" ? "Group" : "Individual";
+}
+
+function toUIStatus(s: string): Exclude<FilterType, "All"> {
+  const v = (s || "").toLowerCase();
+  if (v === "paid") return "Paid";
+  if (v === "overdue") return "Overdue";
+  return "Unpaid"; 
+}
+
+function formatDate(iso: string) {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  return d.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+}
 
 const columns: Column<Payment>[] = [
   { key: "date", title: "Date", render: (row) => <span className="text-sm text-gray-600">{row.date}</span> },
@@ -57,23 +49,46 @@ const columns: Column<Payment>[] = [
   {
     key: "action",
     title: "Action",
-    render: () => (
+    render: (row) => (
       <div className="flex gap-4 items-center">
-        <HiMiniTrash className="text-red-500 cursor-pointer" size={16} />
-        <BiSolidPencil className="text-gray-600 cursor-pointer" size={16} />
+        <HiMiniTrash className="text-red-500 cursor-pointer" size={16} onClick={() => console.log("delete", row.id)} />
+        <BiSolidPencil className="text-gray-600 cursor-pointer" size={16} onClick={() => console.log("edit", row.id)} />
       </div>
     ),
   },
 ];
 
-const TableBudget = () => {
+export default function TableBudget() {
   const [activeFilter, setActiveFilter] = useState<FilterType>("All");
+
+ 
+  const typeFilter: "individual" | "group" | undefined = undefined;
+
+  const { data, isLoading, isError } = useBills({
+    page: 1,
+    limit: 10,
+    type: typeFilter,
+  });
+
+  const apiItems = (data as any)?.data?.items ?? [];
+
+  const paymentsFromApi: Payment[] = useMemo(() => {
+    return apiItems.map((b: any) => ({
+      id: b.id,
+      date: formatDate(b.date),
+      member: "-",
+      type: toUIType(b.type),
+      amount: String(b.amount),
+      billName: String(b.name),
+      status: toUIStatus(b.status),
+    }));
+  }, [apiItems]);
 
   const filteredPayments = useMemo(() => {
     return activeFilter === "All"
-      ? payments
-      : payments.filter((p) => p.status === activeFilter);
-  }, [activeFilter]);
+      ? paymentsFromApi
+      : paymentsFromApi.filter((p) => p.status === activeFilter);
+  }, [activeFilter, paymentsFromApi]);
 
   return (
     <div className="space-y-4">
@@ -93,11 +108,14 @@ const TableBudget = () => {
         </div>
       </div>
 
-      <h1 className="text-xl font-semibold text-gray-800">Budget Table</h1>
+      <h1 className="text-xl font-semibold text-gray-800">Budgets Table</h1>
 
-      <Table columns={columns} data={filteredPayments} />
+      {isLoading ? <div>Loading...</div> : null}
+      {isError ? <div>Failed to load bills</div> : null}
+
+      {!isLoading && !isError ? (
+        <Table columns={columns} data={filteredPayments} />
+      ) : null}
     </div>
   );
-};
-
-export default TableBudget;
+}
