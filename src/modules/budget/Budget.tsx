@@ -15,19 +15,19 @@ import { useBudgetSummary } from "@/src/modules/budget/hooks/useBudgetSummary";
 
 export type FilterType = "All" | "Paid" | "Unpaid" | "Overdue";
 
+
 const Budget = () => {
   const [activeFilter, setActiveFilter] = useState<FilterType>("All");
 
 const { data: summaryRes, isLoading, error } = useBudgetSummary(true);
 
-const summary = summaryRes?.data ?? {};
+const summary = summaryRes?.data;
 
-const totalBudget = Number(summary.totalAllocated ?? 0);
-const totalExpenses = Number(summary.totalSpent );
-const remaining = Number(summary.totalRemaining ?? (totalBudget - totalExpenses));
+const totalBudget = Number(summary?.totalAllocated ?? 0);
+const totalExpenses = Number(summary?.totalSpent ?? 0);
+const remaining = Number(summary?.totalRemaining ?? (totalBudget - totalExpenses));
+
 const currency = "$";
-
-
   return (
     <>
     <PadgetComponent />

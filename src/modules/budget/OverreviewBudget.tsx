@@ -19,7 +19,6 @@ const data = [
 const total = data.reduce((sum, item) => sum + item.value, 0);
 
 const OverreviewBudget = () => {
-  const totalBudget = 5000;
 
   const { data: budgetsRes, isLoading } = useBudgets();
 

@@ -1,8 +1,7 @@
 export type BudgetSummary = {
-
-  totalBudget?: number;
-  totalExpenses?: number;
-  remaining?: number;
+  totalAllocated: number | string;
+  totalSpent: number | string;
+  totalRemaining?: number | string;
 };
 
 export type ApiResponse<T> = {
@@ -53,3 +52,4 @@ export type GetBudgetsParams = {
   startDate?: string; // ISO date-time
   endDate?: string;   // ISO date-time
 };
+
