@@ -135,7 +135,7 @@ export default function Users() {
               </clipPath>
             </defs>
           </svg>
-          <div className="absolute left-1/2 -translate-x-1/2 z-50 px-1 -translate-y-0.5 font-medium">
+          <div className="absolute text-[18px] left-1/2 -translate-x-1/2 z-50 px-1 -translate-y-0.5 font-medium">
             Users
           </div>
         </div>
