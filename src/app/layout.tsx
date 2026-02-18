@@ -1,27 +1,26 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import { Roboto } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
-//import Providers from "./providers";
-import Footer from "../components/footer/Footer";
-import Header from "../components/Header";
 
 import ThemeRegistry from "./theme-registry";
 import ReactQueryProvider from "./providers/ReactQueryProvider";
+import { AuthProvider } from "../context/AuthContext";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+const roboto = localFont({
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],});
-
-const roboto = Roboto({
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
-  variable: "--font-roboto",
+variable: "--font-roboto",
+  src: [
+    {
+      path: "../assets/fonts/Roboto-VariableFont_wdth,wght.ttf",
+      weight: "100 900",
+      style: "normal",
+    },
+    {
+      path: "../assets/fonts/Roboto-Italic-VariableFont_wdth,wght.ttf",
+      weight: "100 900",
+      style: "italic",
+    },
+  ],
 });
 
 
@@ -30,19 +29,14 @@ export const metadata: Metadata = {
   description: "Personal Finance and Bill Splitting Assistant",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={roboto.variable}>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className="antialiased">
         <ThemeRegistry>
-          {" "}
-          <ReactQueryProvider>{children}</ReactQueryProvider>
+          <ReactQueryProvider>
+            <AuthProvider>{children}</AuthProvider>
+          </ReactQueryProvider>
         </ThemeRegistry>
       </body>
     </html>

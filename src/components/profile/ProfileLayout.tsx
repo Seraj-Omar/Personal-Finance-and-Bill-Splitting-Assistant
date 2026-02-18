@@ -19,7 +19,6 @@ export default function ProfileLayout() {
     tabFromUrl === "password" ? "password" : "info",
   );
 
-  // Sync state when URL changes (refresh / back / forward)
   useEffect(() => {
     if (tabFromUrl === "password" || tabFromUrl === "info") {
       setActiveTab(tabFromUrl);
