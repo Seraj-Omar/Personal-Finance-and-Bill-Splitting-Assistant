@@ -31,7 +31,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
             className={`w-10 h-10 rounded-xl text-sm font-semibold transition-all ${
               currentPage === page
                 ? "bg-[#3447AA] text-white shadow-sm"
-                : "text-[#F6F6F7] hover:bg-[#f7f7fa] hover:text-[#1C1A1A]"
+                : " hover:bg-[#f7f7fa] text-[#1C1A1A] "
             }`}
           >
             {page}

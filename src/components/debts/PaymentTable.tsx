@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Table, { Column } from "@/src/components/Table";
 import { HiMiniTrash } from "react-icons/hi2";
 import { BiSolidPencil } from "react-icons/bi";
@@ -9,6 +9,7 @@ import UpdateDebtModal from "./UpdateDebtForm"; // your ready modal
 import ConfirmModal from "./ConfirmModal";
 import { daDK } from "@mui/material/locale";
 import { Debt } from "@/src/types/debt";
+import { debtService } from "@/src/services/debts-service";
 
 // type Payment = {
 //   personName: string;
@@ -27,23 +28,33 @@ import { Debt } from "@/src/types/debt";
 // ];
 
 const statusStyles = {
-  Paid: "bg-[#15D13114] text-[#5EC00F]",
-  Unpaid: "bg-[#1661E021] text-[#3447AA]",
-  Overdue: "bg-[#FFF0F2] text-[#FF5050]",
+  PAID: "bg-[#15D13114] text-[#5EC00F]",
+  UNPAID: "bg-[#1661E021] text-[#3447AA]",
+  OVERDUE: "bg-[#FFF0F2] text-[#FF5050]",
   "": "bg-[#FFF0F2] text-[#FF5050]",
   default: "bg-[#FFF0F2] text-[#FF5050]",
 };
 
+function getStatusStyle(status: string): string {
+  if (status === "PAID" || status === "UNPAID" || status === "OVERDUE" || status === "") {
+    return statusStyles[status];
+  }
+  return statusStyles.default;
+}
+
 export default function PaymentsTable({
   filter,
   debts,
+  onRefresh,
 }: {
   filter: FilterType;
   debts: Debt[];
+  onRefresh: () => void;
 }) {
   const [updateOpen, setUpdateOpen] = useState(false);
   const [selectedDebt, setSelectedDebt] = useState<Debt | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const openDeleteModal = (row: Debt) => {
     setSelectedDebt(row);
@@ -90,10 +101,10 @@ export default function PaymentsTable({
       title: "Status",
       render: (row) => (
         <span
-          className={`inline-flex items-center gap-1 md:gap-2 px-2 py-1 md:px-3 rounded-full text-[10px] md:text-xs font-medium ${statusStyles[row.status] || statusStyles.default}`}
+          className={`inline-flex items-center gap-1 md:gap-2 px-2 py-1 md:px-3 rounded-full text-[10px] md:text-xs font-medium ${getStatusStyle(row.status ?? "")}`}
         >
           <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-current"></span>
-          {row.status[0].toUpperCase() + row.status.slice(1).toLowerCase()} 
+          {row.status ? row.status[0]?.toUpperCase() + row.status.slice(1).toLowerCase() : "Unknown"} 
         </span>
       ),
     },
@@ -120,7 +131,52 @@ export default function PaymentsTable({
 
   // const filteredPayments =
   //   filter.toLowerCase() === "all" ? debts : debts.filter((p) => p.status.toLowerCase() === filter.toLowerCase());
+const handleDelete = async () => {
+    if (!selectedDebt) return;
 
+    try {
+      setLoading(true);
+      await debtService.deleteDebt(selectedDebt.id);
+      
+      setDeleteOpen(false);
+      onRefresh(); // Call parent refresh to update table UI
+    } catch (error) {
+      alert("Failed to delete debt. Please try again.");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+  const syncOverdueDebts = async () => {
+    const now = new Date();
+    
+    // Find debts that should be OVERDUE but are still UNPAID
+    const overdueDebts = debts.filter(
+      (debt) => debt.status?.toUpperCase() === "UNPAID" && new Date(debt.dueDate) < now
+    );
+
+    if (overdueDebts.length > 0) {
+      try {
+        // Map through and update each one
+        await Promise.all(
+          overdueDebts.map((debt) => 
+            debtService.UpdateDebt(debt.id, { ...debt, status: "OVERDUE" })
+          )
+        );
+        // Refresh the list so the UI reflects the new "OVERDUE" status from the DB
+        onRefresh(); 
+      } catch (error) {
+        console.error("Failed to sync overdue status:", error);
+      }
+    }
+  };
+
+  if (debts.length > 0) {
+    syncOverdueDebts();
+  }
+}, [debts]);
   return (
     <>
       <Table columns={columns} data={debts} />
@@ -130,19 +186,16 @@ export default function PaymentsTable({
         isOpen={updateOpen}
         onClose={() => setUpdateOpen(false)}
         defaultData={selectedDebt}
+        onRefresh={onRefresh}
       />
       <ConfirmModal
         open={deleteOpen}
         title="Are you sure you want to delete this debt?"
-        description="This action will remove the debt from your list."
-        confirmText="Delete"
+        description="This action will remove the debt from your list permanently."
+        confirmText={loading ? "Deleting..." : "Delete"}
         cancelText="Cancel"
         onCancel={() => setDeleteOpen(false)}
-        onConfirm={() => {
-          console.log("Deleting / updating:", selectedDebt);
-         
-          setDeleteOpen(false);
-        }}
+        onConfirm={handleDelete} // Link to the new handler
       />
     </>
   );

@@ -9,6 +9,7 @@ import ReminderToggle from "../addDebts/ReminderToggle";
 import { IoClose } from "react-icons/io5";
 import { HiChevronDown } from "react-icons/hi";
 import { Debt } from "@/src/types/debt";
+import { debtService } from "@/src/services/debts-service";
 
 
 // type Debt = {
@@ -24,14 +25,18 @@ type Props = {
   isOpen: boolean;
   defaultData: Partial<Debt> | null;
   onClose: () => void;
+  onRefresh: () => void; // New prop to trigger refresh in parent
 };
 
 export default function UpdateDebtForm({
   isOpen,
   onClose,
   defaultData,
+  onRefresh
 }: Props) {
   const [reminder, setReminder] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<Partial<Debt>>({
     personalName: "",
@@ -49,17 +54,19 @@ export default function UpdateDebtForm({
 
   // 🔥 Fill form when modal opens
   useEffect(() => {
-    if (defaultData && isOpen) {
-      setFormData({
-        personalName: defaultData.personalName ?? "",
-        amount: defaultData.amount ?? "",
-        dueDate: defaultData.dueDate ?? "",
-        description: defaultData.description ?? "",
-        status: defaultData.status ?? "",
-        reminderEnabled: defaultData.reminderEnabled ?? false,
-      });
-    }
-  }, [defaultData, isOpen]);
+  if (defaultData && isOpen) {
+    setError(null);
+    setFormData({
+      personalName: defaultData.personalName ?? "",
+      amount: defaultData.amount ?? "",
+      dueDate: defaultData.dueDate ?? "",
+      description: defaultData.description ?? "",
+      status: defaultData.status?.toUpperCase() ?? "",
+      reminderEnabled: !!defaultData.reminderEnabled, // Ensure it's a boolean
+      remindAt: defaultData.remindAt ?? null,
+    });
+  }
+}, [defaultData, isOpen]);
 
   // 🧹 Reset form on close (optional but clean)
   useEffect(() => {
@@ -74,6 +81,64 @@ export default function UpdateDebtForm({
       });
     }
   }, [isOpen]);
+
+  
+
+  const handleUpdate = async () => {
+    try {
+      setLoading(true);
+      
+      if (!defaultData || !defaultData.id) {
+        setError("Error: Unable to update debt. Missing required data.");
+
+      
+      
+        return;
+      }
+      if (!formData.personalName || !formData.amount || !formData.dueDate) {
+    setError("Please fill in all required fields");
+    return; // Stop execution
+  }
+
+  const parsedAmount = parseFloat(formData.amount);
+  if (isNaN(parsedAmount) || parsedAmount <= 0) {
+    setError("Amount must be a valid number greater than 0");
+    return; // Stop execution
+  }
+      let calculatedRemindAt = null;
+    if (formData.reminderEnabled && formData.dueDate) {
+      const date = new Date(formData.dueDate);
+      // Subtract 1 day
+      date.setDate(date.getDate() - 1);
+      // Set to a standard morning time (e.g., 9:00 AM)
+      date.setHours(9, 0, 0, 0);
+      calculatedRemindAt = date.toISOString();
+    }
+      
+      // Clean the payload (ensure amount is a string with .00 if needed)
+      const payload = {
+        personalName: formData.personalName ?? "",
+        amount: formData.amount ?? "",
+        dueDate: formData.dueDate ?? "",
+        description: formData.description ?? "",
+        status: formData.status ?? defaultData.status?.toUpperCase() ?? "",
+        reminderEnabled: formData.reminderEnabled ?? false,
+       
+        remindAt: calculatedRemindAt ?? null,
+        
+      };
+      console.log("Updating with payload:", payload);
+
+      await debtService.UpdateDebt(defaultData.id, payload);
+      
+      onRefresh(); // Refresh table in DebtsView
+      onClose();   // Close modal
+    } catch (error) {
+      alert("Update failed");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -145,10 +210,11 @@ export default function UpdateDebtForm({
           />
           <div className="relative">
           <select
-    value={(formData.status ?? "")[0]?.toUpperCase() + (formData.status ?? "").slice(1).toLowerCase()}
+    value={formData.status?.toUpperCase() || ""} 
     onChange={(e) =>
-      setFormData({ ...formData, status: e.target.value as "" | "Unpaid" | "Paid" | "Overdue" })
+      setFormData({ ...formData, status: e.target.value })
     }
+    
     className="
       w-full p-4 pr-12 rounded-2xl
       border border-[#E0E0E0]
@@ -160,9 +226,9 @@ export default function UpdateDebtForm({
     <option value="" disabled>
       Select status
     </option>
-    <option value="Paid">Paid</option>
-    <option value="Unpaid">Unpaid</option>
-    <option value="Overdue">Overdue</option>
+    <option value="PAID">Paid</option>
+    <option value="UNPAID">Unpaid</option>
+    <option value="OVERDUE" disabled>Overdue</option>
   </select>
   <HiChevronDown
     size={24}
@@ -170,16 +236,24 @@ export default function UpdateDebtForm({
   />
 </div>
 
-          <ReminderToggle enabled={formData.reminderEnabled ?? false} setEnabled={setReminder}  />
+          <ReminderToggle enabled={formData.reminderEnabled ?? false} setEnabled={(value: boolean) => {
+    setFormData({ ...formData, reminderEnabled: value });
+  }}
+          />
+          {error && (
+  <div className=" text-red-600 px-4  rounded-xl text-sm font-medium animate-shake">
+    {error}
+  </div>
+)}
 
           {/* Actions */}
           <div className="flex gap-4 pt-4">
             <button
               className="bg-[#3447AA] text-white flex-1 py-3 rounded-2xl font-medium"
               onClick={() => {
-                console.log("Updated data:", formData);
-                onClose();
+                handleUpdate();
               }}
+              disabled={loading}
             >
               Update Debt
             </button>

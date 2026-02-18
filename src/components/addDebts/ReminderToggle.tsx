@@ -2,9 +2,10 @@ import { IconBellRingingFilled } from "@tabler/icons-react";
 type Props = {
   enabled: boolean;
   setEnabled: (v: boolean) => void;
+  onChange?: (e: any) => void;
 };
 
-export default function ReminderToggle({ enabled, setEnabled }: Props) {
+export default function ReminderToggle({ enabled, setEnabled, onChange }: Props) {
   return (
     <>
  
@@ -28,6 +29,7 @@ export default function ReminderToggle({ enabled, setEnabled }: Props) {
 
       <button
         onClick={() => setEnabled(!enabled)}
+        onChange={onChange}
         className={`w-13 h-8 rounded-full transition ${
           enabled ? "bg-[#3447AA]" : "bg-gray-300"
         }`}

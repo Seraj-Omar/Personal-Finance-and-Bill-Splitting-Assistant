@@ -6,15 +6,91 @@ import InputField from "./InputField";
 import UploadBox from "./UploadBox";
 import ReminderToggle from "./ReminderToggle";
 import { IoClose } from "react-icons/io5";
+import { debtService } from "@/src/services/debts-service";
+
+
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
+  onSuccess: () => void;
+
 };
 
-export default function AddDebtForm({ isOpen, onClose }: Props) {
-  const [reminder, setReminder] = useState(true);
+export default function AddDebtForm({ isOpen, onClose, onSuccess }: Props) {
+  const [reminder, setReminder] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [formData, setFormData] = useState({
+    personalName: "",
+    amount: "",
+    dueDate: "",
+    description: "",
+    direction: "I_OWE",
+    reminderEnabled: true,
+    assetId: null,
+  });
 
+  const handleSave = async () => {
+  // 1. Reset error state at start of every attempt
+  setError(null);
+
+  // 2. Validation Checks
+  if (!formData.personalName || !formData.amount || !formData.dueDate) {
+    setError("Please fill in all required fields");
+    return; // Stop execution
+  }
+
+  const parsedAmount = parseFloat(formData.amount);
+  if (isNaN(parsedAmount) || parsedAmount <= 0) {
+    setError("Amount must be a valid number greater than 0");
+    return; // Stop execution
+  }
+
+  // 3. Main Logic (Now properly inside handleSave)
+  try {
+    setLoading(true);
+
+    let remindAtValue = null;
+    if (reminder) {
+      const date = new Date(formData.dueDate);
+      date.setDate(date.getDate() - 1);
+      date.setHours(9, 0, 0, 0);
+      remindAtValue = date.toISOString();
+    }
+
+    const payload = {
+      personalName: formData.personalName,
+      amount: parsedAmount.toFixed(2), 
+      dueDate: formData.dueDate,
+      description: formData.description || "",
+      reminderEnabled: reminder,
+      remindAt: remindAtValue,
+      direction: "I_OWE",
+      assetId: null,
+    };
+
+    await debtService.createDebt(payload);
+    //clear form
+    setFormData({
+      personalName: "",
+      amount: "",
+      dueDate: "",
+      description: "",
+      direction: "I_OWE",
+      reminderEnabled: true,
+      assetId: null,
+    });
+    
+    onSuccess(); 
+    onClose();   
+  } catch (err) {
+    console.error("Error creating debt:", err);
+    setError("Failed to create debt. Please try again.");
+  } finally {
+    setLoading(false);
+  }
+}; // Function ends here
   // Disable background scroll when modal is open
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "auto";
@@ -46,21 +122,39 @@ export default function AddDebtForm({ isOpen, onClose }: Props) {
 
        
         <div className="flex flex-col gap-5 p-5">
-          <InputField icon={<FaUser fill="#AEAEAE" />} label="Personal Name" placeholder="Personal Name" />
-          <InputField icon={<FaDollarSign fill="#AEAEAE" />} label="Amount" placeholder="0.00" />
-          <InputField icon={<FaCalendarDays fill="#AEAEAE" />} label="Due date" type="date" />
+          <InputField icon={<FaUser fill="#AEAEAE" />} label="Personal Name" placeholder="Personal Name"
+          value={formData.personalName}
+        onChange={(e: any) => setFormData({...formData, personalName: e.target.value})} />
+          <InputField icon={<FaDollarSign fill="#AEAEAE" />} label="Amount" placeholder="0.00"
+          value={formData.amount}
+        onChange={(e: any) => setFormData({...formData, amount: e.target.value})} />
+          <InputField icon={<FaCalendarDays fill="#AEAEAE" />} label="Due date" type="date" 
+          value={formData.dueDate}
+        onChange={(e: any) => setFormData({...formData, dueDate: e.target.value})} />
           <InputField
             label="Description"
             placeholder="Add short note about this debt..."
             textarea
             option="(Optional)"
+            value={formData.description}
+            onChange={(e: any) => setFormData({...formData, description: e.target.value})}
           />
 
        
-          <ReminderToggle enabled={reminder} setEnabled={setReminder} />
+          <ReminderToggle enabled={reminder} setEnabled={setReminder} 
+          
+          onChange={(e: any) => setFormData({...formData, reminderEnabled: e.target.checked})}/>
+          {error && (
+  <div className=" text-red-600 px-4  rounded-xl text-sm font-medium animate-shake">
+    {error}
+  </div>
+)}
 
-          <div className="flex gap-4 pt-4">
-            <button className="bg-[#3447AA] text-white flex-1 py-3 rounded-2xl font-medium">
+          <div className="flex gap-4 ">
+            <button 
+            onClick={handleSave}
+            disabled={loading}
+            className="bg-[#3447AA] text-white flex-1 py-3 rounded-2xl font-medium">
               Save Debt
             </button>
             <button

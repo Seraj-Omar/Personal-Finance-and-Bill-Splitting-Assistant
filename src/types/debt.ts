@@ -2,14 +2,16 @@ export interface Debt {
   id: string;
   userId: string;
   personalName: string;
-  direction: "I_OWE";
+  direction: string;
   amount: string;
   currencyId: string;
   dueDate: string;
   description: string;
-  status: "Unpaid" | "Paid" | "Overdue" | "" ;
+  status: string|null ;
   createdAt: string;
   reminderEnabled: boolean;
+  assetId?: string | null;
+  remindAt: string | null;
 }
 
 export interface DebtResponse {

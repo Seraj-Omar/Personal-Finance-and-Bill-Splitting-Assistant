@@ -23,42 +23,84 @@ export default function DebtsView() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [allDebtsForCalc, setAllDebtsForCalc] = useState<Debt[]>([]);
 
-  const fetchDebts = async (page: number, limit: number = 10) => {
-    try {
-      setLoading(true);
-     
-      const response = await debtService.getDebts(page, limit);
-      setDebts(response.data);
-      setTotalPages(response.meta.totalPages);
-      setCurrentPage(response.meta.page);
-    } catch (error) {
-      console.error("Failed to load debts:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  useEffect(() => {
-    fetchDebts(currentPage);
-  }, [currentPage]);
+  const fetchDebts = async (page: number, limit: number = 10, filter: string = "All") => {
+  try {
+    setLoading(true);
+   
+    const statusParam = filter === "All" ? undefined : filter;
+    
+    const response = await debtService.getDebts(page, limit, statusParam);
+    
+    setDebts(response.data);
+    setTotalPages(response.meta.totalPages);
+    setCurrentPage(response.meta.page);
+  } catch (error) {
+    console.error("Failed to load debts:", error);
+  } finally {
+    setLoading(false);
+  }
+};
+
+  
 
   
   const filteredDebts = useMemo(() => {
     
-    if (activeFilter === "All") return debts;
-    return debts.filter((debt) => {
-      const status = debt.status.toUpperCase();
+    return debts;
+  }, [debts]);
 
-      if (activeFilter === "Paid") return debt.status.toUpperCase() === "PAID";
-      if (activeFilter === "Unpaid") return debt.status.toUpperCase() === "UNPAID";
-     
-      if (activeFilter === "Overdue") {
-        return debt.status.toUpperCase() === "UNPAID" && new Date(debt.dueDate) < new Date();
+  const fetchAllForCalculation = async () => {
+    try {
+      // Pass a very high limit or a specific 'all' flag if your backend supports it
+      const response = await debtService.getDebts(1, 9999); 
+      setAllDebtsForCalc(response.data);
+    } catch (error) {
+      console.error("Calculation fetch failed", error);
+    }
+  };
+
+
+  useEffect(() => {
+    fetchDebts(currentPage, 10, activeFilter);
+    fetchAllForCalculation(); 
+  }, [currentPage, activeFilter]);
+
+  useEffect(() => {
+  setCurrentPage(1);
+}, [activeFilter]);
+
+  const stats = useMemo(() => {
+  const now = new Date();
+  
+  return allDebtsForCalc.reduce(
+    (acc, debt) => {
+      const amount = parseFloat(debt.amount) || 0;
+      const status = debt.status?.toUpperCase();
+  
+      acc.total += amount;
+
+      if (status === "PAID") {
+        acc.paid += amount;
+      } else if (status ==="OVERDUE") {
+        acc.overdue += amount;
+      } else {
+       
+        acc.unpaid += amount;
       }
-      return true;
-    });
-  }, [debts, activeFilter]);
+
+      return acc;
+    },
+    { total: 0, unpaid: 0, paid: 0, overdue: 0 }
+  );
+}, [allDebtsForCalc]);
+
+const refreshAllData = () => {
+  fetchDebts(currentPage, 10, activeFilter);
+  fetchAllForCalculation(); // Keeps the cards in sync
+};
 
   
 
@@ -67,7 +109,7 @@ export default function DebtsView() {
       <div className="bg-[#F6F6F7B2] mb-10">
         <div className="ml-10">
          
-          <FinancialOverview />
+          <FinancialOverview stats={stats}/>
         </div>
       </div>
 
@@ -88,7 +130,8 @@ export default function DebtsView() {
           <TableSkeleton />
         ) : (
           <>
-          <PaymentsTable debts={filteredDebts} filter={activeFilter} />
+          <PaymentsTable onRefresh={refreshAllData} debts={filteredDebts} filter={activeFilter}
+          />
           {/* Show pagination only if there's more than 1 page */}
             {  totalPages > 1 && (
               <Pagination 
@@ -104,7 +147,7 @@ export default function DebtsView() {
       <AddDebtForm 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
-       // onSuccess={fetchDebts} 
+       onSuccess={refreshAllData}
       />
     </>
   );
