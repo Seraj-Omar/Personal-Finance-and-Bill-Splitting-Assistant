@@ -11,6 +11,7 @@ export default function AiBudgetSuggestions() {
       sx={{
         display: "flex",
         alignItems: "center",
+        flexDirection: { xs: "column", sm: "row" },
         justifyContent: "space-between",
         gap: 4,
         p: 4,
@@ -18,8 +19,7 @@ export default function AiBudgetSuggestions() {
         borderRadius: 4,
         background: "linear-gradient(90deg, #F6B1C1 0%, #B7B9F4 100%)",
         width: "100%",
-        minHeight: 150,
-        height :200
+        minHeight: 100,
       }}
     >
       {/* ===== Left side ===== */}

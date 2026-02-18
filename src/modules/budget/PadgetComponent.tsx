@@ -3,7 +3,7 @@ import { TrendingDown, TrendingUp } from "lucide-react";
 import React from "react";
 import OverreviewBudget from "./OverreviewBudget";
 import BudgetSummary from "./BudgetSummary";
-import { useOverviewBudget } from "./hooks/useOverviewBudget";
+import { useOverviewCards } from "./hooks/useOverviewBudget";
 
 const PadgetComponent = () => {
   const MoneyIcon = (
@@ -51,14 +51,12 @@ const PadgetComponent = () => {
       />
     </svg>
   );
-const { data, isLoading } = useOverviewBudget();
+  const { data, isLoading, isError, error } = useOverviewCards();
 
-if (isLoading) return null;
+// if (isLoading) return <div>Loading...</div>;
+// if (isError) return <pre>{JSON.stringify(error, null, 2)}</pre>;
 
-const balance = data?.expenses?.balance ?? "0";
-const revenues = data?.expenses?.totalRevenues ?? "0";
-const expenses = data?.expenses?.totalExpenses ?? "0";
-const totalDebt = data?.debts?.totalDebt ?? "0";
+
   return (
         <div className="bg-[#F6F6F7B2] p-5 rounded-2xl">
     <div className="w-full px-4 sm:px-6 lg:px-8 py-6">
@@ -66,7 +64,7 @@ const totalDebt = data?.debts?.totalDebt ?? "0";
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
             <Card
               title="Balance"
-              amount={`$${balance}`}
+              amount={`$${data?.balance ?? 0}`}
               meta={
                 <div className="flex items-center gap-1">
                   <TrendingUp
@@ -85,7 +83,7 @@ const totalDebt = data?.debts?.totalDebt ?? "0";
 
             <Card
               title="Revenues"
-              amount={`$${revenues}`}
+              amount={`$${data?.revenues ?? 0}`}
               icon={MoneyIcon}
               iconBg="bg-[#EEEAFE]"
               meta={
@@ -104,7 +102,7 @@ const totalDebt = data?.debts?.totalDebt ?? "0";
 
             <Card
               title="Expenses"
-       amount={`$${expenses}`}
+       amount={`$${data?.expenses ?? 0}`}
               icon={MoneyIcon}
               iconBg="bg-[#DCFCE7]"
               meta={
@@ -123,8 +121,7 @@ const totalDebt = data?.debts?.totalDebt ?? "0";
 
             <Card
               title="Total debt"
-               amount={`$${totalDebt}`}
-
+ amount={`$${ data?.utilization ? (data.utilization * 100).toFixed(2) + "%" : "0%"}`}
                         icon={MoneyIcon}
 
               iconBg="bg-[#686FFF1A]"

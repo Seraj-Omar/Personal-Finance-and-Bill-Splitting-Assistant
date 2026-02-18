@@ -23,6 +23,7 @@ function toQuery(params?: GetBudgetsParams) {
 
 /* ---------- EXPENSES ---------- */
 export type ExpensesOverview = {
+  data: any;
   totalExpenses: string;
   totalRevenues: string;
   balance: string;
@@ -34,13 +35,14 @@ export function fetchExpensesOverview() {
 
 /* ---------- DEBTS ---------- */
 export type DebtSummary = {
+  data: any;
   totalDebt: string;
   totalOwedToYou: string;
   totalYouOwe: string;
 };
 
 export function fetchDebtSummary() {
-  return apiFetch<{ data: DebtSummary }>("/debts/summary", { method: "GET" });
+  return apiFetch<{ data: DebtSummary }>("/debts", { method: "GET" });
 }
 
 /* ---------- BUDGETS ---------- */
@@ -49,6 +51,7 @@ export function fetchBudgets(params?: GetBudgetsParams) {
   const path = qs ? `/budgets?${qs}` : `/budgets`;
   return apiFetch<ApiListResponse<Budget>>(path, { method: "GET" });
 }
+
 
 /* ---------- BUDGET SUMMARY ---------- */
 export function getBudgetSummary() {
@@ -68,4 +71,33 @@ export function fetchBills(params?: {
 
   const qs = sp.toString();
   return apiFetch(`/bills${qs ? `?${qs}` : ""}`, { method: "GET" });
+}
+export type DebtDirection = "I_OWE" | "OWED_TO_ME";
+export type DebtStatus = "PAID" | "UNPAID";
+
+export type Debt = {
+  id: string;
+  personalName: string;
+  direction: DebtDirection;
+  amount: string;
+  dueDate: string;
+  description?: string;
+  status: DebtStatus;
+};
+
+
+export function fetchMyDebts(params?: {
+  page?: number;
+  limit?: number;
+  status?: "PAID" | "UNPAID";
+}) {
+  const sp = new URLSearchParams();
+  if (params?.page != null) sp.set("page", String(params.page));
+  if (params?.limit != null) sp.set("limit", String(params.limit));
+  if (params?.status) sp.set("status", params.status);
+
+  const qs = sp.toString();
+  return apiFetch<ApiListResponse<Debt>>(`/debts${qs ? `?${qs}` : ""}`, {
+    method: "GET",
+  });
 }

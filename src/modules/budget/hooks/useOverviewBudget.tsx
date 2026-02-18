@@ -1,37 +1,22 @@
+"use client";
+
 import { useQuery } from "@tanstack/react-query";
-import {
-  fetchBudgets,
-  fetchDebtSummary,
-  fetchExpensesOverview,
-  type ExpensesOverview,
-  type DebtSummary,
-} from "../services/budget.api";
-import type { Budget, ApiListResponse } from "../type/types";
+import { fetchFinancialReport } from "../services/financialReports.api";
 
-export function useOverviewBudget() {
-  return useQuery<{
-    expenses: ExpensesOverview;
-    debts: DebtSummary;
-    budgets: Budget[];
-  }>({
-    queryKey: ["dashboard"],
-    queryFn: async () => {
-      const [expensesRes, debtsRes, budgetsRes] = await Promise.all([
-        fetchExpensesOverview(),
-        fetchDebtSummary(),
-        fetchBudgets(),
-      ]);
-
-      const budgetsList = budgetsRes as ApiListResponse<Budget>;
-      const budgets = (budgetsList as any).items ?? (budgetsList as any).data ?? [];
+export function useOverviewCards(params?: { startDate?: string; endDate?: string }) {
+  return useQuery({
+    queryKey: ["financial-report", params?.startDate, params?.endDate],
+    queryFn: () => fetchFinancialReport(params),
+    retry: false,
+    select: (res) => {
+      const s = res.data.summary;
 
       return {
-        expenses: expensesRes.data,
-        debts: debtsRes.data,
-        budgets,
+        balance: Number(s.netSavings),          // أو سميها netSavings لو بدك
+        revenues: Number(s.totalIncome),
+        expenses: Number(s.totalExpenses),
+        utilization: Number(s.budgetUtilization),
       };
     },
-    staleTime: 60 * 1000,
-    retry: false,
   });
 }
