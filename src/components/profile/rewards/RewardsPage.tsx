@@ -44,10 +44,11 @@ const earningTasks = [
     icon: <IconWallet size={24} />,
   },
 ];
-const gradientUnderline = "absolute -bottom-2 left-0 w-full h-[3px] rounded-full bg-[linear-gradient(90.01deg,#EFA5B6_44.3%,rgba(52,71,170,0.65)_99.99%)]";
+const gradientUnderline =
+  "absolute -bottom-2 left-0 w-full h-[3px] rounded-full bg-[linear-gradient(90.01deg,#EFA5B6_44.3%,rgba(52,71,170,0.65)_99.99%)]";
 function RewardsPage() {
   return (
-    <div className="w-full max-w-[1280px] mx-auto px-6 lg:px-20 py-14">
+    <div className="w-full px-4 md:px-8 lg:px-[100px] py-14">
       <section className="mb-20">
         <h2 className="text-2xl font-extrabold text-gray-800 relative inline-block mb-10">
           Featured Rewards
@@ -68,7 +69,7 @@ function RewardsPage() {
         </div>
       </section>
 
-<section className="pb-10">
+      <section className="pb-10">
         <h2 className="text-2xl font-extrabold text-[#1C1A1A] relative inline-block mb-12">
           How to Earn More Points
           <span className={gradientUnderline}></span>
