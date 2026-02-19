@@ -115,11 +115,8 @@ export default function AskAIChat() {
                 key={q}
                 size="small"
                 variant="outlined"
-                onClick={() => send(q)}
-                sx={{
-                  borderRadius: 999,
-                  textTransform: "none",
-                }}
+               disabled={loading}
+  onClick={() => send(q)}
               >
                 {q}
               </Button>
