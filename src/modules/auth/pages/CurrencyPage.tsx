@@ -71,10 +71,10 @@ export default function CurrencyPage() {
 
   useEffect(() => {
     if (meLoading) return;
-const hasCurrency = !!meRes?.data?.user?.defaultCurrencyId;
-if (hasCurrency) {
-  router.replace("/");
 
+    if (meRes?.data?.user?.currency
+) {
+      router.replace("/");
     }
   }, [meRes, meLoading, router]);
 
@@ -199,38 +199,35 @@ if (hasCurrency) {
                       {filtered.map((cur: any) => {
                         const active = cur.code === selectedCurrency;
                         return (
-                          <ListItemButton
-                            key={cur.id || cur.code}
-                            onClick={() => setSelectedCurrency(cur.code)}
-                            sx={{
-                              px: 2,
-                              py: 1.2,
-                              gap: 1.5,
-                              backgroundColor: active
-                                ? "rgba(52, 71, 170, 0.87)"
-                                : "transparent",
-                              "&:hover": {
-                                backgroundColor: active
-                                  ? "rgba(52, 71, 170, 0.87)"
-                                  : "rgba(0,0,0,0.04)",
-                              },
-                            }}
-                          >
-                            {/* ✅ العلم */}
-                            <span style={{ fontSize: 16 }}>
-                              {currencyCodeToFlag(cur.code)}
-                            </span>
+       <ListItemButton
+  key={cur.id || cur.code}
+  onClick={() => setSelectedCurrency(cur.code)}
+  sx={{
+    px: 2,
+    py: 1.2,
+    gap: 1.5,
+    backgroundColor: active ? "rgba(52, 71, 170, 0.87)" : "transparent",
+    "&:hover": {
+      backgroundColor: active
+        ? "rgba(52, 71, 170, 0.87)"
+        : "rgba(0,0,0,0.04)",
+    },
+  }}
+>
+  <span style={{ fontSize: 16 }}>
+    {currencyCodeToFlag(cur.code)}
+  </span>
 
-                            <ListItemText
-                              primary={` ${cur.name}`}
-                              sx={{
-                                "& .MuiListItemText-primary": {
-                                  fontSize: 13,
-                                  color: active ? "white" : "#1f2937",
-                                },
-                              }}
-                            />
-                          </ListItemButton>
+  <ListItemText
+    primary={`${cur.name}`}
+    sx={{
+      "& .MuiListItemText-primary": {
+        fontSize: 13,
+        color: active ? "white" : "#1f2937",
+      },
+    }}
+  />
+</ListItemButton>
                         );
                       })}
                     </List>

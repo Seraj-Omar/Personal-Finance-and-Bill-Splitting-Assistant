@@ -3,12 +3,9 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../context/AuthContext";
+import AppLoading from "../components/AppLoading"; 
 
-export default function ProtectedRoute({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthed, loading } = useAuth();
   const router = useRouter();
 
@@ -18,7 +15,7 @@ export default function ProtectedRoute({
     }
   }, [loading, isAuthed, router]);
 
-  if (loading) return null;
+  if (loading) return <AppLoading />; // 
 
-  return isAuthed ? <>{children}</> : null;
+  return isAuthed ? <>{children}</> : <AppLoading />
 }
