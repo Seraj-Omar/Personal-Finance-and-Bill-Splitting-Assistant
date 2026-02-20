@@ -7,7 +7,8 @@ import ReactQueryProvider from "./providers/ReactQueryProvider";
 import { AuthProvider } from "../context/AuthContext";
 
 const roboto = localFont({
-  variable: "--font-roboto",
+
+variable: "--font-roboto",
   src: [
     {
       path: "../assets/fonts/Roboto-VariableFont_wdth,wght.ttf",
@@ -21,6 +22,7 @@ const roboto = localFont({
     },
   ],
 });
+
 
 export const metadata: Metadata = {
   title: "Personal Finance App",

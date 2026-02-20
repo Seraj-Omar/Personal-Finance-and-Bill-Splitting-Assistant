@@ -14,65 +14,65 @@ interface User {
   updatedAt: string;
   status: UserStatus;
 }
-
+const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 export default function Users() {
   const [da, setDa] = useState<User[]>([]);
 
   useEffect(() => {
-    const token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZWJlN2VlOS1kNzVkLTQ4ZjItYWNkYS1kMGI0NjJiYjc0MzUiLCJyb2xlIjoiVVNFUiIsImVtYWlsIjoibW9hbWVuQGV4YW1wbGUuY29tIiwiZnVsbE5hbWUiOiJNb2FtZW4gQWwtWWF6b3VyaSIsInByb3ZpZGVyIjoiTE9DQUwiLCJzdGF0dXMiOiJBQ1RJVkUiLCJpYXQiOjE3NzA4NDE5MTJ9.MaMV0j46xuotYzeoU2xzdvo9TGWzmTnuKVxmhOhMAPU";
+    const token = sessionStorage.getItem("token");
 
-    fetch("https://gsg-project-group-5.vercel.app/api/v1/users", {
+    if (!token) return;
+
+    fetch(`${API_BASE_URL}/users`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
     })
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error("Unauthorized");
+        return res.json();
+      })
       .then((result) => {
-        console.log(result);
         setDa(result.data ?? []);
       })
       .catch((err) => console.error(err));
   }, []);
+
   const handleDelete = async (id: string) => {
     const confirmed = window.confirm(
       "Are you sure you want to delete this user?",
     );
     if (!confirmed) return;
 
-    const token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZWJlN2VlOS1kNzVkLTQ4ZjItYWNkYS1kMGI0NjJiYjc0MzUiLCJyb2xlIjoiVVNFUiIsImVtYWlsIjoibW9hbWVuQGV4YW1wbGUuY29tIiwiZnVsbE5hbWUiOiJNb2FtZW4gQWwtWWF6b3VyaSIsInByb3ZpZGVyIjoiTE9DQUwiLCJzdGF0dXMiOiJBQ1RJVkUiLCJpYXQiOjE3NzA4NDE5MTJ9.MaMV0j46xuotYzeoU2xzdvo9TGWzmTnuKVxmhOhMAPU"; // Replace with your valid token
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      alert("You are not authenticated");
+      return;
+    }
 
     try {
-      const res = await fetch(
-        `https://gsg-project-group-5.vercel.app/api/v1/users/${id}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+      const res = await fetch(`${API_BASE_URL}/users/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-      );
+      });
 
       if (!res.ok) {
         const errorData = await res.json();
-        console.error("Delete failed:", errorData);
-        alert(
-          "Failed to delete user: " + (errorData.message ?? "Unknown error"),
-        );
+        alert(errorData.message ?? "Delete failed");
         return;
       }
 
       setDa((prev) => prev.filter((user) => user.id !== id));
-      alert("User deleted successfully!");
     } catch (err) {
-      console.error("Error deleting user:", err);
-      alert("An error occurred while deleting the user");
+      console.error(err);
     }
   };
-  const itemsPerPage = 7;
+
+  const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(da.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;

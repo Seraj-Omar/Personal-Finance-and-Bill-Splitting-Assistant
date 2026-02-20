@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Chart from "chart.js/auto";
 
 type BillStatus = "paid" | "unpaid" | "overdue";
@@ -8,42 +8,66 @@ type BillStatus = "paid" | "unpaid" | "overdue";
 type Bill = {
   id: number;
   title: string;
-  amount: number;
+  amount: string;
   status: BillStatus;
 };
 
-const bills: Bill[] = [
-  { id: 1, title: "Electricity", amount: 120, status: "unpaid" },
-  { id: 2, title: "Internet", amount: 80, status: "paid" },
-  { id: 3, title: "Water", amount: 60, status: "overdue" },
-  { id: 4, title: "Water", amount: 60, status: "unpaid" },
-  { id: 5, title: "Water", amount: 60, status: "overdue" },
-  { id: 6, title: "Water", amount: 60, status: "overdue" },
-];
+// const bills: Bill[] = [
+//   { id: 1, title: "Electricity", amount: 120, status: "unpaid" },
+//   { id: 2, title: "Internet", amount: 80, status: "paid" },
+//   { id: 3, title: "Water", amount: 60, status: "overdue" },
+//   { id: 4, title: "Water", amount: 60, status: "unpaid" },
+//   { id: 5, title: "Water", amount: 60, status: "overdue" },
+//   { id: 6, title: "Water", amount: 60, status: "overdue" },
+// ];
 
 export default function DonutChart() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const chartRef = useRef<Chart | null>(null);
+  const [bills, setBills] = useState<Bill[]>([]);
+  const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
+  useEffect(() => {
+    const token = sessionStorage.getItem("token");
+
+    if (!token) return;
+
+    fetch(`${API_BASE_URL}/bills`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Unauthorized");
+        return res.json();
+      })
+      .then((result) => {
+        console.log(result.data);
+        setBills(result.data.items ?? []);
+      })
+      .catch((err) => console.error(err));
+  }, []);
   const { values, total } = useMemo(() => {
+    const parseAmount = (b: Bill) => Number(b.amount);
+
     const paid = bills
       .filter((b) => b.status === "paid")
-      .reduce((s, b) => s + b.amount, 0);
+      .reduce((s, b) => s + parseAmount(b), 0);
 
     const unpaid = bills
       .filter((b) => b.status === "unpaid")
-      .reduce((s, b) => s + b.amount, 0);
+      .reduce((s, b) => s + parseAmount(b), 0);
 
     const overdue = bills
       .filter((b) => b.status === "overdue")
-      .reduce((s, b) => s + b.amount, 0);
+      .reduce((s, b) => s + parseAmount(b), 0);
 
     const values = [paid, unpaid, overdue];
     const total = values.reduce((a, b) => a + b, 0);
 
     return { values, total };
-  }, []);
-
+  }, [bills]);
   const stats = useMemo(() => {
     const totalBills = bills.length;
 
@@ -51,8 +75,7 @@ export default function DonutChart() {
     const unpaidBills = bills.filter((b) => b.status === "unpaid");
     const overdueBills = bills.filter((b) => b.status === "overdue");
 
-    const sum = (arr: Bill[]) => arr.reduce((s, b) => s + b.amount, 0);
-
+    const sum = (arr: Bill[]) => arr.reduce((s, b) => s + Number(b.amount), 0);
     const totalAmount = sum(bills);
 
     const paidPercent =
@@ -95,7 +118,7 @@ export default function DonutChart() {
       remainingBills,
       breakdown,
     };
-  }, []);
+  }, [bills]);
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -121,20 +144,28 @@ export default function DonutChart() {
         const centerX = (chart.chartArea.left + chart.chartArea.right) / 2;
         const centerY = (chart.chartArea.top + chart.chartArea.bottom) / 2;
 
-        const radius = 45;
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-        ctx.fillStyle = "#ffffff00";
-        ctx.fill();
-        ctx.lineWidth = 0.5;
-        ctx.strokeStyle = "rgba(215, 214, 214, 0.69)";
-        ctx.stroke();
-        ctx.restore();
+        const radius = 45; // نصف قطر الدائرة الداخلية
+
+        // دالة لضبط حجم الخط حتى لا يتجاوز حدود الدائرة
+        function fitTextInCircle(text: string, maxRadius: number) {
+          let fontSize = 24; // البداية
+          ctx.font = `700 ${fontSize}px Roboto`;
+          let width = ctx.measureText(text).width;
+
+          while (width > maxRadius * 2 && fontSize > 10) {
+            fontSize -= 1;
+            ctx.font = `700 ${fontSize}px Roboto`;
+            width = ctx.measureText(text).width;
+          }
+
+          return fontSize;
+        }
+
+        const fontSize = fitTextInCircle(`$${total}`, radius);
 
         ctx.save();
         ctx.fillStyle = "#111";
-        ctx.font = "700 24px Roboto";
+        ctx.font = `700 ${fontSize}px Roboto`;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText(`$${total}`, centerX, centerY);

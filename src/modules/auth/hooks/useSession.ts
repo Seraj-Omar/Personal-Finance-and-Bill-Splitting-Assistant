@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { revalidate } from "../services/auth.api";
 
-export function useSession() {
+export function useSession(p0: boolean) {
   return useQuery({
     queryKey: ["session"],
     queryFn: revalidate,          // GET /auth/revalidate

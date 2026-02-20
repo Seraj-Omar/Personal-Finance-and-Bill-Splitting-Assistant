@@ -93,7 +93,7 @@ export default function Navbar() {
           </div>
         </Link>
 
-        <ul className="hidden lg:flex gap-[24px] items-center text-sm font-medium text-[18px]">
+        <ul className="hidden lg:flex gap-[24px] items-center xl:font-medium text-[18px]">
           <li>
             <Link href="/" className={isActiveExact("/")}>
               Home
@@ -144,7 +144,7 @@ export default function Navbar() {
         </ul>
 
         {/* Desktop Right */}
-        <div className="hidden lg:flex items-center gap-[12px] text-[18px] font-medium">
+        <div className="hidden lg:flex items-center gap-[12px] text-[18px] xl:font-medium">
           <div className="relative">
             <button
               type="button"
@@ -175,10 +175,10 @@ export default function Navbar() {
             <div className="flex items-center gap-3">
               <Link
                 href="/settings/profile"
-                className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee]  transition "
+                className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] transition overflow-hidden"
               >
                 <User size={20} className="fill-current" />
-                <span>{user?.fullName || "Account"}</span>
+                <span>{user?.fullName?.split(" ")[0] || "Account"}</span>
               </Link>
             </div>
           )}
@@ -188,19 +188,19 @@ export default function Navbar() {
         <div className="lg:hidden flex items-center gap-1 md:gap-3">
           <div className="relative">
             <button
-              className="w-[35px] h-[35px] md:w-[40px] md:h-[40px]  flex items-center justify-center rounded-full bg-[#f9f9fa] text-gray-700 hover:text-[#3447aaee] transition"
+              className="w-[35px] h-[35px] sm:w-[40px] sm:h-[40px]  flex items-center justify-center rounded-full bg-[#f9f9fa] text-gray-700 hover:text-[#3447aaee] transition"
               type="button"
               onClick={() => setIsNotificationsOpen((prev) => !prev)}
             >
-              <Bell className="w-[15px] h-[15px] md:w-[20px] md:h-[20px] fill-current" />
+              <Bell className="w-[15px] h-[15px] sm:w-[20px] sm:h-[20px] fill-current" />
             </button>
           </div>
 
           <button
-            className="w-[35px] h-[35px] md:w-[40px] md:h-[40px] flex items-center justify-center rounded-full bg-[#f9f9fa] text-gray-700 hover:text-[#3447aaee] transition"
+            className="w-[35px] h-[35px] sm:w-[40px] sm:h-[40px] flex items-center justify-center rounded-full bg-[#f9f9fa] text-gray-700 hover:text-[#3447aaee] transition"
             type="button"
           >
-            <Search className="w-[15px] h-[15px] md:w-[20px] md:h-[20px]" />
+            <Search className="w-[15px] h-[15px] sm:w-[20px] sm:h-[20px]" />
           </button>
 
           <button

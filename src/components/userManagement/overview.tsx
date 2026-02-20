@@ -1,7 +1,7 @@
 import { number, string } from "zod";
 
 const CARD_BASE =
-  "relative flex flex-col  h-[137px] bg-white rounded-[16px] p-[16px] gap-1";
+  "relative flex flex-col  h-[137px] bg-white rounded-[16px] p-[16px] gap-1 border-[#D9D9D980] border-[0.5px]";
 const svgrise = (
   <svg
     width="16"
