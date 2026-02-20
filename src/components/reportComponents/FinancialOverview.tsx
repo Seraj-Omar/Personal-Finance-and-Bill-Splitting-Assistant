@@ -9,7 +9,7 @@ type ApiData = {
 };
 
 const CARD_BASE =
-  "flex flex-1 min-w-[302.25px]  h-[99px] bg-white rounded-[16px] p-[16px]";
+  "flex flex-1  h-[99px] bg-white rounded-[16px] p-[16px]";
 
 const ICON_BASE =
   "flex items-center justify-center w-[45px] h-[45px] rounded-[8px]";
@@ -18,20 +18,28 @@ const formatMoney = (num: number) => `$${num.toLocaleString()}`;
 
 export default function FinancialOverview() {
   const [data, setData] = useState<ApiData | null>(null);
+  const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
   useEffect(() => {
-    const response = {
-      success: true,
-      data: {
-        totalBalance: 1758,
-        totalIncome: 2500,
-        totalExpenses: 1758,
-      },
-    };
+    const token = sessionStorage.getItem("token");
 
-    if (response.success) {
-      setData(response.data);
-    }
+    if (!token) return;
+
+    fetch(`${API_BASE_URL}/expenses/overview`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Unauthorized");
+        return res.json();
+      })
+      .then((result) => {
+        console.log(result.data)
+        setData(result.data ?? []);
+      })
+      .catch((err) => console.error(err));
   }, []);
 
   const netBalance = data ? data.totalIncome - data.totalExpenses : 0;
@@ -44,7 +52,7 @@ export default function FinancialOverview() {
           <div className="mt-2 h-[2px] rounded-[16px] hero-gradient" />
         </div>
 
-        <div className="flex flex-wrap gap-[24px] mt-4 justify-center sm:justify-start">
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mt-4 ">
           <div className={CARD_BASE}>
             <div className={`${ICON_BASE} bg-[rgba(22,97,224,0.13)]`}>
               <svg
