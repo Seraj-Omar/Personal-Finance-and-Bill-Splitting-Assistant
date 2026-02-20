@@ -14,8 +14,9 @@ export type BudgetSegment = {
 
 export type BudgetPayload = {
   title: string;
+  subtitle?: string;
   items: BudgetItem[];
-  segments?: BudgetSegment[];
+  segments: BudgetSegment[]; // خليها required بدل optional
 };
 
 export type ChatMessage = {
@@ -54,3 +55,5 @@ export type SuggestBudgetResponse = {
     data: BudgetSuggestionItem[];
   };
 };
+
+
