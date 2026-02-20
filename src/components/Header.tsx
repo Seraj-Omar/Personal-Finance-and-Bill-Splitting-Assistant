@@ -178,7 +178,8 @@ export default function Navbar() {
                 className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] transition overflow-hidden"
               >
                 <User size={20} className="fill-current" />
-                <span>{user?.fullName?.split(" ")[0] || "Account"}</span>
+                <span className="flex xl:hidden">{user?.fullName?.split(" ")[0] || "Account"}</span>
+                <span className="hidden xl:flex">{user?.fullName || "Account"}</span>
               </Link>
             </div>
           )}
