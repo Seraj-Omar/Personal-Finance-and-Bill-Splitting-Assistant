@@ -1,3 +1,4 @@
+"use client"
 import Card from "@/src/components/debts/Card";
 import { TrendingDown, TrendingUp } from "lucide-react";
 import React from "react";
@@ -64,7 +65,7 @@ const PadgetComponent = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
             <Card
               title="Balance"
-              amount={`$${data?.balance ?? 0}`}
+amount={`${(data?.utilization ?? 0).toFixed(2)}%`}
               meta={
                 <div className="flex items-center gap-1">
                   <TrendingUp
