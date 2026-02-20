@@ -34,26 +34,33 @@ export default function AskAIChat() {
     appendMessage,
   } = useAskAIChat(initialMessages);
 
-  async function handleShowChart() {
-    send("Make me AI budget suggestion");
+  function uid() {
+  return Math.random().toString(16).slice(2) + Date.now().toString(16);
+}
 
-    const res = await refetch();
-    const items = res.data; // <-- array من select
+async function handleBudgetSuggestionClick() {
+  appendMessage({
+    id: uid(),
+    role: "user",
+    type: "text",
+    content: "Make me AI budget suggestion",
+  });
 
-    if (!items) return;
+  const res = await refetch(); 
+  const items = res.data;      
+  if (!items) return;
 
-    appendMessage({
-      id: `budget-${Date.now()}`,
-      role: "ai",
-      type: "budgetCard",
-      budget: {
-        title: "Suggested Budget 🤖",
-        segments: items.map((x) => ({ label: x.category, value: x.percentage })),
-        items: items.map((x) => ({ label: x.category, amount: x.amount.toString() })),
-      },
-    });
-  }
-
+  appendMessage({
+    id: `budget-${Date.now()}`,
+    role: "ai",
+    type: "budgetCard",
+    budget: {
+      title: "Suggested Budget 🤖",
+      segments: items.map((x) => ({ label: x.category, value: x.percentage })),
+      items: items.map((x) => ({ label: x.category, amount: String(x.amount) })),
+    },
+  });
+}
   return (
     <Container
       maxWidth={false}
@@ -125,8 +132,13 @@ export default function AskAIChat() {
                   size="small"
                   variant="outlined"
                   disabled={loading}
-                  onClick={() => send(q)}
-                  sx={{ borderRadius: 999, textTransform: "none" }}
+onClick={() => {
+    if (q.toLowerCase().includes("budget")) {
+      handleBudgetSuggestionClick();
+    } else {
+      send(q);
+    }
+  }}                  sx={{ borderRadius: 999, textTransform: "none" }}
                 >
                   {q}
                 </Button>
@@ -136,7 +148,7 @@ export default function AskAIChat() {
                 size="small"
                 variant="contained"
                 disabled={isFetching}
-                onClick={handleShowChart}
+                onClick={handleBudgetSuggestionClick}
                 sx={{ borderRadius: 999, textTransform: "none" }}
               >
                 {isFetching ? "Loading..." : "Make me AI budget suggestion"}

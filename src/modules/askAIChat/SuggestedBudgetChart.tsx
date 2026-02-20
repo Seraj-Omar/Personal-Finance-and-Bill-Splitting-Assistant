@@ -4,10 +4,16 @@ import React from "react";
 import { Box, Paper, Stack, Typography } from "@mui/material";
 import { PieChart } from "@mui/x-charts/PieChart";
 
-type BudgetItem = {
+export type BudgetItem = {
   category: string;
   amount: number;
-  percentage: number; // 50, 30, 20
+  percentage: number; // 0..100
+};
+
+type Props = {
+  title?: string;
+  subtitle?: string;
+  items: BudgetItem[];
 };
 
 function formatMoney(n: number) {
@@ -18,20 +24,16 @@ export default function SuggestedBudgetChart({
   title = "Suggested Budget 🤖",
   subtitle = "Budget Distribution Chart",
   items,
-}: {
-  title?: string;
-  subtitle?: string;
-  items: BudgetItem[];
-}) {
-  const palette = [
-    "#F59AA8", // pink
-    "#2F3FBD", // blue
-    "#F3D7DC", // light pink
-    "#9AA7FF",
-    "#7B5CFF",
-  ];
+}: Props) {
+  const palette = ["#F59AA8", "#2F3FBD", "#F3D7DC", "#9AA7FF", "#7B5CFF"];
 
-  const seriesData = items.map((it, i) => ({
+  const seriesData: Array<{
+    id: number;
+    value: number;
+    label: string;
+    amount: number;
+    color: string;
+  }> = items.map((it, i) => ({
     id: i,
     value: it.percentage,
     label: it.category,
@@ -54,6 +56,7 @@ export default function SuggestedBudgetChart({
       <Typography fontWeight={800} sx={{ mb: 0.25 }}>
         {title}
       </Typography>
+
       <Typography variant="caption" color="text.secondary" sx={{ mb: 1.5, display: "block" }}>
         {subtitle}
       </Typography>
@@ -63,32 +66,32 @@ export default function SuggestedBudgetChart({
           series={[
             {
               data: seriesData,
-              innerRadius: 52,      
-              outerRadius: 86,      
-              paddingAngle: 2.5,    
-              cornerRadius: 10,     
-              startAngle: -90,      
+              innerRadius: 52,
+              outerRadius: 86,
+              paddingAngle: 2.5,
+              cornerRadius: 10,
+              startAngle: -90,
               arcLabel: (item) => `${item.value}%`,
-              arcLabelMinAngle: 8, 
+              arcLabelMinAngle: 8,
             },
           ]}
-          slotProps={{
-            legend: { hidden: true }, 
-          }}
+          width={260}
+          height={220}
           sx={{
+            // ✅ اخفي legend الافتراضي لو ظهر
+            "& .MuiChartsLegend-root": { display: "none" },
+
             "& .MuiChartsArcLabel-root": {
-              fill: "#111", 
+              fill: "#111",
               fontWeight: 700,
               fontSize: 12,
               paintOrder: "stroke",
-              stroke: "#fff",      
-              strokeWidth: 10,    
+              stroke: "#fff",
+              strokeWidth: 10,
               strokeLinecap: "round",
               strokeLinejoin: "round",
             },
           }}
-          width={260}
-          height={220}
         />
       </Box>
 
@@ -104,14 +107,7 @@ export default function SuggestedBudgetChart({
             }}
           >
             <Box sx={{ display: "flex", alignItems: "center", gap: 1.2 }}>
-              <Box
-                sx={{
-                  width: 10,
-                  height: 10,
-                  borderRadius: "50%",
-                  backgroundColor: it.color,
-                }}
-              />
+              <Box sx={{ width: 10, height: 10, borderRadius: "50%", backgroundColor: it.color }} />
               <Typography variant="body2" color="text.secondary">
                 {it.label}
               </Typography>

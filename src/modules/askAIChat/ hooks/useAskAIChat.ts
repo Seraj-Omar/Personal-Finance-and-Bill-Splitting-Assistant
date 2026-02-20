@@ -22,9 +22,6 @@ export function useAskAIChat(initialMessages: ChatMessage[]) {
     return !loading && input.trim().length > 0;
   }, [loading, input]);
 
-  function appendMessage(msg: ChatMessage) {
-    setMessages((prev) => [...prev, msg]);
-  }
 
   useEffect(() => {
     const el = scrollerRef.current;
@@ -73,16 +70,18 @@ export function useAskAIChat(initialMessages: ChatMessage[]) {
       setMessages((prev) => [...prev, aiErr]);
     }
   }
-
-  return {
-    messages,
-    input,
-    setInput,
-    loading,
-    canSend,
-    send,
-    scrollerRef,
-    chatId,
-    appendMessage, 
-  };
+function appendMessage(msg: ChatMessage) {
+  setMessages((prev) => [...prev, msg]);
+}
+ return {
+  messages,
+  input,
+  setInput,
+  loading,
+  canSend,
+  send,
+  scrollerRef,
+  chatId,
+  appendMessage,
+};
 }
