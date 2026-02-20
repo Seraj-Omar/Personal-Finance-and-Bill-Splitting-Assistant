@@ -122,7 +122,7 @@ export default function Categories() {
             ))}
         </div>
 
-        <div className="w-full lg:w-[35%]">
+        <div className="w-full lg:w-[35%] bg-[#F9F9FA]">
           <ExpensesDonutCard />
         </div>
       </div>
