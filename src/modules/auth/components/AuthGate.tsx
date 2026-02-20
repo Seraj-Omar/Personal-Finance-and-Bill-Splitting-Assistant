@@ -1,9 +1,22 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useSession } from "../hooks/useSession";
-import { Box, Container, Skeleton, Stack } from "@mui/material";
+import { useRouter, usePathname } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import { revalidate, fetchMe } from "../services/auth.api";
+
+type Provider = "LOCAL" | "GOOGLE" | null;
+
+function readProvider(): Provider {
+  if (typeof window === "undefined") return null;
+  const p = sessionStorage.getItem("auth_provider");
+  return p === "LOCAL" || p === "GOOGLE" ? p : null;
+}
+
+function readToken(): string | null {
+  if (typeof window === "undefined") return null;
+  return sessionStorage.getItem("token");
+}
 
 export default function AuthGate({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -25,9 +38,16 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener("auth:changed", sync);
   }, []);
 
-  const { isLoading, error } = useSession(ready && !!token);
+  const sessionQ = useQuery({
+    queryKey: ["session"],
+    queryFn: revalidate,
+    enabled: ready && provider === "LOCAL" && !!token,
+    retry: false,
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
 
-  // GOOGLE: me (Cookie)
   const meQ = useQuery({
     queryKey: ["me"],
     queryFn: fetchMe,
@@ -63,8 +83,16 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
       return;
     }
 
+    if (!loading && !authed) {
+      router.replace(`/login?next=${encodeURIComponent(pathname)}`);
+      return;
+    }
+
     const status =
-      (sessionQ.error as any)?.status || (meQ.error as any)?.status;
+      (sessionQ.error as any)?.status ||
+      (sessionQ.error as any)?.response?.status ||
+      (meQ.error as any)?.status ||
+      (meQ.error as any)?.response?.status;
 
     if (status === 401) {
       sessionStorage.removeItem("token");
@@ -73,92 +101,10 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
       window.dispatchEvent(new Event("auth:changed"));
       router.replace(`/login?next=${encodeURIComponent(pathname)}`);
     }
-  }, [ready, provider, token, sessionQ.error, meQ.error, router, pathname]);
+  }, [ready, provider, token, loading, authed, sessionQ.error, meQ.error, router, pathname]);
 
-  if (loading) {
-    return (
-      <Container
-        maxWidth={false}
-        disableGutters
-        sx={{ py: 5, px: { xs: "10px", sm: "12px", md: "16px", lg: "100px" } }}
-      >
-        <Stack spacing={3}>
-          <Skeleton variant="text" width={220} height={36} />
-          <Skeleton variant="text" width={320} />
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: { xs: "column", md: "row" },
-              gap: 5,
-              boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-              p: 4,
-              borderRadius: 4,
-            }}
-          >
-            <Stack spacing={2} sx={{ flex: 5 }}>
-              <Skeleton variant="text" width={160} height={28} />
-              <Skeleton variant="rounded" height={280} />
-              <Skeleton variant="rounded" height={120} />
-            </Stack>
-
-            <Stack spacing={2} sx={{ flex: 7 }}>
-              <Skeleton variant="text" width={200} height={28} />
-              <Skeleton variant="rounded" height={320} />
-            </Stack>
-          </Box>
-
-          <Skeleton variant="text" width={180} height={28} />
-          <Skeleton variant="rounded" height={360} />
-        </Stack>
-      </Container>
-    );
-  }
-
-  if (!ready) return null;
-  if (!token) return null;
-
-  if (isLoading) {
-    return (
-      <Container
-        maxWidth={false}
-        disableGutters
-        sx={{ py: 5, px: { xs: "10px", sm: "12px", md: "16px", lg: "100px" } }}
-      >
-        <Stack spacing={3}>
-          {/* Top area (header / title) */}
-          <Skeleton variant="text" width={220} height={36} />
-          <Skeleton variant="text" width={320} />
-
-          {/* Two columns section */}
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: { xs: "column", md: "row" },
-              gap: 5,
-              boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-              p: 4,
-              borderRadius: 4,
-            }}
-          >
-            <Stack spacing={2} sx={{ flex: 5 }}>
-              <Skeleton variant="text" width={160} height={28} />
-              <Skeleton variant="rounded" height={280} />
-              <Skeleton variant="rounded" height={120} />
-            </Stack>
-
-            <Stack spacing={2} sx={{ flex: 7 }}>
-              <Skeleton variant="text" width={200} height={28} />
-              <Skeleton variant="rounded" height={320} />
-            </Stack>
-          </Box>
-
-          {/* Table/List section */}
-          <Skeleton variant="text" width={180} height={28} />
-          <Skeleton variant="rounded" height={360} />
-        </Stack>
-      </Container>
-    );
-  }
+  if (loading) return null;
+  if (!authed) return null;
 
   return <>{children}</>;
 }
