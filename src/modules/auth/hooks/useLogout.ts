@@ -9,21 +9,17 @@ export function useLogout() {
   const router = useRouter();
 
   return useMutation({
-    mutationFn: logoutUser,
-    onSuccess: () => {
-      sessionStorage.removeItem("cached_user");
-      sessionStorage.removeItem("token"); // اختياري إذا بتخزني token
-
-      queryClient.removeQueries({ queryKey: ["me"] });
-      queryClient.removeQueries({ queryKey: ["session"] });
-
-      router.push("/login");
+    mutationFn: async () => {
+      // لو user جوجل، هذا يمسح cookie
+      try { await logoutUser(); } catch {}
     },
-    onError: () => {
+    onSettled: () => {
       sessionStorage.removeItem("cached_user");
       sessionStorage.removeItem("token");
-      queryClient.removeQueries({ queryKey: ["me"] });
-      queryClient.removeQueries({ queryKey: ["session"] });
+      sessionStorage.removeItem("auth_provider");
+      window.dispatchEvent(new Event("auth:changed"));
+
+      queryClient.clear(); 
       router.push("/login");
     },
   });

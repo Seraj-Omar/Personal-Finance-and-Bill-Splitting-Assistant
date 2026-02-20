@@ -215,8 +215,7 @@ export default function CurrencyPage() {
                                   : "rgba(0,0,0,0.04)",
                               },
                             }}
-                          >
-                            {/* ✅ العلم */}
+                          
                             <span style={{ fontSize: 16 }}>
                               {currencyCodeToFlag(cur.code)}
                             </span>
