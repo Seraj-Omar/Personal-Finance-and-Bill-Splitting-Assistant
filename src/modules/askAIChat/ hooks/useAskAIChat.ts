@@ -14,7 +14,6 @@ export function useAskAIChat(initialMessages: ChatMessage[]) {
   const [chatId, setChatId] = useState<string | undefined>(undefined);
 
   const scrollerRef = useRef<HTMLDivElement | null>(null);
-
   const { mutateAsync, isPending } = useAIChatMutation();
 
   const loading = isPending;
@@ -23,7 +22,10 @@ export function useAskAIChat(initialMessages: ChatMessage[]) {
     return !loading && input.trim().length > 0;
   }, [loading, input]);
 
-  // auto-scroll on new messages
+  function appendMessage(msg: ChatMessage) {
+    setMessages((prev) => [...prev, msg]);
+  }
+
   useEffect(() => {
     const el = scrollerRef.current;
     if (!el) return;
@@ -47,29 +49,26 @@ export function useAskAIChat(initialMessages: ChatMessage[]) {
     try {
       const res = await mutateAsync({ message: content, chatId });
 
-      // save chatId for next turns
       setChatId(res.data.chatId);
 
-      // add ai message
+      const aiText = res.data.message ?? res.data.response ?? "";
+
       const aiMsg: ChatMessage = {
         id: uid(),
         role: "ai",
         type: "text",
-  content: res.data.message,
+        content: aiText,
       };
       setMessages((prev) => [...prev, aiMsg]);
     } catch (e: any) {
       const errText =
-        e?.data?.message ||
-        e?.message ||
-        "Something went wrong while contacting AI.";
+        e?.data?.message || e?.message || "Something went wrong while contacting AI.";
 
       const aiErr: ChatMessage = {
         id: uid(),
         role: "ai",
         type: "text",
         content: `⚠️ ${errText}`,
-        
       };
       setMessages((prev) => [...prev, aiErr]);
     }
@@ -83,6 +82,7 @@ export function useAskAIChat(initialMessages: ChatMessage[]) {
     canSend,
     send,
     scrollerRef,
-    chatId, // لو بدك تعرضيه/تتبعيه
+    chatId,
+    appendMessage, 
   };
 }
