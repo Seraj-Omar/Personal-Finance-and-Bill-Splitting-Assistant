@@ -151,7 +151,7 @@ const ExpensesDonutCard = () => {
           {isError && <Typography sx={{ color: "#ef4444" }}>Failed to load</Typography>}
 
           {mounted && !isLoading && !isError && (
-      <PieChart
+     <PieChart
   series={[
     {
       data: chartData,
@@ -167,7 +167,9 @@ const ExpensesDonutCard = () => {
   height={chartSize}
   margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
   slotProps={{
-    legend: { hidden: true }
+    legend: {
+      sx: { display: "none" },
+    },
   }}
 />
           )}
