@@ -21,14 +21,17 @@ onSuccess: (res) => {
 
   if (user?.defaultCurrencyId) {
     sessionStorage.setItem("currencyId", user.defaultCurrencyId);
-  } else {
-    sessionStorage.removeItem("currencyId");
   }
 
   window.dispatchEvent(new Event("auth:changed"));
 
   queryClient.setQueryData(["session"], res);
   queryClient.removeQueries({ queryKey: ["me"] });
+
+  if (user?.role === "ADMIN") {
+    router.replace("/dashboard");
+    return;
+  }
 
   const hasCurrency = Boolean(user?.defaultCurrencyId);
 
@@ -37,6 +40,6 @@ onSuccess: (res) => {
   } else {
     router.replace("/currency");
   }
-},
+}
   });
 }
