@@ -54,23 +54,27 @@ const ExpensesDonutCard = () => {
   const outerRadius = Math.round(ringSize * 0.43125);
 
   return (
-    <Paper
-      elevation={0}
-      sx={{
-        width: "100%",
-        maxWidth: 409,
-        height: "100",
-        minHeight: 584,
-        p: "32px",
-        borderRadius: "16px",
-        border: "1px solid #E5E7EB",
-        backgroundColor: "#F9FAFB",
-        display: "flex",
-        flexDirection: "column",
-        gap: "32px",
-        boxSizing: "border-box",
-      }}
-    >
+<Paper
+  elevation={0}
+  sx={{
+    width: "100%",
+    // maxWidth: 409,
+    height: "100",
+    minHeight: 584,
+    p: "32px",
+    borderRadius: "16px",
+    backgroundColor: "#F9FAFB",
+    display: "flex",
+    flexDirection: "column",
+    gap: "32px",
+    boxSizing: "border-box",
+
+    mx: "auto",               
+    my: { xs: 2, sm: 0 },       
+    px: { xs: 2, sm: "32px" },  
+    maxWidth: { xs: "100%", sm: 409 }, 
+  }}
+>
       {/* Tabs */}
       <Box sx={{ display: "flex", justifyContent: "center", mt: 0.5 }}>
         <Tabs
