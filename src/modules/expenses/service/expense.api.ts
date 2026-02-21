@@ -43,11 +43,31 @@ export type DonutItem = {
   percentage: number;
 };
 
-
-
 export function fetchExpensesDonutChart() {
   return apiFetch<ApiResponse<DonutItem[]>>(
     "/expenses/charts/donut",
     { method: "GET" }
   );
+}
+
+//Add exprenses
+
+export type CreateExpensePayload = {
+  name: string;
+  amount: number;
+  currencyId: string;
+  category: string;   // "FOOD" | "TRANSPORT" ...
+  dueDate: string;    // "YYYY-MM-DD"
+  description?: string;
+  assetId?: string;  
+};
+
+
+
+
+export function createExpense(payload: CreateExpensePayload) {
+  return apiFetch<ApiResponse<any>>("/expenses", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
 }
