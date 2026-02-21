@@ -52,9 +52,9 @@ const categoryMeta: Record<
   },
 };
 
+
 export default function Categories() {
   const [open, setOpen] = useState(false);
-
   const { data, isLoading, isError } = useExpensesCategoriesBreakdown();
 
   const categories = useMemo(() => {

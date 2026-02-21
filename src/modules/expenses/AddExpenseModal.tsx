@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from "react"
 import { X } from "lucide-react"
+import { useCreateExpense } from "./hooks/useCreateExpense"
 
 type CategoryItem = {
   key: string
@@ -20,7 +21,10 @@ type AddExpenseModalProps = {
   }) => void
   categories?: CategoryItem[]
 }
-
+function getCurrencyId() {
+  if (typeof window === "undefined") return null;
+  return sessionStorage.getItem("currencyId");
+}
 const AddExpenseModal = ({
   open,
   onClose,
@@ -73,6 +77,9 @@ const AddExpenseModal = ({
     return `${yyyy}-${mm}-${dd}`
   })
 
+  const { mutate, isPending } = useCreateExpense();
+
+
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose()
@@ -91,27 +98,40 @@ const AddExpenseModal = ({
   }, [open])
 
   if (!open) return null
+const handleSubmit = (e: React.FormEvent) => {
+  e.preventDefault();
 
-  const handleSave = (e: React.FormEvent) => {
-    e.preventDefault()
+  if (!name.trim()) return;
 
-    const safeAmount = Number(amount || 0)
-    if (!name.trim()) return
-
-    onSave?.({
-      name: name.trim(),
-      amount: safeAmount,
-      category: selectedCategory,
-      date,
-    })
-
-    // reset
-    setName("")
-    setAmount("")
-    setSelectedCategory(cats[0]?.key ?? "")
-    onClose()
+  const currencyId = getCurrencyId();
+  if (!currencyId) {
+    console.log("❌ currencyId missing in sessionStorage");
+    return;
   }
 
+  const payload = {
+    name: name.trim(),
+    amount: Number(amount || 0),
+    currencyId,
+    category: selectedCategory.toUpperCase(),
+    dueDate: date,
+    description: "",
+  };
+
+  console.log("✅ create expense payload:", payload);
+
+  mutate(payload, {
+    onSuccess: () => {
+      setName("");
+      setAmount("");
+      setSelectedCategory(cats[0]?.key ?? "");
+      onClose();
+    },
+    onError: (err) => {
+      console.log("❌ mutate onError:", err);
+    },
+  });
+};
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center px-4">
       {/* Overlay */}
@@ -136,8 +156,7 @@ const AddExpenseModal = ({
         </div>
 
         {/* Body */}
-        <form onSubmit={handleSave} className="p-6 space-y-5">
-          {/* Expense name */}
+<form onSubmit={handleSubmit} className="p-6 space-y-5">
           <div className="space-y-2">
             <p className="text-xs font-medium text-gray-600">Expense name</p>
             <input
@@ -221,12 +240,13 @@ const AddExpenseModal = ({
 
           {/* Footer buttons */}
           <div className="pt-2 flex items-center justify-between gap-4">
-                  <button
-              type="submit"
-              className="w-1/2 rounded-xl bg-[#3447AA] text-white px-4 py-3 text-sm font-medium hover:opacity-90 transition"
-            >
-              Save Expense
-            </button>
+     <button
+  type="submit"
+  disabled={isPending}
+  className="w-1/2 rounded-xl bg-[#3447AA] text-white px-4 py-3 text-sm font-medium hover:opacity-90 transition disabled:opacity-60"
+>
+  {isPending ? "Saving..." : "Save Expense"}
+</button>
             <button
               type="button"
               onClick={onClose}
