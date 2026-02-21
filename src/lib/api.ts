@@ -17,12 +17,10 @@ export async function apiFetch<T>(path: string, options: ApiFetchOptions = {}): 
 
   const res = await fetch(`${BASE_URL}${path}`, {
     ...options,
-    // ✅ الافتراضي: لا كوكيز
     credentials: options.withCredentials ? "include" : "omit",
     headers: {
       ...(options.headers || {}),
       "Content-Type": "application/json",
-      // ✅ Authorization فقط لو عندنا token ومو طالب skip
       ...(!options.skipAuthHeader && token ? { Authorization: `Bearer ${token}` } : {}),
     },
     cache: "no-store",

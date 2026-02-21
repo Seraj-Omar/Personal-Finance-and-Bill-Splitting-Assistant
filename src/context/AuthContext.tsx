@@ -68,7 +68,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const loading =
     provider === "LOCAL" ? sessionQ.isLoading : provider === "GOOGLE" ? meQ.isLoading : false;
 
-  // logout بسيط (بدون باك حالياً)
   const logoutLocal = () => {
     sessionStorage.removeItem("token");
     sessionStorage.removeItem("cached_user");
