@@ -1,9 +1,12 @@
+"use client";
+
 import React, { useMemo, useState } from "react";
-import FilterButton from "../../components/debts/FilterButton";
 import Table from "@/src/components/Table";
 import { HiMiniTrash } from "react-icons/hi2";
 import { BiSolidPencil } from "react-icons/bi";
-import { useBills } from "./hooks/useBills";
+import TableToolbar from "./TableToolbar";
+import AddBudgetModal from "./AddBudgetModal";
+import { useBudgets } from "./hooks/useBudgets";
 
 type FilterType = "All" | "Paid" | "Unpaid" | "Overdue";
 
@@ -31,7 +34,7 @@ function toUIStatus(s: string): Exclude<FilterType, "All"> {
   const v = (s || "").toLowerCase();
   if (v === "paid") return "Paid";
   if (v === "overdue") return "Overdue";
-  return "Unpaid"; 
+  return "Unpaid";
 }
 
 function formatDate(iso: string) {
@@ -41,16 +44,16 @@ function formatDate(iso: string) {
 }
 
 const columns: Column<Payment>[] = [
-  { key: "date", title: "Date", render: (row) => <span className="text-sm text-gray-600">{row.date}</span> },
-  { key: "member", title: "Member", render: (row) => <span className="text-sm text-gray-700">{row.member}</span> },
-  { key: "type", title: "Type", render: (row) => <span className="text-sm text-gray-700">{row.type}</span> },
-  { key: "amount", title: "Amount", render: (row) => <span className="text-sm font-medium text-gray-900">{row.amount}</span> },
-  { key: "billName", title: "Bill Name", render: (row) => <span className="text-sm text-gray-700">{row.billName}</span> },
+  { key: "date", title: "Date", render: (row) => <span className="text-sm text-gray-600 whitespace-nowrap">{row.date}</span> },
+  { key: "member", title: "Member", render: (row) => <span className="text-sm text-gray-700 whitespace-nowrap">{row.member}</span> },
+  { key: "type", title: "Type", render: (row) => <span className="text-sm text-gray-700 whitespace-nowrap">{row.type}</span> },
+  { key: "amount", title: "Amount", render: (row) => <span className="text-sm font-medium text-gray-900 whitespace-nowrap">{row.amount}</span> },
+  { key: "billName", title: "Bill Name", render: (row) => <span className="block max-w-[140px] sm:max-w-[240px] truncate text-sm text-gray-700">{row.billName}</span> },
   {
     key: "action",
     title: "Action",
     render: (row) => (
-      <div className="flex gap-4 items-center">
+      <div className="flex gap-3 items-center justify-end whitespace-nowrap">
         <HiMiniTrash className="text-red-500 cursor-pointer" size={16} onClick={() => console.log("delete", row.id)} />
         <BiSolidPencil className="text-gray-600 cursor-pointer" size={16} onClick={() => console.log("edit", row.id)} />
       </div>
@@ -60,27 +63,24 @@ const columns: Column<Payment>[] = [
 
 export default function TableBudget() {
   const [activeFilter, setActiveFilter] = useState<FilterType>("All");
+  const [openAdd, setOpenAdd] = useState(false);
 
- 
-  const typeFilter: "individual" | "group" | undefined = undefined;
+const params = React.useMemo(() => ({ page: 1, limit: 10 }), []);
+const { data, isLoading, isError } = useBudgets(params);
 
-  const { data, isLoading, isError } = useBills({
-    page: 1,
-    limit: 10,
-    type: typeFilter,
-  });
+console.log("Budgets response:", data);
 
-  const apiItems = (data as any)?.data?.items ?? [];
+const apiItems = (data as any)?.data ?? [];
 
   const paymentsFromApi: Payment[] = useMemo(() => {
     return apiItems.map((b: any) => ({
-      id: b.id,
-      date: formatDate(b.date),
+      id: String(b.id),
+      date: formatDate(String(b.startDate ?? b.date ?? "")),
       member: "-",
-      type: toUIType(b.type),
-      amount: String(b.amount),
-      billName: String(b.name),
-      status: toUIStatus(b.status),
+      type: "Individual",
+      amount: String(b.allocatedAmount ?? b.amount ?? ""),
+      billName: String(b.category ?? b.name ?? ""),
+      status: "Unpaid", 
     }));
   }, [apiItems]);
 
@@ -91,30 +91,26 @@ export default function TableBudget() {
   }, [activeFilter, paymentsFromApi]);
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-4">
-        <span className="text-sm text-gray-500">Filtered By :</span>
+    <div className="space-y-4 w-full">
+      <TableToolbar
+        activeFilter={activeFilter}
+        onChangeFilter={setActiveFilter}
+        onAddNew={() => setOpenAdd(true)}
+      />
 
-        <div className="bg-[#1661E00D] p-2 rounded-2xl flex gap-2">
-          {(["All", "Paid", "Unpaid", "Overdue"] as FilterType[]).map((item) => (
-            <FilterButton
-              key={item}
-              active={activeFilter === item}
-              onClick={() => setActiveFilter(item)}
-            >
-              {item}
-            </FilterButton>
-          ))}
-        </div>
-      </div>
+      <AddBudgetModal open={openAdd} onClose={() => setOpenAdd(false)} />
 
-      <h1 className="text-xl font-semibold text-gray-800">Budgets Table</h1>
+      <h1 className="text-xl font-semibold text-gray-800">Budget Table.</h1>
 
       {isLoading ? <div>Loading...</div> : null}
-      {isError ? <div>Failed to load bills</div> : null}
+      {isError ? <div>Failed to load budgets</div> : null}
 
       {!isLoading && !isError ? (
-        <Table columns={columns} data={filteredPayments} />
+        <div className="w-full overflow-x-auto">
+          <div className="min-w-[720px]">
+            <Table columns={columns} data={filteredPayments} />
+          </div>
+        </div>
       ) : null}
     </div>
   );
