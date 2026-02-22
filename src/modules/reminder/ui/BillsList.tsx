@@ -21,21 +21,17 @@ const BillsList = () => {
   }
 
   const handleToggle = (id: string, active: boolean) => {
-    setBills(prev =>
-      prev.map(bill =>
-        bill.id === id ? { ...bill, active } : bill
-      )
-    )
+    setBills(prev => prev.map(bill => (bill.id === id ? { ...bill, active } : bill)))
   }
 
   const handleEdit = (bill: Bill) => {
     console.log("Edit bill:", bill)
-    // هنا تفتح Modal أو صفحة تعديل
   }
 
   return (
-    <div className="space-y-4">
-      {bills.map(bill => (
+  <div className="w-full">
+    <div className="grid grid-cols-1 gap-4 w-full">
+      {bills.map((bill) => (
         <BillCard
           key={bill.id}
           bill={bill}
@@ -45,7 +41,9 @@ const BillsList = () => {
         />
       ))}
     </div>
-  )
+  </div>
+)
+  
 }
 
 export default BillsList

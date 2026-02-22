@@ -66,18 +66,7 @@ const PadgetComponent = () => {
             <Card
               title="Balance"
 amount={`${(data?.utilization ?? 0).toFixed(2)}%`}
-              meta={
-                <div className="flex items-center gap-1">
-                  <TrendingUp
-                    size={14}
-                    strokeWidth={1.5}
-                    className="text-[#FF7292] opacity-70"
-                  />
-                  <span className="text-xs font-medium text-[#FF7292]">
-                    +8.2% increase
-                  </span>
-                </div>
-              }
+        
               icon={MoneyIcon}
               iconBg="bg-[#FDF5F7]"
             />
@@ -87,18 +76,7 @@ amount={`${(data?.utilization ?? 0).toFixed(2)}%`}
               amount={`$${data?.revenues ?? 0}`}
               icon={MoneyIcon}
               iconBg="bg-[#EEEAFE]"
-              meta={
-                <div className="flex items-center gap-1">
-                  <TrendingDown
-                    size={14}
-                    strokeWidth={1.5}
-                    className="text-[#6133BD]"
-                  />
-                  <span className="text-xs font-medium text-[#8B5CF6]">
-                    -2.5%
-                  </span>
-                </div>
-              }
+            
             />
 
             <Card
@@ -106,38 +84,16 @@ amount={`${(data?.utilization ?? 0).toFixed(2)}%`}
        amount={`$${data?.expenses ?? 0}`}
               icon={MoneyIcon}
               iconBg="bg-[#DCFCE7]"
-              meta={
-                <div className="flex items-center gap-1">
-                  <TrendingUp
-                    size={14}
-                    strokeWidth={1.5}
-                    className="text-[#16C087]"
-                  />
-                  <span className="text-xs font-medium text-[#16C087]">
-                    2 payments expected
-                  </span>
-                </div>
-              }
+             
             />
 
             <Card
               title="Total debt"
- amount={`$${ data?.utilization ? (data.utilization * 100).toFixed(2) + "%" : "0%"}`}
+ amount={`${ data?.utilization ? (data.utilization * 100).toFixed(2) + "%" : "0%"}`}
                         icon={MoneyIcon}
 
               iconBg="bg-[#686FFF1A]"
-              meta={
-                <div className="flex items-center gap-1">
-                  <TrendingUp
-                    size={14}
-                    strokeWidth={1.5}
-                    className="text-[#686FFF]"
-                  />
-                  <span className="text-xs font-medium text-[#686FFF]">
-                    2 payments expected
-                  </span>
-                </div>
-              }
+             
             />
           </div>
         </div>

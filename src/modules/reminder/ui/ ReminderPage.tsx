@@ -6,8 +6,9 @@ import { useRouter } from "next/navigation";
 
 const ReminderPage = () => {
   const router = useRouter();
+
   return (
-<div className="container mx-auto py-5 ">
+    <div className="container mx-auto py-5 px-4">
       <section
         className="mt-10 p-6 rounded-2xl"
         style={{
@@ -16,19 +17,17 @@ const ReminderPage = () => {
           borderRadius: "16px",
         }}
       >
-        {" "}
-        <div className="flex flex-col lg:flex-row gap-6 justify-center items-center">
+        <div className="flex flex-col lg:flex-row gap-6 justify-center items-stretch w-full">
           {/* LEFT – Bills */}
-          <div className="flex-1 space-y-4">
+          <div className="w-full flex-1">
             <BillsList />
             <BillsList />
-
             <BillsList />
           </div>
 
           {/* RIGHT – Image */}
-          <div className="hidden lg:flex lg:items-end lg:justify-end">
-            <div className="relative rounded-2xl overflow-hidden main-bg-color/50">
+          <div className="hidden lg:flex lg:w-[420px] lg:justify-end">
+            <div className="relative rounded-2xl overflow-hidden">
               <Image
                 src="/reminder-img.png"
                 alt="Reminder Illustration"
@@ -40,6 +39,7 @@ const ReminderPage = () => {
           </div>
         </div>
       </section>
+
       <ImportantReminder />
     </div>
   );

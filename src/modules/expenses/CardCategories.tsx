@@ -31,7 +31,7 @@ const CategoryCard = ({
     <div
       onClick={onClick}
       className={`w-full rounded-xl border bg-white px-4 py-3 transition cursor-pointer ${
-        active ? "border-indigo-600 shadow-sm" : "border-gray-200"
+        active ? "border-indigo-600 shadow-lg hover:shadow-blue-500/20" : "border-gray-200"
       }`}
     >
       <div className="flex items-center justify-between gap-4">
