@@ -80,7 +80,7 @@ amount={`${(data?.utilization ?? 0).toFixed(2)}%`}
               title="Expenses"
        amount={`$${data?.expenses ?? 0}`}
               icon={<svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M8.3125 12.0312C8.3125 12.88 8.96876 13.5625 9.77376 13.5625H11.4187C12.1187 13.5625 12.6875 12.9675 12.6875 12.2237C12.6875 11.4275 12.3375 11.1387 11.8213 10.955L9.1875 10.0362C8.67125 9.85246 8.32126 9.57246 8.32126 8.76746C8.32126 8.03246 8.88999 7.42871 9.58999 7.42871H11.235C12.04 7.42871 12.6963 8.11121 12.6963 8.95996" stroke="#16C087" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M8.3125 12.0312C8.3125 12.88 8.96876 13.5625 9.77376 13.5625H11.4187C12.1187 13.5625 12.6875 12.9675 12.6875 12.2237C12.6875 11.4275 12.3375 11.1387 11.8213 10.955L9.1875 10.0362C8.67125 9.85246 8.32126 9.57246 8.32126 8.76746C8.32126 8.03246 8.88999 7.42871 9.58999 7.42871H11.235C12.04 7.42871 12.6963 8.11121 12.6963 8.95996" stroke="#16C087" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
 <path d="M10.5 6.5625V14.4375" stroke="#16C087" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
 <path d="M19.25 10.5C19.25 15.33 15.33 19.25 10.5 19.25C5.67 19.25 1.75 15.33 1.75 10.5C1.75 5.67 5.67 1.75 10.5 1.75" stroke="#16C087" strokeWidth="1.2" stroke-linecap="round" stroke-linejoin="round"/>
 <path d="M19.25 5.25L19.25 1.75L15.75 1.75" stroke="#16C087" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
