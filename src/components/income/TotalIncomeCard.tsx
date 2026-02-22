@@ -2,7 +2,7 @@
 
 export default function TotalIncomeCard() {
   return (
-    <div className="w-full xl:w-[832px] min-h-[432px] rounded-[16px] bg-white p-[24px] shadow-[2px_1px_12.4px_0px_#3A4DE912]">
+    <div className="w-full min-w-0 min-h-[432px] rounded-[16px] bg-white p-[24px] shadow-[2px_1px_12.4px_0px_#3A4DE912]">
       {/* Header */}
       <div className="flex items-start justify-between">
         <div className="flex flex-col gap-[16px]">
@@ -14,7 +14,7 @@ export default function TotalIncomeCard() {
           </div>
         </div>
 
-     <button
+        <button
           type="button"
           className="mt-[32px] flex items-center gap-[8px] text-[14px] leading-[14px] font-normal text-[#8D9092]"
         >
@@ -40,19 +40,13 @@ export default function TotalIncomeCard() {
 
       {/* Chart */}
       <div className="mt-[16px]">
-        {/* chart area */}
         <div className="relative h-[270px] w-full">
-          {/* bars row */}
           <div className="absolute bottom-[30px] left-0 right-0 flex items-end justify-between">
-            {/* Mon */}
             <div className="w-[10px] sm:w-[14px] h-[120px] rounded-[30px] bg-[#E6E6E6]" />
-            {/* Tue */}
             <div className="w-[10px] sm:w-[13px] h-[168px] rounded-[30px] bg-[#E6E6E6]" />
-            {/* Wed */}
             <div className="w-[10px] sm:w-[13px] h-[90px] rounded-[30px] bg-[#E6E6E6]" />
 
             <div className="relative flex flex-col items-center">
-              {/* Tooltip */}
               <div className="absolute -top-[42px] flex flex-col items-center">
                 <div className="h-[35.88px] w-[56.52px] rounded-[12px] bg-[#3447AA] flex items-center justify-center text-white text-[16px] leading-[16px] font-medium">
                   100
@@ -60,19 +54,14 @@ export default function TotalIncomeCard() {
                 <div className="w-0 h-0 border-l-[6px] border-r-[6px] border-t-[8px] border-l-transparent border-r-transparent border-t-[#3447AA] -mt-[2px]" />
               </div>
 
-              {/* Bar */}
               <div className="w-[10px] sm:w-[12px] h-[240px] rounded-[30px] bg-[#3447AA]" />
             </div>
 
-            {/* Fri */}
             <div className="w-[10px] sm:w-[13px] h-[216px] rounded-[30px] bg-[#E6E6E6]" />
-            {/* Sat */}
             <div className="w-[10px] sm:w-[14px] h-[216px] rounded-[30px] bg-[#E6E6E6]" />
-            {/* Sun */}
             <div className="w-[10px] sm:w-[14px] h-[216px] rounded-[30px] bg-[#E6E6E6]" />
           </div>
 
-          {/* days labels */}
           <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between text-[12px] leading-[12px] font-medium text-black/50">
             <span>Mon</span>
             <span>Tue</span>

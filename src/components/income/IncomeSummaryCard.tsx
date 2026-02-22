@@ -4,14 +4,13 @@ import Image from "next/image";
 
 export default function IncomeSummaryCard() {
   return (
-    <div className="mt-[10px] w-full max-w-[832px] md:w-[832px] h-auto md:h-[135px] rounded-[16px] p-[24px] border border-[0.5px] border-[#1661E02E] bg-[linear-gradient(91.79deg,#FCEDF1_0.42%,#E3E1FC_99.71%)]">
-      <div className="flex flex-col md:flex-row md:items-center gap-[16px] md:h-full">
+    <div className="mt-[10px] w-full min-w-0 h-auto md:h-[135px] rounded-[16px] p-[24px] border border-[0.5px] border-[#1661E02E] bg-[linear-gradient(91.79deg,#FCEDF1_0.42%,#E3E1FC_99.71%)]">
+      <div className="flex flex-col md:flex-row md:items-center gap-[16px] md:h-full min-w-0">
         <div className="w-[64px] h-[64px] rounded-[40px] bg-[#3447AA] flex items-center justify-center shrink-0">
           <Image src="/icons/idea.svg" alt="Idea" width={30} height={34} />
         </div>
 
-      
-        <div className="flex-1 flex flex-col gap-[12px]">
+        <div className="flex-1 flex flex-col gap-[12px] min-w-0">
           <div className="font-medium text-[20px] leading-[20px] text-[#1C1A1A]">
             Your Bill increased
           </div>

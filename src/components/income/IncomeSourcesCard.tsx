@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 export default function IncomeSourcesCard() {
   const items = [
     {
@@ -41,8 +43,7 @@ export default function IncomeSourcesCard() {
   ];
 
   return (
-<div className="w-full xl:w-[424px] h-auto xl:h-[614px] rounded-[16px] bg-white p-[24px] shadow-[0px_2px_15.8px_0px_#D7D7D740]">
-
+    <div className="w-full xl:w-[424px] h-auto xl:h-[614px] rounded-[16px] bg-white p-[24px] shadow-[0px_2px_15.8px_0px_#D7D7D740]">
       <div className="w-full h-full flex flex-col gap-[24px]">
         {/* Gradient Card */}
         <div className="w-full rounded-[16px] p-[16px] flex flex-col gap-[16px] bg-[linear-gradient(298.48deg,_#FCEDF1_0%,_#E4E2FC_92.52%)] shadow-[2px_1px_12.4px_0px_#3A4DE912]">
@@ -128,7 +129,10 @@ export default function IncomeSourcesCard() {
         {/* Buttons */}
         <div className="mt-auto w-full flex flex-col gap-[16px]">
           {/* View AI Budget */}
-          <div className="w-full h-[56px] rounded-[16px] px-[16px] py-[8px] bg-[#F2F3F7] relative flex items-center">
+          <Link
+            href="/budget"
+            className="w-full h-[56px] rounded-[16px] px-[16px] py-[8px] bg-[#F2F3F7] relative flex items-center cursor-pointer hover:bg-[#E9EBF3] transition"
+          >
             <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-[8px]">
               <img
                 src="/icons/elements4.svg"
@@ -158,10 +162,14 @@ export default function IncomeSourcesCard() {
                 />
               </svg>
             </div>
-          </div>
+          </Link>
 
           {/* View Reports */}
-          <div className="w-full h-[56px] rounded-[16px] px-[16px] py-[8px] bg-[#F2F3F7] relative flex items-center">
+          <Link
+            href="/report"
+            
+            className="w-full h-[56px] rounded-[16px] px-[16px] py-[8px] bg-[#F2F3F7] relative flex items-center cursor-pointer hover:bg-[#E9EBF3] transition"
+          >
             <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-[8px]">
               <img
                 src="/icons/elements5.svg"
@@ -191,7 +199,7 @@ export default function IncomeSourcesCard() {
                 />
               </svg>
             </div>
-          </div>
+          </Link>
         </div>
       </div>
     </div>

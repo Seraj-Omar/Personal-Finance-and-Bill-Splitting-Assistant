@@ -2,7 +2,7 @@
 
 export default function AllIncomeCard() {
   return (
-    <div className="w-full max-w-[400px] md:max-w-[400px] h-auto md:h-[400px] rounded-[24px] bg-white p-[24px] shadow-[0px_5.77px_16.34px_-4.81px_#3A4DE926] flex flex-col">
+<div className="w-full min-w-0 h-auto md:h-[400px] rounded-[24px] bg-white p-[24px] shadow-[2px_1px_12.4px_0px_#3A4DE912] flex flex-col">
       {/* Header */}
       <div className="w-full h-[24.9358px] flex items-center justify-between gap-[24px]">
         <h3 className="text-[18px] font-medium text-[#1C1A1A] leading-[100%]">
@@ -28,13 +28,17 @@ export default function AllIncomeCard() {
       </div>
 
       {/* List */}
-      <div className="mt-[16px] w-full flex flex-col gap-[16px]">
+      <div className="mt-[16px] w-full flex flex-col gap-[16px] min-w-0">
         {/* Item 1 */}
         <div className="w-full h-auto md:h-[85px] rounded-[8px] bg-white p-[16px] shadow-[0px_1px_17px_0px_#9E9E9E26]">
           <div className="w-full flex items-center justify-between gap-[16px]">
             <div className="flex items-center gap-[16px]">
               <div className="w-[40px] h-[40px] rounded-full bg-[#FD9AA01A] flex items-center justify-center shrink-0">
-                <img src="/icons/elements1.svg" alt="salary" className="w-[24px] h-[24px]" />
+                <img
+                  src="/icons/elements1.svg"
+                  alt="salary"
+                  className="w-[24px] h-[24px]"
+                />
               </div>
 
               <div className="flex flex-col gap-[8px] md:gap-[16px]">
@@ -67,7 +71,11 @@ export default function AllIncomeCard() {
           <div className="w-full flex items-center justify-between gap-[16px]">
             <div className="flex items-center gap-[16px]">
               <div className="w-[40px] h-[40px] rounded-full bg-[#3447AA1A] flex items-center justify-center shrink-0">
-                <img src="/icons/elements2.svg" alt="freelance" className="w-[24px] h-[24px]" />
+                <img
+                  src="/icons/elements2.svg"
+                  alt="freelance"
+                  className="w-[24px] h-[24px]"
+                />
               </div>
 
               <div className="flex flex-col gap-[8px] md:gap-[16px]">
@@ -100,7 +108,11 @@ export default function AllIncomeCard() {
           <div className="w-full flex items-center justify-between gap-[16px]">
             <div className="flex items-center gap-[16px]">
               <div className="w-[40px] h-[40px] rounded-full bg-[#3447AA1A] flex items-center justify-center shrink-0">
-                <img src="/icons/elements3.svg" alt="business" className="w-[24px] h-[24px]" />
+                <img
+                  src="/icons/elements3.svg"
+                  alt="business"
+                  className="w-[24px] h-[24px]"
+                />
               </div>
 
               <div className="flex flex-col gap-[8px] md:gap-[16px]">
@@ -127,7 +139,6 @@ export default function AllIncomeCard() {
             </div>
           </div>
         </div>
-
       </div>
     </div>
   );
