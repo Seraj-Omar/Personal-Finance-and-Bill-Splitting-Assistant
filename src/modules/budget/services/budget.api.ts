@@ -113,3 +113,9 @@ export function createBudget(payload: CreateBudgetPayload) {
     body: JSON.stringify(payload),
   });
 }
+
+export function deleteBudget(id: string) {
+  return apiFetch(`/budgets/${id}`, {
+    method: "DELETE",
+  });
+}

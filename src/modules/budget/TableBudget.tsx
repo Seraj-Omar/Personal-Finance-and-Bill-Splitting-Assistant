@@ -7,6 +7,7 @@ import { BiSolidPencil } from "react-icons/bi";
 import TableToolbar from "./TableToolbar";
 import AddBudgetModal from "./AddBudgetModal";
 import { useBudgets } from "./hooks/useBudgets";
+import { useDeleteBudget } from "./hooks/useDeleteBudget";
 
 type FilterType = "All" | "Paid" | "Unpaid" | "Overdue";
 
@@ -26,61 +27,36 @@ type Payment = {
   status: Exclude<FilterType, "All">;
 };
 
-function toUIType(t: string): "Group" | "Individual" {
-  return t?.toLowerCase() === "group" ? "Group" : "Individual";
-}
-
-function toUIStatus(s: string): Exclude<FilterType, "All"> {
-  const v = (s || "").toLowerCase();
-  if (v === "paid") return "Paid";
-  if (v === "overdue") return "Overdue";
-  return "Unpaid";
-}
-
 function formatDate(iso: string) {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return iso;
-  return d.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+  return d.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
 }
-
-const columns: Column<Payment>[] = [
-  { key: "date", title: "Date", render: (row) => <span className="text-sm text-gray-600 whitespace-nowrap">{row.date}</span> },
-  { key: "member", title: "Member", render: (row) => <span className="text-sm text-gray-700 whitespace-nowrap">{row.member}</span> },
-  { key: "type", title: "Type", render: (row) => <span className="text-sm text-gray-700 whitespace-nowrap">{row.type}</span> },
-  { key: "amount", title: "Amount", render: (row) => <span className="text-sm font-medium text-gray-900 whitespace-nowrap">{row.amount}</span> },
-  { key: "billName", title: "Bill Name", render: (row) => <span className="block max-w-[140px] sm:max-w-[240px] truncate text-sm text-gray-700">{row.billName}</span> },
-  {
-    key: "action",
-    title: "Action",
-    render: (row) => (
-      <div className="flex gap-3 items-center justify-end whitespace-nowrap">
-        <HiMiniTrash className="text-red-500 cursor-pointer" size={16} onClick={() => console.log("delete", row.id)} />
-        <BiSolidPencil className="text-gray-600 cursor-pointer" size={16} onClick={() => console.log("edit", row.id)} />
-      </div>
-    ),
-  },
-];
 
 export default function TableBudget() {
   const [activeFilter, setActiveFilter] = useState<FilterType>("All");
   const [openAdd, setOpenAdd] = useState(false);
 
-const params = React.useMemo(() => ({ page: 1, limit: 10 }), []);
-const { data, isLoading, isError } = useBudgets(params);
+  const { mutate: deleteBudgetMutate, isPending: isDeleting } = useDeleteBudget();
 
-console.log("Budgets response:", data);
+  const params = useMemo(() => ({ page: 1, limit: 10 }), []);
+  const { data, isLoading, isError } = useBudgets(params);
 
-const apiItems = (data as any)?.data ?? [];
+  const apiItems = Array.isArray((data as any)?.data) ? (data as any).data : [];
 
   const paymentsFromApi: Payment[] = useMemo(() => {
     return apiItems.map((b: any) => ({
       id: String(b.id),
-      date: formatDate(String(b.startDate ?? b.date ?? "")),
+      date: formatDate(String(b.startDate ?? "")),
       member: "-",
       type: "Individual",
-      amount: String(b.allocatedAmount ?? b.amount ?? ""),
-      billName: String(b.category ?? b.name ?? ""),
-      status: "Unpaid", 
+      amount: String(b.allocatedAmount ?? ""),
+      billName: String(b.category ?? ""),
+      status: "Unpaid",
     }));
   }, [apiItems]);
 
@@ -89,6 +65,74 @@ const apiItems = (data as any)?.data ?? [];
       ? paymentsFromApi
       : paymentsFromApi.filter((p) => p.status === activeFilter);
   }, [activeFilter, paymentsFromApi]);
+
+  // ✅ columns جوّا الكمبوننت عشان يشوف deleteBudgetMutate
+  const columns: Column<Payment>[] = useMemo(
+    () => [
+      {
+        key: "date",
+        title: "Date",
+        render: (row) => (
+          <span className="text-sm text-gray-600 whitespace-nowrap">{row.date}</span>
+        ),
+      },
+      {
+        key: "member",
+        title: "Member",
+        render: (row) => (
+          <span className="text-sm text-gray-700 whitespace-nowrap">{row.member}</span>
+        ),
+      },
+      {
+        key: "type",
+        title: "Type",
+        render: (row) => (
+          <span className="text-sm text-gray-700 whitespace-nowrap">{row.type}</span>
+        ),
+      },
+      {
+        key: "amount",
+        title: "Amount",
+        render: (row) => (
+          <span className="text-sm font-medium text-gray-900 whitespace-nowrap">
+            {row.amount}
+          </span>
+        ),
+      },
+      {
+        key: "billName",
+        title: "Bill Name",
+        render: (row) => (
+          <span className="block max-w-[140px] sm:max-w-[240px] truncate text-sm text-gray-700">
+            {row.billName}
+          </span>
+        ),
+      },
+      {
+        key: "action",
+        title: "Action",
+        render: (row) => (
+          <div className="flex gap-3 items-center justify-start whitespace-nowrap">
+            <HiMiniTrash
+              className={`text-red-500 cursor-pointer ${isDeleting ? "opacity-50 pointer-events-none" : ""}`}
+              size={16}
+              onClick={() => {
+                if (confirm("Delete this budget?")) {
+                  deleteBudgetMutate(row.id);
+                }
+              }}
+            />
+            <BiSolidPencil
+              className="text-gray-600 cursor-pointer"
+              size={16}
+              onClick={() => console.log("edit", row.id)}
+            />
+          </div>
+        ),
+      },
+    ],
+    [deleteBudgetMutate, isDeleting]
+  );
 
   return (
     <div className="space-y-4 w-full">
