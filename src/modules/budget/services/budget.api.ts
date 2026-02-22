@@ -4,6 +4,7 @@ import type {
   ApiResponse,
   Budget,
   BudgetSummary,
+  CreateBudgetPayload,
   GetBudgetsParams,
 } from "../type/types";
 
@@ -99,5 +100,22 @@ export function fetchMyDebts(params?: {
   const qs = sp.toString();
   return apiFetch<ApiListResponse<Debt>>(`/debts${qs ? `?${qs}` : ""}`, {
     method: "GET",
+  });
+}
+
+
+
+//create, update, delete APIs for budgets,
+
+export function createBudget(payload: CreateBudgetPayload) {
+  return apiFetch<ApiResponse<Budget>>("/budgets", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function deleteBudget(id: string) {
+  return apiFetch(`/budgets/${id}`, {
+    method: "DELETE",
   });
 }

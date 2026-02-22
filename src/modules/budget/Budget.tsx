@@ -87,8 +87,14 @@ const currency = "$";
         </Box>
       </Box>
 
-      <Box sx={{ mt: 5 }}>
-        <TableBudget />
+      <Box
+        sx={{
+          mt: 10,
+          mb:10
+        }}
+
+      >
+<TableBudget />
       </Box>
 
       <Box sx={{ mt: 5 }}>

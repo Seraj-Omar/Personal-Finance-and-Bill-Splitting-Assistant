@@ -9,7 +9,8 @@ export function useBudgets(params?: GetBudgetsParams, enabled = true) {
     queryKey: ["budgets", params],
     queryFn: () => fetchBudgets(params),
     enabled,
-    retry: false,
+    refetchOnWindowFocus: false,
+    retry: 0,
     staleTime: 60_000,
   });
 }
