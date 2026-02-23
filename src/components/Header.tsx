@@ -193,7 +193,7 @@ export default function Navbar() {
               type="button"
               onClick={() => setIsNotificationsOpen((prev) => !prev)}
             >
-              <Bell className="w-[15px] h-[15px] sm:w-[20px] sm:h-[20px] fill-current" />
+              <Bell className="w-[18px] h-[18px] sm:w-[20px] sm:h-[20px] fill-current" />
             </button>
           </div>
 
@@ -201,7 +201,7 @@ export default function Navbar() {
             className="w-[35px] h-[35px] sm:w-[40px] sm:h-[40px] flex items-center justify-center rounded-full bg-[#f9f9fa] text-gray-700 hover:text-[#3447aaee] transition"
             type="button"
           >
-            <Search className="w-[15px] h-[15px] sm:w-[20px] sm:h-[20px]" />
+            <Search className="w-[18px] h-[18px] sm:w-[20px] sm:h-[20px]" />
           </button>
 
           <button

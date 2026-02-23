@@ -63,11 +63,9 @@ interface OverviewProps {
   da: Data[];
 }
 
-// دالة لاختيار أيقونة الاتجاه
 const trendIcon = (trend: "UP" | "DOWN") =>
   trend === "UP" ? svgrise : svgdown;
 
-// دالة لاختيار لون الأيقونة والخلفية حسب الكارد
 const cardColors = (id: string) => {
   switch (id) {
     case "total-users":
