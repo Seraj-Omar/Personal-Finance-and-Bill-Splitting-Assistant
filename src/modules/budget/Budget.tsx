@@ -11,28 +11,39 @@ import AiBudgetSuggestions from "./AiBudgetSuggestions";
 import TableBudget from "./TableBudget";
 import ManageExpenses from "./ManageExpenses";
 
+import { useBudgetSummary } from "@/src/modules/budget/hooks/useBudgetSummary";
+
 export type FilterType = "All" | "Paid" | "Unpaid" | "Overdue";
+
 
 const Budget = () => {
   const [activeFilter, setActiveFilter] = useState<FilterType>("All");
 
-  return (
-<Container
-  maxWidth={false}
-  disableGutters
-  sx={{
-    py: 5,
-    px: { xs: "10px", sm: "12px", md: "16px", lg: "100px" }, 
-  }}
->
+const { data: summaryRes, isLoading, error } = useBudgetSummary(true);
 
-      <PadgetComponent />
+const summary = summaryRes?.data;
+
+const totalBudget = Number(summary?.totalAllocated ?? 0);
+const totalExpenses = Number(summary?.totalSpent ?? 0);
+const remaining = Number(summary?.totalRemaining ?? (totalBudget - totalExpenses));
+
+const currency = "$";
+  return (
+    <>
+    <PadgetComponent />
+    <Container
+      maxWidth={false}
+      disableGutters
+      sx={{
+        py: 5,
+        px: { xs: "10px", sm: "12px", md: "16px", lg: "100px" },
+      }}
+    >
 
       <Box
         sx={{
           display: "flex",
-                flexDirection: { xs: "column", md: "row" },
-
+          flexDirection: { xs: "column", md: "row" },
           gap: 5,
           boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
           p: 4,
@@ -50,7 +61,17 @@ const Budget = () => {
         >
           <OverreviewBudget />
 
-          <BudgetSummary totalBudget={5000} totalExpenses={3500} currency="$" />
+          {isLoading ? (
+            <div>Loading summary...</div>
+          ) : error ? (
+            <div>Failed to load summary</div>
+          ) : (
+            <BudgetSummary
+              totalBudget={totalBudget}
+              totalExpenses={totalExpenses}
+              currency={currency}
+            />
+          )}
         </Box>
 
         <Box
@@ -68,14 +89,19 @@ const Budget = () => {
 
       <Box
         sx={{
-          mt: 5,
+          mt: 10,
+          mb:10
         }}
+
       >
 <TableBudget />
       </Box>
 
-      <Box sx={{       mt: 5,}} ><ManageExpenses /></Box>
+      <Box sx={{ mt: 5 }}>
+        <ManageExpenses />
+      </Box>
     </Container>
+      </>
   );
 };
 

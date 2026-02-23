@@ -3,6 +3,7 @@
 import React from "react";
 import { Box, Typography, Button } from "@mui/material";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function AiBudgetSuggestions() {
   return (
@@ -10,6 +11,7 @@ export default function AiBudgetSuggestions() {
       sx={{
         display: "flex",
         alignItems: "center",
+        flexDirection: { xs: "column", sm: "row" },
         justifyContent: "space-between",
         gap: 4,
         p: 4,
@@ -17,7 +19,7 @@ export default function AiBudgetSuggestions() {
         borderRadius: 4,
         background: "linear-gradient(90deg, #F6B1C1 0%, #B7B9F4 100%)",
         width: "100%",
-        minHeight: 180,
+        minHeight: 100,
       }}
     >
       {/* ===== Left side ===== */}
@@ -26,24 +28,23 @@ export default function AiBudgetSuggestions() {
         <Box
           sx={{
             width: 90,
-            height: 90,
+            height: 100,
             borderRadius: "50%",
             display: "flex",           
             alignItems: "center",
             justifyContent: "center",
             overflow: "hidden",
+            
           }}
         >
-          <img
-            src="/Ai-image.png"
-            alt="AI"
-            style={{
-              width: "100%",               
-              height: "100%",
-              objectFit: "contain",
-            }}
-          />
-        </Box>
+<Image
+  src="/Ai-image.png"
+  alt="AI"
+  width={100}
+  height={100}
+  style={{ objectFit: "contain" }}
+/>
+      </Box>
 
         {/* Text */}
         <Box>

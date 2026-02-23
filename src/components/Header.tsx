@@ -3,46 +3,20 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useRef, useEffect, useMemo } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Search, ChevronDown, User, Menu, X, Bell } from "lucide-react";
 import Notifactions from "./Notifactions";
-import { useSession } from "../modules/auth/hooks/useSession";
-
-type CachedUser = { fullName?: string } | null;
+import { useAuth } from "../context/AuthContext";
 
 export default function Navbar() {
   const pathname = usePathname();
-  const router = useRouter();
+  const { user, isAuthed, loading } = useAuth();
 
   const serviceRef = useRef<HTMLLIElement | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isServiceOpenMobile, setIsServiceOpenMobile] = useState(false);
   const [isServiceOpen, setIsServiceOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
-
-  const [mounted, setMounted] = useState(false);
-  const [cachedUser, setCachedUser] = useState<CachedUser>(null);
-
-const { data: sessionData } = useSession(true);
-  const serverUser = sessionData?.data?.user ?? null;
-
-  useEffect(() => {
-    setMounted(true);
-    try {
-      const raw = sessionStorage.getItem("cached_user");
-      setCachedUser(raw ? JSON.parse(raw) : null);
-    } catch {
-      setCachedUser(null);
-    }
-  }, []);
-
-  // ✅ لو إجى user من السيرفر، خليه يغطي على cached
-  const user = serverUser ?? cachedUser;
-
-  // ✅ لا تنتظر الشبكة: جاهز فورًا بعد mount
-  const authReady = mounted;
-
-  const isAuthedFinal = !!user;
 
   const isActiveExact = (path: string) =>
     pathname === path
@@ -61,12 +35,15 @@ const { data: sessionData } = useSession(true);
       { name: "Expenses", href: "/services/expenses" },
       { name: "Income", href: "/services/income" },
     ],
-    []
+    [],
   );
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (serviceRef.current && !serviceRef.current.contains(event.target as Node)) {
+      if (
+        serviceRef.current &&
+        !serviceRef.current.contains(event.target as Node)
+      ) {
         setIsServiceOpen(false);
       }
     }
@@ -116,7 +93,7 @@ const { data: sessionData } = useSession(true);
           </div>
         </Link>
 
-        <ul className="hidden md:flex gap-[24px] items-center text-sm font-medium text-[18px]">
+        <ul className="hidden lg:flex gap-[24px] items-center xl:font-medium text-[18px]">
           <li>
             <Link href="/" className={isActiveExact("/")}>
               Home
@@ -167,7 +144,7 @@ const { data: sessionData } = useSession(true);
         </ul>
 
         {/* Desktop Right */}
-        <div className="hidden md:flex items-center gap-[12px] text-[18px] font-medium">
+        <div className="hidden lg:flex items-center gap-[12px] text-[18px] xl:font-medium">
           <div className="relative">
             <button
               type="button"
@@ -179,17 +156,17 @@ const { data: sessionData } = useSession(true);
           </div>
 
           <button
-            className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition text-lg"
+            className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee]  transition "
             type="button"
           >
             <Search size={20} />
             <span>Search</span>
           </button>
 
-          {!authReady ? null : !isAuthedFinal ? (
+          {loading ? null : !isAuthed ? (
             <Link
               href="/register"
-              className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition text-lg"
+              className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] transition "
             >
               <User size={20} className="fill-current" />
               <span>Sign up</span>
@@ -198,35 +175,39 @@ const { data: sessionData } = useSession(true);
             <div className="flex items-center gap-3">
               <Link
                 href="/settings/profile"
-                className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition text-lg"
+                className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] transition overflow-hidden"
               >
                 <User size={20} className="fill-current" />
-                <span>{user?.fullName || "Account"}</span>
+                <span className="flex xl:hidden">{user?.fullName?.split(" ")[0] || "Account"}</span>
+                <span className="hidden xl:flex">{user?.fullName || "Account"}</span>
               </Link>
             </div>
           )}
         </div>
 
         {/* Mobile Right */}
-        <div className="md:hidden flex items-center gap-3">
+        <div className="lg:hidden flex items-center gap-1 md:gap-3">
           <div className="relative">
             <button
-              className="w-[30px] h-[30px] md:w-[40px] md:h-[40px]  flex items-center justify-center rounded-full bg-[#f9f9fa] text-gray-700 hover:text-[#3447aaee] transition"
+              className="w-[35px] h-[35px] sm:w-[40px] sm:h-[40px]  flex items-center justify-center rounded-full bg-[#f9f9fa] text-gray-700 hover:text-[#3447aaee] transition"
               type="button"
               onClick={() => setIsNotificationsOpen((prev) => !prev)}
             >
-              <Bell className="w-[15px] h-[15px] md:w-[20px] md:h-[20px] fill-current" />
+              <Bell className="w-[15px] h-[15px] sm:w-[20px] sm:h-[20px] fill-current" />
             </button>
           </div>
 
           <button
-            className="w-[40px] h-[40px] flex items-center justify-center rounded-full bg-[#f9f9fa] text-gray-700 hover:text-[#3447aaee] transition"
+            className="w-[35px] h-[35px] sm:w-[40px] sm:h-[40px] flex items-center justify-center rounded-full bg-[#f9f9fa] text-gray-700 hover:text-[#3447aaee] transition"
             type="button"
           >
-            <Search size={20} />
+            <Search className="w-[15px] h-[15px] sm:w-[20px] sm:h-[20px]" />
           </button>
 
-          <button type="button" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+          <button
+            type="button"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
@@ -245,14 +226,20 @@ const { data: sessionData } = useSession(true);
                 className="flex items-center justify-between"
               >
                 <span>Service</span>
-                <ChevronDown size={16} className={`${isServiceOpen ? "rotate-180" : ""}`} />
+                <ChevronDown
+                  size={16}
+                  className={`${isServiceOpen ? "rotate-180" : ""}`}
+                />
               </button>
 
               {isServiceOpenMobile && (
                 <ul className="flex flex-col gap-2 pl-4 text-sm text-gray-600">
                   {services.map((item) => (
                     <li key={item.href}>
-                      <Link href={item.href} onClick={() => setIsMobileMenuOpen(false)}>
+                      <Link
+                        href={item.href}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
                         {item.name}
                       </Link>
                     </li>
@@ -268,23 +255,21 @@ const { data: sessionData } = useSession(true);
               Budget
             </Link>
 
-            {!authReady ? null : !isAuthedFinal ? (
+            {loading ? null : !isAuthed ? (
               <Link
                 href="/register"
-                className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition text-lg"
+                className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee]  transition "
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                <User size={20} className="fill-current" />
                 <span>Sign up</span>
               </Link>
             ) : (
               <div className="flex items-center gap-3">
                 <Link
                   href="/settings/profile"
-                  className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] focus:text-[#3447aaee] transition text-lg"
+                  className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee]  transition "
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  <User size={20} className="fill-current" />
                   <span>{user?.fullName || "Account"}</span>
                 </Link>
               </div>

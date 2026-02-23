@@ -5,14 +5,19 @@ import { Paper, Tabs, Tab, Box, Typography, IconButton } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { PieChart } from "@mui/x-charts/PieChart";
+import { useExpensesDonutChart } from "./hooks/useExpensesDonutChart";
+
+const donutColors = ["#2F46B8", "#5E74E6", "#BFC7EA", "#F4B9C2", "#E9A3AD"];
 
 const ExpensesDonutCard = () => {
   const [tab, setTab] = useState(2);
   const [mounted, setMounted] = useState(false);
 
-  // ✅ لقياس حجم الكونتينر
   const chartWrapRef = useRef<HTMLDivElement | null>(null);
-  const [ringSize, setRingSize] = useState(320); // حجم الدائرة البيضاء
+  const [ringSize, setRingSize] = useState(320);
+
+  const { data: donutRes, isLoading, isError } = useExpensesDonutChart();
+  const items = donutRes?.data ?? [];
 
   useEffect(() => setMounted(true), []);
 
@@ -20,10 +25,8 @@ const ExpensesDonutCard = () => {
     if (!chartWrapRef.current) return;
 
     const el = chartWrapRef.current;
-
     const ro = new ResizeObserver(([entry]) => {
       const w = entry.contentRect.width;
-
       const next = Math.max(220, Math.min(w, 320));
       setRingSize(next);
     });
@@ -32,40 +35,46 @@ const ExpensesDonutCard = () => {
     return () => ro.disconnect();
   }, []);
 
-  const data = useMemo(
-    () => [
-      { id: 0, value: 30, color: "#2F46B8" },
-      { id: 1, value: 20, color: "#5E74E6" },
-      { id: 2, value: 15, color: "#BFC7EA" },
-      { id: 3, value: 18, color: "#F4B9C2" },
-      { id: 4, value: 17, color: "#E9A3AD" },
-    ],
-    []
-  );
+  const chartData = useMemo(() => {
+    return items.map((x, idx) => ({
+      id: idx,
+      value: Number(x.percentage) || 0,
+      label: x.category,
+      color: donutColors[idx % donutColors.length],
+    }));
+  }, [items]);
+
+  const totalExpenses = useMemo(() => {
+    const sum = items.reduce((acc, x) => acc + (Number(x.totalAmount) || 0), 0);
+    return sum;
+  }, [items]);
 
   const chartSize = Math.round(ringSize - 20);
-
-  const innerRadius = Math.round(ringSize * 0.2875); 
-  const outerRadius = Math.round(ringSize * 0.43125); 
+  const innerRadius = Math.round(ringSize * 0.2875);
+  const outerRadius = Math.round(ringSize * 0.43125);
 
   return (
-    <Paper
-      elevation={0}
-      sx={{
-        width: "100%",            
-        maxWidth: 409,            
-        height: "auto",        
-        minHeight: 584,          
-        p: "32px",
-        borderRadius: "16px",
-        border: "1px solid #E5E7EB",
-        backgroundColor: "#F9FAFB",
-        display: "flex",
-        flexDirection: "column",
-        gap: "32px",
-        boxSizing: "border-box",
-      }}
-    >
+<Paper
+  elevation={0}
+  sx={{
+    width: "100%",
+    // maxWidth: 409,
+    height: "100",
+    minHeight: 584,
+    p: "32px",
+    borderRadius: "16px",
+    backgroundColor: "#F9FAFB",
+    display: "flex",
+    flexDirection: "column",
+    gap: "32px",
+    boxSizing: "border-box",
+
+    mx: "auto",               
+    my: { xs: 2, sm: 0 },       
+    px: { xs: 2, sm: "32px" },  
+    maxWidth: { xs: "100%", sm: 409 }, 
+  }}
+>
       {/* Tabs */}
       <Box sx={{ display: "flex", justifyContent: "center", mt: 0.5 }}>
         <Tabs
@@ -93,7 +102,6 @@ const ExpensesDonutCard = () => {
         </Tabs>
       </Box>
 
-      {/* Month header */}
       <Box
         sx={{
           display: "flex",
@@ -122,7 +130,7 @@ const ExpensesDonutCard = () => {
         ref={chartWrapRef}
         sx={{
           flex: 1,
-          display: "grid",
+          // display: "grid",
           placeItems: "center",
           width: "100%",
         }}
@@ -139,23 +147,31 @@ const ExpensesDonutCard = () => {
             placeItems: "center",
           }}
         >
-          {mounted && (
-            <PieChart
-              series={[
-                {
-                  data,
-                  innerRadius,
-                  outerRadius,
-                  paddingAngle: 7,
-                  cornerRadius: 14,
-                  startAngle: -90,
-                  endAngle: 270,
-                },
-              ]}
-              width={chartSize}
-              height={chartSize}
-              margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
-            />
+          {isLoading && <Typography sx={{ color: "#6B7280" }}>Loading...</Typography>}
+          {isError && <Typography sx={{ color: "#ef4444" }}>Failed to load</Typography>}
+
+          {mounted && !isLoading && !isError && (
+     <PieChart
+  series={[
+    {
+      data: chartData,
+      innerRadius,
+      outerRadius,
+      paddingAngle: 7,
+      cornerRadius: 14,
+      startAngle: -90,
+      endAngle: 270,
+    },
+  ]}
+  width={chartSize}
+  height={chartSize}
+  margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
+  slotProps={{
+    legend: {
+      sx: { display: "none" },
+    },
+  }}
+/>
           )}
 
           {/* Center Text */}
@@ -168,8 +184,8 @@ const ExpensesDonutCard = () => {
               pointerEvents: "none",
             }}
           >
-            <Typography sx={{ fontSize: 26, fontWeight: 800, color: "#111827" }}>
-              $1,758
+            <Typography sx={{ fontSize: 50, fontWeight: 500, color: "#111827" }}>
+              ${totalExpenses.toFixed(0)}
             </Typography>
           </Box>
         </Box>

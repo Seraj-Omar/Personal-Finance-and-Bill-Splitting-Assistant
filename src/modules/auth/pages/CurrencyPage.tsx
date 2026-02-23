@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-
+import { MePayload } from "../type";
 import {
   Typography,
   TextField,
@@ -18,6 +18,7 @@ import {
 
 import SearchIcon from "@mui/icons-material/Search";
 import { useCurrencies } from "../hooks/useCurrencies";
+import { useMe } from "@/src/modules/auth/hooks/useMe";
 
 function currencyCodeToFlag(code: string) {
   const map: Record<string, string> = {
@@ -46,8 +47,15 @@ function currencyCodeToFlag(code: string) {
 export default function CurrencyPage() {
   const router = useRouter();
 
-  const { data, isLoading, error } = useCurrencies();
-  const currenciesFromApi = data?.data ?? [];
+  const {
+    data: currenciesRes,
+    isLoading: currenciesLoading,
+    error,
+  } = useCurrencies();
+
+  const currenciesFromApi = currenciesRes?.data ?? [];
+
+  const { data: meRes, isLoading: meLoading } = useMe();
 
   const [selectedCurrency, setSelectedCurrency] = useState("AED");
   const [query, setQuery] = useState("");
@@ -62,9 +70,20 @@ export default function CurrencyPage() {
   }, [router]);
 
   useEffect(() => {
+    if (meLoading) return;
+
+    if (meRes?.data?.user?.currency
+) {
+      router.replace("/");
+    }
+  }, [meRes, meLoading, router]);
+
+  useEffect(() => {
     if (!currenciesFromApi.length) return;
 
-    const exists = currenciesFromApi.some((c: any) => c.code === selectedCurrency);
+    const exists = currenciesFromApi.some(
+      (c: any) => c.code === selectedCurrency
+    );
     if (!exists) setSelectedCurrency(currenciesFromApi[0].code);
   }, [currenciesFromApi, selectedCurrency]);
 
@@ -122,8 +141,8 @@ export default function CurrencyPage() {
                     This currency will be used across the platform
                   </Typography>
 
-                  {/* (اختياري) Loading / Error بدون ستايل جديد قوي */}
-                  {isLoading && (
+                  {/* Loading / Error */}
+                  {currenciesLoading && (
                     <Typography
                       variant="body2"
                       sx={{ color: "white", opacity: 0.9, mb: 1.5 }}
@@ -180,38 +199,35 @@ export default function CurrencyPage() {
                       {filtered.map((cur: any) => {
                         const active = cur.code === selectedCurrency;
                         return (
-                          <ListItemButton
-                            key={cur.id || cur.code}
-                            onClick={() => setSelectedCurrency(cur.code)}
-                            sx={{
-                              px: 2,
-                              py: 1.2,
-                              gap: 1.5,
-                              backgroundColor: active
-                                ? "rgba(52, 71, 170, 0.87)"
-                                : "transparent",
-                              "&:hover": {
-                                backgroundColor: active
-                                  ? "rgba(52, 71, 170, 0.87)"
-                                  : "rgba(0,0,0,0.04)",
-                              },
-                            }}
-                          >
-                            {/* ✅ العلم */}
-                            <span style={{ fontSize: 16 }}>
-                              {currencyCodeToFlag(cur.code)}
-                            </span>
+       <ListItemButton
+  key={cur.id || cur.code}
+  onClick={() => setSelectedCurrency(cur.code)}
+  sx={{
+    px: 2,
+    py: 1.2,
+    gap: 1.5,
+    backgroundColor: active ? "rgba(52, 71, 170, 0.87)" : "transparent",
+    "&:hover": {
+      backgroundColor: active
+        ? "rgba(52, 71, 170, 0.87)"
+        : "rgba(0,0,0,0.04)",
+    },
+  }}
+>
+  <span style={{ fontSize: 16 }}>
+    {currencyCodeToFlag(cur.code)}
+  </span>
 
-                            <ListItemText
-                              primary={` ${cur.name}`}
-                              sx={{
-                                "& .MuiListItemText-primary": {
-                                  fontSize: 13,
-                                  color: active ? "white" : "#1f2937",
-                                },
-                              }}
-                            />
-                          </ListItemButton>
+  <ListItemText
+    primary={`${cur.name}`}
+    sx={{
+      "& .MuiListItemText-primary": {
+        fontSize: 13,
+        color: active ? "white" : "#1f2937",
+      },
+    }}
+  />
+</ListItemButton>
                         );
                       })}
                     </List>

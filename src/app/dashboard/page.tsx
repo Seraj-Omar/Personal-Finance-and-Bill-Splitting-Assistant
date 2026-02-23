@@ -1,5 +1,7 @@
-import { redirect } from "next/navigation";
-
+import AuthGateWrapper from "@/src/modules/auth/components/AuthGateWrapper";
+import Dashboard from "../../components/dashboard/home/Dashboard";
 export default function DashboardPage() {
-  redirect("/dashboard/settings");
+    return (<AuthGateWrapper> 
+        <Dashboard />
+        </AuthGateWrapper>);
 }

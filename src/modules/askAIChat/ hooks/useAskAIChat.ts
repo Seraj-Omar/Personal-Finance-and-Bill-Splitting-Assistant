@@ -1,82 +1,87 @@
-import { useMemo, useRef, useState } from "react";
-import { askAi } from "../api/askAi.api";
-import { ChatMessage } from "../type/type";
+"use client";
+
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useAIChatMutation } from "./useAIChatMutation";
+import type { ChatMessage } from "../type/type";
 
 function uid() {
-  return Math.random().toString(16).slice(2);
+  return Math.random().toString(16).slice(2) + Date.now().toString(16);
 }
 
 export function useAskAIChat(initialMessages: ChatMessage[]) {
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
   const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [chatId, setChatId] = useState<string | undefined>(undefined);
+
   const scrollerRef = useRef<HTMLDivElement | null>(null);
+  const { mutateAsync, isPending } = useAIChatMutation();
 
-  const canSend = useMemo(
-    () => input.trim().length > 0 && !loading,
-    [input, loading]
-  );
+  const loading = isPending;
 
-  const scrollDown = () => {
-    requestAnimationFrame(() => {
-      scrollerRef.current?.scrollTo({
-        top: scrollerRef.current.scrollHeight,
-        behavior: "smooth",
-      });
-    });
-  };
+  const canSend = useMemo(() => {
+    return !loading && input.trim().length > 0;
+  }, [loading, input]);
 
-  const send = async (text: string) => {
-    const prompt = text.trim();
-    if (!prompt || loading) return;
 
+  useEffect(() => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    el.scrollTop = el.scrollHeight;
+  }, [messages.length, loading]);
+
+  async function send(text?: string) {
+    const content = (text ?? input).trim();
+    if (!content || loading) return;
+
+    // add user message
     const userMsg: ChatMessage = {
       id: uid(),
       role: "user",
       type: "text",
-      content: prompt,
+      content,
     };
-
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
-    setLoading(true);
-    scrollDown();
 
     try {
-      const data = await askAi([...messages, userMsg]);
+      const res = await mutateAsync({ message: content, chatId });
+
+      setChatId(res.data.chatId);
+
+      const aiText = res.data.message ?? res.data.response ?? "";
 
       const aiMsg: ChatMessage = {
         id: uid(),
         role: "ai",
-        type: data.type || "text",
-        content: data.content,
-        budget: data.budget,
+        type: "text",
+        content: aiText,
       };
-
       setMessages((prev) => [...prev, aiMsg]);
-    } catch {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: uid(),
-          role: "ai",
-          type: "text",
-          content: "Something went wrong. Please try again.",
-        },
-      ]);
-    } finally {
-      setLoading(false);
-      scrollDown();
-    }
-  };
+    } catch (e: any) {
+      const errText =
+        e?.data?.message || e?.message || "Something went wrong while contacting AI.";
 
-  return {
-    messages,
-    input,
-    setInput,
-    loading,
-    canSend,
-    send,
-    scrollerRef,
-  };
+      const aiErr: ChatMessage = {
+        id: uid(),
+        role: "ai",
+        type: "text",
+        content: `⚠️ ${errText}`,
+      };
+      setMessages((prev) => [...prev, aiErr]);
+    }
+  }
+function appendMessage(msg: ChatMessage) {
+  setMessages((prev) => [...prev, msg]);
+}
+ return {
+  messages,
+  input,
+  setInput,
+  loading,
+  canSend,
+  send,
+  scrollerRef,
+  chatId,
+  appendMessage,
+};
 }

@@ -1,52 +1,85 @@
 "use client";
 
-import React, { createContext, useContext, useMemo } from "react";
-import { useRouter } from "next/navigation";
+import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { User } from "../modules/auth/type";
-import { fetchMe } from "../modules/auth/services/auth.api"; 
+import type { User } from "../modules/auth/type";
+import { fetchMe, revalidate } from "../modules/auth/services/auth.api";
+
+type Provider = "LOCAL" | "GOOGLE" | null;
+
 type AuthContextValue = {
   user: User | null;
   isAuthed: boolean;
   loading: boolean;
-  logout: () => void;
-  refetchMe: () => Promise<void>;
+  provider: Provider;
+  logoutLocal: () => void;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const router = useRouter();
-  const queryClient = useQueryClient();
+function readProvider(): Provider {
+  if (typeof window === "undefined") return null;
+  const p = sessionStorage.getItem("auth_provider");
+  return p === "LOCAL" || p === "GOOGLE" ? p : null; // ❌ بدون fallback
+}
 
-  const { data, isLoading, refetch } = useQuery({
-    queryKey: ["me"],
-    queryFn: fetchMe,
+function hasToken() {
+  if (typeof window === "undefined") return false;
+  return !!sessionStorage.getItem("token");
+}
+
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const queryClient = useQueryClient();
+  const [provider, setProvider] = useState<Provider>(() => readProvider());
+
+  useEffect(() => {
+    const sync = () => setProvider(readProvider());
+    window.addEventListener("auth:changed", sync);
+    return () => window.removeEventListener("auth:changed", sync);
+  }, []);
+
+  const sessionQ = useQuery({
+    queryKey: ["session"],
+    queryFn: revalidate,
+    enabled: provider === "LOCAL" && hasToken(),
     retry: false,
-    // مهم: لا تعمل fetch على السيرفر لأنه sessionStorage
-    enabled: typeof window !== "undefined" && !!sessionStorage.getItem("token"),
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 
-  const user = (data as any)?.data?.user ?? null; // عدّلي حسب شكل response عندك
+  const meQ = useQuery({
+    queryKey: ["me"],
+    queryFn: fetchMe,
+    enabled: provider === "GOOGLE",
+    retry: false,
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
 
-  const logout = () => {
+  const user =
+    provider === "LOCAL"
+      ? (sessionQ.data as any)?.data?.user ?? null
+      : provider === "GOOGLE"
+      ? (meQ.data as any)?.data?.user ?? null
+      : null;
+
+  const loading =
+    provider === "LOCAL" ? sessionQ.isLoading : provider === "GOOGLE" ? meQ.isLoading : false;
+
+  const logoutLocal = () => {
     sessionStorage.removeItem("token");
-    sessionStorage.removeItem("user");
-    queryClient.setQueryData(["me"], null);
-    router.push("/login");
+    sessionStorage.removeItem("cached_user");
+    sessionStorage.removeItem("auth_provider");
+    queryClient.removeQueries({ queryKey: ["session"] });
+    queryClient.removeQueries({ queryKey: ["me"] });
+    window.dispatchEvent(new Event("auth:changed"));
   };
 
   const value = useMemo<AuthContextValue>(
-    () => ({
-      user,
-      isAuthed: !!user,
-      loading: isLoading,
-      logout,
-      refetchMe: async () => {
-        await refetch();
-      },
-    }),
-    [user, isLoading, refetch]
+    () => ({ user, isAuthed: !!user, loading, provider, logoutLocal }),
+    [user, loading, provider]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

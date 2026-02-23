@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useExpensesCategoriesBreakdown } from "./hooks/useExpensesCategoriesBreakdown";
 
 type CategoryCardProps = {
   icon: React.ReactNode;
@@ -23,16 +24,19 @@ const CategoryCard = ({
   active = false,
   onClick,
 }: CategoryCardProps) => {
+
+
+
   return (
     <div
       onClick={onClick}
       className={`w-full rounded-xl border bg-white px-4 py-3 transition cursor-pointer ${
-        active ? "border-indigo-600 shadow-sm" : "border-gray-200"
+        active ? "border-indigo-600 shadow-lg hover:shadow-blue-500/20" : "border-gray-200"
       }`}
     >
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-lg bg-gray-50 flex items-center justify-center">
+          <div className="w-15 h-15 rounded-lg bg-gray-50 flex items-center justify-center">
             {icon}
           </div>
 

@@ -39,6 +39,7 @@ export type ApiResponse<T> = {
 };
 
 export type MePayload = {
+  currencyId(arg0: string, currencyId: any): unknown;
   user: {
     id: string;
     email: string;
@@ -54,6 +55,12 @@ export type MePayload = {
     providerId: unknown;
     createdAt: string;
     updatedAt: string;
+      currency?: {
+    code: string;
+    symbol?: string;
+    id?: string;
+    name?: string;
+  };
   };
   token: string;
 };

@@ -37,15 +37,27 @@ const ForgetPasswordCode = () => {
 
   const { mutateAsync, isPending } = useMutation({
     mutationFn: verifyResetCode,
-    onSuccess: (res) => {
-      const resetToken = (res as any)?.data?.resetToken;
+ onSuccess: (res) => {
+  const r: any = res;
 
-      if (resetToken && typeof window !== "undefined") {
-        sessionStorage.setItem("reset_token", resetToken);
-      }
+  const resetToken =
+    r?.data?.resetToken ||
+    r?.data?.data?.resetToken ||
+    r?.resetToken ||
+    r?.data?.token ||
+    r?.data?.data?.token;
 
-      router.push("/reset-password");
-    },
+  console.log("RESET TOKEN:", resetToken);
+
+  if (!resetToken) {
+    setErrorMsg("Reset token not returned from server. Please try again.");
+    return;
+  }
+
+  sessionStorage.setItem("reset_token", resetToken);
+  router.push(`/reset-password?token=${encodeURIComponent(resetToken)}`);
+},
+
     onError: (err: any) => {
       setErrorMsg(err?.message || "Invalid code. Please try again.");
     },

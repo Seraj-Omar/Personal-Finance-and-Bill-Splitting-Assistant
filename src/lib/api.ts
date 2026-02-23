@@ -6,8 +6,9 @@ function getToken() {
 }
 
 type ApiFetchOptions = RequestInit & {
-  withCredentials?: boolean
-};; 
+  withCredentials?: boolean; // true للـ GOOGLE فقط
+  skipAuthHeader?: boolean;  // مفيد لـ GOOGLE (اختياري)
+};
 
 export async function apiFetch<T>(path: string, options: ApiFetchOptions = {}): Promise<T> {
   if (!BASE_URL) throw new Error("Missing NEXT_PUBLIC_BASE_URL in env");
@@ -16,20 +17,17 @@ export async function apiFetch<T>(path: string, options: ApiFetchOptions = {}): 
 
   const res = await fetch(`${BASE_URL}${path}`, {
     ...options,
-      // credentials: "include", 
-     credentials: options.withCredentials ? "include" : "same-origin",
-
+    credentials: options.withCredentials ? "include" : "omit",
     headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...(options.headers || {}),
+      "Content-Type": "application/json",
+      ...(!options.skipAuthHeader && token ? { Authorization: `Bearer ${token}` } : {}),
     },
     cache: "no-store",
   });
+
   const text = await res.text();
   const data = text ? JSON.parse(text) : null;
-  
-  console.log("TOKEN:", token);
 
   if (!res.ok) {
     const message = data?.message || `Request failed (${res.status})`;
@@ -41,5 +39,3 @@ export async function apiFetch<T>(path: string, options: ApiFetchOptions = {}): 
 
   return data as T;
 }
-
-
