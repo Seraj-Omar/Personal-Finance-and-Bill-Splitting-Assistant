@@ -1,19 +1,21 @@
-
-import { DebtResponse } from "@/src/types/debt";
-import { Debt } from "@/src/types/debt";
-import UpdateDebtForm from "../components/debts/UpdateDebtForm";
+import { DebtResponse, Debt } from "@/src/types/debt";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
+// ✅ safe token getter (works on server + client)
+const getToken = () => {
+  if (typeof window === "undefined") return null;
+  return sessionStorage.getItem("token");
+};
+
 export const debtService = {
   getDebts: async (
-    page: number = 1, 
-    limit: number = 10, 
-    status?: string 
+    page: number = 1,
+    limit: number = 10,
+    status?: string
   ): Promise<DebtResponse> => {
-    const token = sessionStorage.getItem('token');
-    
-   
+    const token = getToken();
+
     const params = new URLSearchParams({
       page: page.toString(),
       limit: limit.toString(),
@@ -24,57 +26,66 @@ export const debtService = {
     }
 
     const response = await fetch(`${API_BASE_URL}/debts?${params.toString()}`, {
-      method: 'GET',
+      method: "GET",
       headers: {
-        'Accept': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        Accept: "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to fetch debts');
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || "Failed to fetch debts");
     }
 
     return response.json();
   },
 
-  createDebt: async ( debtData: Partial<Debt>) => {
-  const token = sessionStorage.getItem('token');
+  createDebt: async (debtData: Partial<Debt>) => {
+    const token = getToken();
+
     const response = await fetch(`${API_BASE_URL}/debts`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
       body: JSON.stringify(debtData),
     });
-    console.log("CREATE DEBT RESPONSE:", response.status);
-    console.log("CREATE DEBT RESPONSE TEXT:", debtData);
+
     return response.json();
   },
-  
+
   deleteDebt: async (debtId: string) => {
-    const token = sessionStorage.getItem('token');
+    const token = getToken();
+
     const response = await fetch(`${API_BASE_URL}/debts/${debtId}`, {
-      method: 'DELETE',
+      method: "DELETE",
       headers: {
-        'Authorization': `Bearer ${token}`,
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
     });
+
     return response.json();
   },
-  UpdateDebt: async (debtId: string, updateData: Partial<Debt>) => {
-    const token = sessionStorage.getItem('token');
+
+  updateDebt: async (debtId: string, updateData: Partial<Debt>) => {
+    const token = getToken();
+
     const response = await fetch(`${API_BASE_URL}/debts/${debtId}`, {
-      method: 'PATCH',
+      method: "PATCH",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
       body: JSON.stringify(updateData),
     });
-    console.log("UPDATE DEBT RESPONSE:", updateData);
+
     return response.json();
+  },
+
+  
+  UpdateDebt: async (debtId: string, updateData: Partial<Debt>) => {
+    return debtService.updateDebt(debtId, updateData);
   },
 };

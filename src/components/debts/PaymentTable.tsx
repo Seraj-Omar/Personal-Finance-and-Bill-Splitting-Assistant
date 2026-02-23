@@ -162,7 +162,8 @@ const handleDelete = async () => {
         // Map through and update each one
         await Promise.all(
           overdueDebts.map((debt) => 
-            debtService.UpdateDebt(debt.id, { ...debt, status: "OVERDUE" })
+            debtService.updateDebt(debt.id, { ...debt, status: "OVERDUE" })
+
           )
         );
         // Refresh the list so the UI reflects the new "OVERDUE" status from the DB
