@@ -17,20 +17,19 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <>
-      {/* ـ AuthGateWrapper مؤقتاً أثناء تطوير الـ UI */}
-      {/* 
+      
       <AuthGateWrapper>
         <Header />
         {shouldShowHero && <PageHeroWrapper />}
         {children}
         <Footer />
       </AuthGateWrapper>
-      */}
+      
 
-      <Header />
+      {/* <Header />
       {shouldShowHero && <PageHeroWrapper />}
       {children}
-      <Footer />
+      <Footer /> */}
     </>
   );
 }
