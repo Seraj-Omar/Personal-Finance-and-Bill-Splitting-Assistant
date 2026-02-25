@@ -1,7 +1,7 @@
 "use client";
 
 import Card from "@/src/components/debts/Card";
-import { useExpensesOverview } from "./hooks/useExpensesOverview";
+import { useExpensesOverview } from "@/src/modules/expenses/hooks/useExpensesOverview";
 
 function formatMoney(value?: string) {
   const n = Number(value ?? 0);

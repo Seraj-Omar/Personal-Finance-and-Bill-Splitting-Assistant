@@ -5,7 +5,7 @@ import { Car, Gamepad2 } from "lucide-react";
 import CategoryCard from "./CardCategories";
 import ExpensesDonutCard from "./ExpensesDonutWidget";
 import AddExpenseModal from "./AddExpenseModal";
-import { useExpensesCategoriesBreakdown } from "./hooks/useExpensesCategoriesBreakdown";
+import { useExpensesCategoriesBreakdown } from "@/src/modules/expenses/hooks/useExpensesCategoriesBreakdown";
 
 const categoryMeta: Record<
   string,
