@@ -1,12 +1,12 @@
 "use client";
 
+import { useCreateBudget } from "@/src/modules/budget/hooks/useCreateBudget";
 import React, { useMemo, useState } from "react";
 
 type Props = {
   open: boolean;
   onClose: () => void;
 };
-import { useCreateBudget } from "./hooks/useCreateBudget";
 
 const CATEGORIES = ["FOOD", "RENT", "TRANSPORT", "UTILITIES", "ENTERTAINMENT", "OTHER"];
 

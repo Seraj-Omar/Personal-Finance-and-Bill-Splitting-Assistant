@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 import { PieChart } from '@mui/x-charts/PieChart';
-import { useBudgets } from './hooks/useBudgets';
+import { useBudgets } from '@/src/modules/budget/hooks/useBudgets';
 
 const data = [
   { label: 'Group A', value: 400, color: '#3146B6' },
