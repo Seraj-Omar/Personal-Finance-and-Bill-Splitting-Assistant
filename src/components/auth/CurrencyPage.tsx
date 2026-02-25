@@ -3,7 +3,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { MePayload } from "../type";
 import {
   Typography,
   TextField,
@@ -17,8 +16,8 @@ import {
 } from "@mui/material";
 
 import SearchIcon from "@mui/icons-material/Search";
-import { useCurrencies } from "../hooks/useCurrencies";
 import { useMe } from "@/src/modules/auth/hooks/useMe";
+import { useCurrencies } from "@/src/modules/auth/hooks/useCurrencies";
 
 function currencyCodeToFlag(code: string) {
   const map: Record<string, string> = {

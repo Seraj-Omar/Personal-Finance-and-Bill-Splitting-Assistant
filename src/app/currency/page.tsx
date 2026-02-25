@@ -1,4 +1,4 @@
-import CurrencyPage from '@/src/modules/auth/pages/CurrencyPage'
+import CurrencyPage from '@/src/components/auth/CurrencyPage'
 import React from 'react'
 
 const Currency = () => {

@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import KeyOutlinedIcon from "@mui/icons-material/KeyOutlined";
 import { TextField, InputAdornment, Typography, Button } from "@mui/material";
-import { useConfirmResetPassword } from "../hooks/useConfirmResetPassword";
+import { useConfirmResetPassword } from "@/src/modules/auth/hooks/useConfirmResetPassword";
 
 const ResetPassword = () => {
  const router = useRouter();

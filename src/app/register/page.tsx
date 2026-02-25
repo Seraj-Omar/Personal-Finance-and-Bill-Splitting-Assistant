@@ -1,4 +1,4 @@
-import RegisterPageUI from "@/src/modules/auth/pages/RegisterPage";
+import RegisterPageUI from "@/src/components/auth/RegisterPage";
 
 export default function RegisterPage() {
   return <RegisterPageUI />

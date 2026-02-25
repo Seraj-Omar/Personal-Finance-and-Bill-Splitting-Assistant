@@ -10,7 +10,7 @@ import MailOutlineIcon from "@mui/icons-material/MailOutline";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRequestResetCode } from "../hooks/useRequestResetCode";
+import { useRequestResetCode } from "@/src/modules/auth/hooks/useRequestResetCode";
 
 const schema = z.object({
   email: z

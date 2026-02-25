@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { revalidate, fetchMe } from "../services/auth.api";
+import { fetchMe, revalidate } from "@/src/modules/auth/services/auth.api";
 
 type Provider = "LOCAL" | "GOOGLE" | null;
 

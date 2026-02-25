@@ -4,7 +4,6 @@ import { FcGoogle } from "react-icons/fc";
 import { FaApple } from "react-icons/fa";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { loginSchema, registerSchema } from "../schema/auth.schema";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { HiOutlineEye, HiOutlineEyeOff } from "react-icons/hi";
@@ -16,9 +15,11 @@ import {
 } from "react-icons/hi";
 import Link from "next/link";
 import { useState } from "react";
+import { useRegister } from "@/src/modules/auth/hooks/useRegister";
+import { useLogin } from "@/src/modules/auth/hooks/useLogin";
+import { loginSchema, registerSchema } from "@/src/modules/auth/schema/auth.schema";
 
-import { useLogin } from "../hooks/useLogin";
-import { useRegister } from "../hooks/useRegister";
+
 
 type AuthType = "login" | "register";
 

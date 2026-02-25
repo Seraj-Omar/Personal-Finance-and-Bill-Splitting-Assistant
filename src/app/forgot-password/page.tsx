@@ -1,4 +1,4 @@
-import ForgetPassword from '@/src/modules/auth/pages/ForgetPassword';
+import ForgetPassword from '@/src/components/auth/ForgetPassword';
 import React from 'react'
 
 const ForgetPasswordPage
