@@ -8,7 +8,7 @@ type Props = {
   onClose: () => void;
 };
 
-const CATEGORIES = ["FOOD", "RENT", "TRANSPORT", "UTILITIES", "ENTERTAINMENT", "OTHER"];
+const CATEGORIES = ["FOOD", "RENT", "TRANSPORT", "HEALTH" ,"SHOPPING", "ENTERTAINMENT", "OTHER"];
 
 function toISOStart(dateOnly: string) {
   return new Date(dateOnly + "T00:00:00.000Z").toISOString();
