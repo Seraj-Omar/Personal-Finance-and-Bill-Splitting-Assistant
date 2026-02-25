@@ -1,29 +1,57 @@
 
-import React from "react";
+"use client";
+import React, { useMemo } from "react";
+
 import { Box, Card, CardContent, Typography } from "@mui/material";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { LineChart } from "@mui/x-charts/LineChart";
+import { useBudgets } from "@/src/modules/budget/hooks/useBudgets";
 
 type CategoryPoint = {
   label: string;
-  bar: number;
-  wave: number;
+  bar: number;  // spent
+  wave: number; // allocated
 };
 
-const mockData: CategoryPoint[] = [
-  { label: "Rent", bar: 4000, wave: 4800 },
-  { label: "Food", bar: 5800, wave: 6200 },
-  { label: "Transport", bar: 3500, wave: 4100 },
-  { label: "Utilities", bar: 5900, wave: 6400 },
-  { label: "Entertainment", bar: 4400, wave: 5200 },
-  { label: "Trip", bar: 6000, wave: 6700 },
-  { label: "University", bar: 4000, wave: 5600 },
+const CATEGORY_ORDER = [
+  "FOOD",
+  "TRANSPORT",
+  "ENTERTAINMENT",
+  "HEALTH",
+  "SHOPPING",
+  "OTHERS",
 ];
 
 export default function SpendingOverviewChart() {
-  const labels = mockData.map((d) => d.label);
-  const bars = mockData.map((d) => d.bar);
-  const wave = mockData.map((d) => d.wave);
+  // ✅ API
+  const { data: budgetsRes, isLoading, error } = useBudgets({ page: 1, limit: 1000 });
+
+  const budgets = budgetsRes?.data ?? [];
+const chartData: CategoryPoint[] = useMemo(() => {
+  const map = budgets.reduce(
+    (acc: Record<string, { spent: number; allocated: number }>, b: any) => {
+      const cat = b.category ?? "OTHERS";
+      acc[cat] ??= { spent: 0, allocated: 0 };
+      acc[cat].spent += Number(b.spentAmount ?? 0);
+      acc[cat].allocated += Number(b.allocatedAmount ?? 0);
+      return acc;
+    },
+    {}
+  );
+
+  const totalSpentAll = Object.values(map).reduce((s, v) => s + v.spent, 0);
+  const useAllocatedAsBars = totalSpentAll === 0;
+
+  return CATEGORY_ORDER.map((cat) => ({
+    label: cat,
+    bar: useAllocatedAsBars ? (map[cat]?.allocated ?? 0) : (map[cat]?.spent ?? 0),
+    wave: map[cat]?.allocated ?? 0,
+  }));
+}, [budgets]);
+
+  const labels = chartData.map((d) => d.label);
+  const bars = chartData.map((d) => d.bar);
+  const wave = chartData.map((d) => d.wave);
 
   return (
     <Card sx={{ borderRadius: 4 }}>

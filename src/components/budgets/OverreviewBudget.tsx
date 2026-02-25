@@ -1,127 +1,110 @@
 "use client";
 
-import React from 'react';
-import Stack from '@mui/material/Stack';
-import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
-import Typography from '@mui/material/Typography';
-import { PieChart } from '@mui/x-charts/PieChart';
-import { useBudgets } from '@/src/modules/budget/hooks/useBudgets';
+import React, { useMemo } from "react";
+import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import { useBudgets } from "@/src/modules/budget/hooks/useBudgets";
 
-const data = [
-  { label: 'Group A', value: 400, color: '#3146B6' },
-  { label: 'Group B', value: 300, color: '#5E74E6' },
-  { label: 'Group C', value: 300, color: '#F4B9C2' },
-  { label: 'Group D', value: 200, color: '#E9A3AD' },
-  { label: 'Savings', value: 250, color: '#6D7DFF' },
-];
+const COLORS = ["#3146B6", "#5E74E6", "#F4B9C2", "#E9A3AD", "#6D7DFF"];
 
-const total = data.reduce((sum, item) => sum + item.value, 0);
+const CATEGORY_ORDER = ["FOOD", "TRANSPORT", "ENTERTAINMENT", "HEALTH", "SHOPPING", "OTHERS"];
 
-const OverreviewBudget = () => {
+export default function OverreviewBudget() {
+  const { data: budgetsRes, isLoading } = useBudgets({ page: 1, limit: 1000 });
 
-  const { data: budgetsRes, isLoading } = useBudgets();
+  const budgets = budgetsRes?.data ?? [];
 
-const budgets = budgetsRes?.data ?? [];
+  const totalAllocated = useMemo(
+    () => budgets.reduce((sum: number, b: any) => sum + Number(b.allocatedAmount ?? 0), 0),
+    [budgets]
+  );
 
-const totalAllocated = budgets.reduce(
-  (sum: number, b: any) => sum + Number(b.allocatedAmount),
-  0
-);
+  const totalSpent = useMemo(
+    () => budgets.reduce((sum: number, b: any) => sum + Number(b.spentAmount ?? 0), 0),
+    [budgets]
+  );
 
-const totalSpent = budgets.reduce(
-  (sum: number, b: any) => sum + Number(b.spentAmount),
-  0
-);
+  const availableBudget = totalAllocated - totalSpent;
 
-const availableBudget = totalAllocated - totalSpent;
+  const pieData = useMemo(() => {
+    const map = budgets.reduce((acc: Record<string, { spent: number; allocated: number }>, b: any) => {
+      const cat = b.category ?? "OTHERS";
+      acc[cat] ??= { spent: 0, allocated: 0 };
+      acc[cat].spent += Number(b.spentAmount ?? 0);
+      acc[cat].allocated += Number(b.allocatedAmount ?? 0);
+      return acc;
+    }, {});
+
+    const totalSpentAll = Object.values(map).reduce((s, v) => s + v.spent, 0);
+    const useAllocatedAsValue = totalSpentAll === 0;
+
+    return CATEGORY_ORDER.map((cat, idx) => ({
+      label: cat,
+      value: useAllocatedAsValue ? (map[cat]?.allocated ?? 0) : (map[cat]?.spent ?? 0),
+      color: COLORS[idx % COLORS.length],
+    }));
+  }, [budgets]);
+
+  const total = useMemo(() => pieData.reduce((s, i) => s + (i.value || 0), 0), [pieData]);
 
   return (
-    <Box>
-      <Typography variant="h6" fontWeight={700}>
-        Budget
-      </Typography>
-      <Typography variant="body2" color="text.secondary" mb={2}>
-        Created On: Dec 16, 2024
-      </Typography>
+    <div>
+      <h3 className="text-lg font-bold">Budget</h3>
+      <p className="mb-4 text-sm text-slate-500">Created On: Dec 16, 2024</p>
 
-      <Stack width="100%" height={300} position="relative" alignItems="center">
-        <PieChart
-          series={[
-            {
-              data,
-              paddingAngle: 4,
-              innerRadius: 80,
-              outerRadius: 120,
-              cornerRadius: 8,
-            },
-          ]}
-          height={300}
-          hideLegend
-        />
+      <div className="relative flex h-[300px] w-full items-center justify-center">
+        {isLoading ? (
+          <p className="text-sm text-slate-500">Loading...</p>
+        ) : total === 0 ? (
+          <p className="text-sm text-slate-500">No data</p>
+        ) : (
+          <div className="h-full w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={pieData}
+                  dataKey="value"
+                  nameKey="label"
+                  innerRadius={80}
+                  outerRadius={120}
+                  paddingAngle={4}
+                  cornerRadius={8}
+                >
+                  {pieData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        )}
 
-        {/* ===== Center Content ===== */}
-        <Stack
-          position="absolute"
-          top="50%"
-          left="50%"
-          alignItems="center"
-          sx={{ transform: 'translate(-50%, -50%)' }}
-        >
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M9.84598 8.46135C12.1401 8.46135 13.9998 7.6348 13.9998 6.6152C13.9998 5.59559 12.1401 4.76904 9.84598 4.76904C7.55188 4.76904 5.69214 5.59559 5.69214 6.6152C5.69214 7.6348 7.55188 8.46135 9.84598 8.46135Z" stroke="#1F1E1F" strokeLinecap="round" strokeLinejoin="round"/>
-<path d="M5.69214 6.61523V12.1537C5.69214 13.1691 7.53829 13.9999 9.84598 13.9999C12.1537 13.9999 13.9998 13.1691 13.9998 12.1537V6.61523" stroke="#1F1E1F" strokeLinecap="round" strokeLinejoin="round"/>
-<path d="M13.9998 9.38477C13.9998 10.4002 12.1537 11.2309 9.84598 11.2309C7.53829 11.2309 5.69214 10.4002 5.69214 9.38477" stroke="#1F1E1F" strokeLinecap="round" strokeLinejoin="round"/>
-<path d="M9.75385 2.93118C8.67522 2.26553 7.41969 1.94359 6.15385 2.0081C3.85538 2.0081 2 2.83887 2 3.85426C2 4.39887 2.53538 4.88811 3.38462 5.23887" stroke="#1F1E1F" strokeLinecap="round" strokeLinejoin="round"/>
-<path d="M3.38462 10.7776C2.53538 10.4268 2 9.93757 2 9.39295V3.85449" stroke="#AFAFAF" strokeLinecap="round" strokeLinejoin="round"/>
-<path d="M3 .c .c .c .c .c .c .c .c .c .c .c .c .c .c .c " stroke="#AFAFAF" strokeLinecap="round" strokeLinejoin="round"/>
-</svg>
+        {/* Center */}
+        <div className="pointer-events-none absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center">
+          <p className="mt-1 text-xs text-slate-500">$</p>
+          <p className="text-2xl font-extrabold">{availableBudget.toFixed(2)}</p>
+          <p className="text-sm text-slate-500">Available Budget</p>
+        </div>
+      </div>
 
-          <Typography variant="caption" color="text.secondary">
-            $
-          </Typography>
-          <Typography variant="h5" fontWeight={800}>
-{availableBudget.toFixed(2)}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Available Budget
-          </Typography>
-        </Stack>
-      </Stack>
-
-      <Stack
-        direction="row"
-        flexWrap="wrap"
-        gap={1.5}
-        mt={2}
-      >
-        {data.map((item) => {
-          const percentage = Math.round((item.value / total) * 100);
+      {/* Chips */}
+      <div className="mt-4 flex flex-wrap gap-3">
+        {pieData.map((item) => {
+          const percentage = total > 0 ? Math.round((item.value / total) * 100) : 0;
 
           return (
-            <Chip
+            <div
               key={item.label}
-              label={`${item.label} - ${percentage}%`}
-              sx={{
-                borderRadius: 2,
-                border: '1px solid #eee',
-                backgroundColor: '#fff',
-                '&::before': {
-                  content: '""',
-                  width: 8,
-                  height: 8,
-                  borderRadius: '50%',
-                  backgroundColor: item.color,
-                  display: 'inline-block',
-                  marginRight: '8px',
-                },
-              }}
-            />
+              className="inline-flex items-center rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700"
+            >
+              <span
+                className="mr-2 inline-block h-2 w-2 rounded-full"
+                style={{ backgroundColor: item.color }}
+              />
+              {item.label} - {percentage}%
+            </div>
           );
         })}
-      </Stack>
-    </Box>
+      </div>
+    </div>
   );
-};
-
-export default OverreviewBudget;
+}

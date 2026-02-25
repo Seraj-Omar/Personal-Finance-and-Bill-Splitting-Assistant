@@ -1,9 +1,6 @@
 "use client"
 import Card from "@/src/components/debts/Card";
-import { TrendingDown, TrendingUp } from "lucide-react";
-import React from "react";
-import OverreviewBudget from "./OverreviewBudget";
-import BudgetSummary from "./BudgetSummary";
+
 import { useOverviewCards } from "@/src/modules/budget/hooks/useOverviewBudget";
 
 const PadgetComponent = () => {
