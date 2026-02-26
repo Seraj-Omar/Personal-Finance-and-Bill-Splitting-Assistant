@@ -6,8 +6,8 @@ import { HiMiniTrash } from "react-icons/hi2";
 import { BiSolidPencil } from "react-icons/bi";
 import TableToolbar from "./TableToolbar";
 import AddBudgetModal from "./AddBudgetModal";
-import { useBudgets } from "./hooks/useBudgets";
-import { useDeleteBudget } from "./hooks/useDeleteBudget";
+import { useBudgets } from "@/src/modules/budget/hooks/useBudgets";
+import { useDeleteBudget } from "@/src/modules/budget/hooks/useDeleteBudget";
 
 type FilterType = "All" | "Paid" | "Unpaid" | "Overdue";
 
