@@ -36,3 +36,12 @@ export type GetMyRemindersParams = {
   page?: number;
   limit?: number;
 };
+
+export type Bill = {
+  id: string;
+  name: string;
+  amount: number;
+  date?: string;
+  status?: "Paid" | "Unpaid" | "Pending" | "Overdue";
+    active?: boolean;
+};

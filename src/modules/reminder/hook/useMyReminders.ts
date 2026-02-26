@@ -5,7 +5,7 @@ import { GetMyRemindersParams } from "../type";
 export function useMyReminders(params: { page: number; limit: number }) {
   return useQuery({
     queryKey: ["reminders", "me", params.page, params.limit],
-    queryFn: () => getMyReminders(params), 
-    keepPreviousData: true,
+    queryFn: () => getMyReminders(params),
+    placeholderData: (prev) => prev, 
   });
 }

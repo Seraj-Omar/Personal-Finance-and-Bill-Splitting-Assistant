@@ -1,8 +1,8 @@
 "use client"
 
 import { Pencil, Trash2 } from "lucide-react"
-import { Bill } from "../type"
 import { DateIcon } from "@/src/components/DateIcon"
+import { Bill } from "../type"
 
 type BillCardProps = {
   bill: Bill
@@ -12,43 +12,48 @@ type BillCardProps = {
 }
 
 const BillCard = ({ bill, onEdit, onDelete, onToggle }: BillCardProps) => {
+  const isActive = Boolean(bill.active);
+
   return (
 <div className="bg-white rounded-xl p-5 shadow-sm w-full max-w-none
                 flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center mb-5" >      {/* Left */}
       <div className="min-w-0 flex-1">
         <h3 className="font-semibold text-gray-800 mb-1 break-words">
-          {bill.title}
+          {bill.name}
         </h3>
 
         <p className="text-sm text-gray-500 mb-2 flex items-center gap-2">
           <span>value:</span>
           <span className="font-medium text-gray-800">
-            ${bill.value.toLocaleString()}
+  ${Number(bill.amount).toLocaleString()}
           </span>
         </p>
 
-        <div className="flex items-center gap-3 text-xs text-gray-500">
-          <span className="px-3 py-1 rounded-full bg-gray-100">
-            {bill.frequency}
-          </span>
-        </div>
+<div className="flex items-center gap-3 text-xs text-gray-500">
+  {bill.status && (
+    <span className="px-3 py-1 rounded-full bg-gray-100">
+      {bill.status}
+    </span>
+  )}
+</div>
       </div>
 
       {/* Right */}
       <div className="w-full flex flex-row items-center justify-between gap-3 sm:w-auto sm:flex-col sm:items-end sm:justify-center">
         {/* Toggle */}
-        <button
-          onClick={() => onToggle(bill.id, !bill.active)}
-          className={`w-11 h-6 rounded-full relative transition ${
-            bill.active ? "bg-[#3447AA]" : "bg-gray-300"
-          }`}
-        >
-          <span
-            className={`absolute top-0.5 w-5 h-5 bg-white rounded-full transition ${
-              bill.active ? "right-0.5" : "left-0.5"
-            }`}
-          />
-        </button>
+
+<button
+  onClick={() => onToggle(bill.id, !isActive)}
+  className={`w-11 h-6 rounded-full relative transition ${
+    isActive ? "bg-[#3447AA]" : "bg-gray-300"
+  }`}
+>
+  <span
+    className={`absolute top-0.5 w-5 h-5 bg-white rounded-full transition ${
+      isActive ? "right-0.5" : "left-0.5"
+    }`}
+  />
+</button>
 
         {/* Date */}
         <div className="flex items-center gap-2 text-[#AEAEAE]">

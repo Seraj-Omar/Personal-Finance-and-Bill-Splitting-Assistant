@@ -12,15 +12,15 @@ const BillsList = ({ reminders }: { reminders: Reminder[] }) => {
             key={r.id}
             bill={{
               id: r.id,
-              title: r.description,
-              value: 0, // ل
-              frequency: r.frequency,
+              name: r.description,
+              amount: 0, // 
+  status: "Pending",
               date: r.dueDate,
               active: r.isActive,
             }}
-            onDelete={() => {}}
-            onToggle={() => {}}
-            onEdit={() => {}}
+  onDelete={(id) => {}}
+onToggle={(id, active) => {}}
+onEdit={(bill) => {}}
           />
         ))}
       </div>
