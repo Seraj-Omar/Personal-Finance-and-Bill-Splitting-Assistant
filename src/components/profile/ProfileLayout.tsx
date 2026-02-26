@@ -8,17 +8,18 @@ import PersonalInfoForm from "../../components/profile/PersonalInfoForm";
 import PasswordForm from "../../components/profile/PasswordForm";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
-import {UserProfile} from "@/src/types/profile";
+import { UserProfile } from "@/src/types/profile";
 import { profileService } from "@/src/services/profile-service";
 import { useCallback } from "react";
 //import { User } from "lucide-react";
-import { User } from "@/src/modules/auth/type";
+
 
 export default function ProfileLayout() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const tabFromUrl = searchParams.get("tab");
   const [activeTab, setActiveTab] = useState<"info" | "password">(
@@ -44,7 +45,6 @@ export default function ProfileLayout() {
 
   useEffect(() => {
     fetchUserProfile();
- 
   }, [fetchUserProfile]);
 
   useEffect(() => {
@@ -53,18 +53,82 @@ export default function ProfileLayout() {
     }
   }, [tabFromUrl]);
 
-  const handleUpdate = async (data: Partial<UserProfile>) => {
-    try {
-      await profileService.updateProfile(
-        data
-       
-      );
-        await fetchUserProfile();
-    } catch (err) {
-      console.error("Update failed", err);
-    }
-  };
 
+const handleUpdate = async (data: Partial<UserProfile>) => {
+  try {
+   
+    const { avatar, ...restOfData } = data;
+
+    
+    const payload: Omit<Partial<UserProfile>, "avatar"> & { avatar?: File } = {
+      ...restOfData,
+    };
+
+   
+    if (selectedFile) {
+      payload.avatar = selectedFile;
+    }
+
+    await profileService.updateProfile(payload);
+
+    setSelectedFile(null);
+    await fetchUserProfile();
+  } catch (err) {
+    console.error("Update failed", err);
+  }
+};
+
+const updatePassword = async (data: any) => {
+  try {
+    await profileService.changePassword(data);
+   
+    
+  } catch (err: any) {
+    console.error("Password update failed", err);
+   
+  }
+};
+
+
+
+const handleAvatarUpdate = async (file: File) => {
+  try {
+    
+    const payload: Omit<Partial<UserProfile>, "avatar"> & { avatar?: File } = {
+      avatar: file,
+    };
+
+    await profileService.updateProfile(payload);
+    await fetchUserProfile(); 
+   
+  } catch (err) {
+    console.  error("Avatar update failed", err);
+  }
+};
+ const handleAvatarDelete = async () => {
+  try {
+   
+    const response = await fetch("/profile.jpg");
+    const blob = await response.blob();
+    
+    const defaultFile = new File([blob], "profile.jpg", { type: "image/jpeg" });
+
+    const payload: Omit<Partial<UserProfile>, "avatar"> & { avatar?: File } = {
+      avatar: defaultFile,
+    };
+
+    console.log("UPLOADING DEFAULT IMAGE AS RESET...");
+
+    await profileService.updateProfile(payload);
+    setSelectedFile(null);
+    await fetchUserProfile(); 
+    
+    
+  } catch (err) {
+    console.error("Failed to reset avatar:", err);
+   
+  }
+};
   //if (loading) return <div>Loading...</div>;
 
   return (
@@ -78,13 +142,26 @@ export default function ProfileLayout() {
       />
 
       <div className="flex-1 bg-white rounded-2xl p-6 ml-6">
-        <AvatarSection avatarAssetId={user?.avatarAssetId ?? null} />
+        <AvatarSection
+          avatarAssetId={user?.avatar?.[0]?.url ?? null}
+          onFileSelect={(file) => {
+            setSelectedFile(file); 
+            handleAvatarUpdate(file); 
+          }}
+          onDelete={handleAvatarDelete}
+        />
         <Divider />
 
         {activeTab === "info" && user && (
           <PersonalInfoForm user={user} onSubmit={handleUpdate} />
         )}
-        {activeTab === "password" && <PasswordForm defaultCurrencyId={user?.defaultCurrencyId ?? ""} onChange={handleUpdate} />}
+        {activeTab === "password" && (
+          <PasswordForm
+            defaultCurrencyId={user?.defaultCurrencyId ?? ""}
+            onChange={handleUpdate}
+            onUpdatePassword={updatePassword}
+          />
+        )}
       </div>
     </div>
   );

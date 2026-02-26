@@ -15,13 +15,12 @@ export default function PersonalInfoForm({ user, onSubmit }: Props) {
     phone: user.phone ?? "",
   });
   useEffect(() => {
-  setForm({
-    firstName: user.fullName.split(" ")[0] || "",
-    lastName: user.fullName.split(" ").slice(1).join(" ") || "",
-    phone: user.phone ?? "",
-  });
-}, [user]);
-
+    setForm({
+      firstName: user.fullName.split(" ")[0] || "",
+      lastName: user.fullName.split(" ").slice(1).join(" ") || "",
+      phone: user.phone ?? "",
+    });
+  }, [user]);
 
   const handleSubmit = () => {
     if (!onSubmit) return;
@@ -37,32 +36,22 @@ export default function PersonalInfoForm({ user, onSubmit }: Props) {
       <Input
         label="First Name*"
         value={form.firstName}
-        onChange={(e) =>
-          setForm({ ...form, firstName: e.target.value })
-        }
+        onChange={(e) => setForm({ ...form, firstName: e.target.value })}
       />
 
       <Input
         label="Last Name*"
         value={form.lastName}
-        onChange={(e) =>
-          setForm({ ...form, lastName: e.target.value })
-        }
+        onChange={(e) => setForm({ ...form, lastName: e.target.value })}
       />
 
       <div className="flex flex-col gap-6 lg:col-span-2">
-        <Input
-          label="Email*"
-          value={user.email}
-          disabled
-        />
+        <Input label="Email*" value={user.email} disabled />
 
         <Input
           label="Phone Number*"
           value={form.phone}
-          onChange={(e) =>
-            setForm({ ...form, phone: e.target.value })
-          }
+          onChange={(e) => setForm({ ...form, phone: e.target.value })}
         />
       </div>
 

@@ -3,11 +3,23 @@ import { IconCamera, IconX } from "@tabler/icons-react";
 import { useState, useRef, useEffect } from "react";
 import UploadPictureModal from "./UploadPictureModal";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL
-export default function AvatarSection({ avatarAssetId }: { avatarAssetId: string| null }) {
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+
+export default function AvatarSection({
+  avatarAssetId,
+  onFileSelect,
+  onDelete,
+}: {
+  avatarAssetId: string | null;
+  onFileSelect: (file: File) => void;
+  onDelete: () => void;
+}) {
   const [open, setOpen] = useState(false);
+  const [preview, setPreview] = useState<string>("/profile.jpg");
   const [cameraOpen, setCameraOpen] = useState(false);
-  const [avatar, setAvatar] = useState(avatarAssetId!=null? BASE_URL + "/"+avatarAssetId : "/profile.jpg");
+  const [avatar, setAvatar] = useState(
+    avatarAssetId != null ? BASE_URL + "/" + avatarAssetId : "/profile.jpg",
+  );
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -28,6 +40,31 @@ export default function AvatarSection({ avatarAssetId }: { avatarAssetId: string
     setCameraOpen(false);
   };
 
+  const dataURLtoFile = (dataurl: string, filename: string) => {
+    let arr = dataurl.split(","),
+      mime = arr[0].match(/:(.*?);/)![1],
+      bstr = atob(arr[1]),
+      n = bstr.length,
+      u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new File([u8arr], filename, { type: mime });
+  };
+
+  useEffect(() => {
+    if (avatarAssetId) {
+      setPreview(avatarAssetId);
+    }
+  }, [avatarAssetId]);
+
+  const handleFileAction = (file: File) => {
+    const objectUrl = URL.createObjectURL(file);
+    setPreview(objectUrl);
+
+    onFileSelect(file);
+  };
+
   const takePhoto = () => {
     const video = videoRef.current;
     const canvas = canvasRef.current;
@@ -38,6 +75,8 @@ export default function AvatarSection({ avatarAssetId }: { avatarAssetId: string
       ctx?.drawImage(video, 0, 0, canvas.width, canvas.height);
       const url = canvas.toDataURL("image/png");
       setAvatar(url);
+      const file = dataURLtoFile(url, "camera-capture.png");
+      handleFileAction(file);
       closeCamera();
     }
   };
@@ -55,13 +94,18 @@ export default function AvatarSection({ avatarAssetId }: { avatarAssetId: string
     if (file) setAvatar(URL.createObjectURL(file));
   };
 
-  const handleUpload = (file: File) => setAvatar(URL.createObjectURL(file));
+  const handleUpload = (file: File) => {
+    handleFileAction(file);
+  };
 
   return (
     <>
       <div className="flex flex-col lg:flex-row items-center gap-4 lg:gap-10 mb-6">
         <div className="relative">
-          <img src={avatar} className="w-40 h-40  rounded-full object-cover" />
+          <img
+            src={avatarAssetId ?? "/profile.jpg"}
+            className="w-40 h-40  rounded-full object-cover"
+          />
 
           <input
             ref={fileInputRef}
@@ -87,7 +131,7 @@ export default function AvatarSection({ avatarAssetId }: { avatarAssetId: string
             Upload New
           </button>
           <button
-            onClick={() => setAvatar("/profile.jpg")}
+            onClick={onDelete}
             className="px-5 py-2 rounded-lg bg-gray-200 text-[#707070] font-medium"
           >
             Delete avatar
