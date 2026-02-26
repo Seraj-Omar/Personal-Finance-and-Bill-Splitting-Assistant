@@ -13,7 +13,7 @@ export type DashboardStatsResponse = {
 		totalUsers: StatItem;
 		activeUsers: StatItem;
 		debts: StatItem;
-		incomes?: StatItem;//fix later
+		incomes: StatItem;
 	};
 };
 

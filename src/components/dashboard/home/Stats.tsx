@@ -69,8 +69,8 @@ export default function Stats() {
         {
             id: "total-income",
             title:"Total Income",
-            value:data.data.incomes?.count??0,//fix later
-            percentage:data.data.incomes?.changePercent??0,
+            value:data.data.incomes.count,
+            percentage:data.data.incomes.changePercent,
             icon:<svg width="45" height="45" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
                     <rect width="45" height="45" rx="8" fill="#E8FEF1"/>
                 <g clipPath="url(#clip0_4224_1640)">
