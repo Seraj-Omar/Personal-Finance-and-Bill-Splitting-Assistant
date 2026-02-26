@@ -38,6 +38,6 @@ export async function apiFetch<T>(path: string, options: ApiFetchOptions = {}): 
     err.data = data;
     throw err;
   }
-
+  console.log(data);
   return data as T;
 }

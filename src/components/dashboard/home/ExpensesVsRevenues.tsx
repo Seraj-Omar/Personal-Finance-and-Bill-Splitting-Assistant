@@ -72,7 +72,7 @@ export default function ExpensesVsRevenues() {
     const containerRef = useRef<HTMLDivElement | null>(null);
     const [width, setWidth] = useState(0);
     const {data,isLoading,error}=useBillsVsExpenses();
-
+    
     useEffect(() => {
         if (!containerRef.current) return;
 
@@ -98,40 +98,58 @@ export default function ExpensesVsRevenues() {
         };
     }, []);
 
+    let message;
     if (isLoading || error || !data) {
-        const message = isLoading
+        message = isLoading
             ? "Loading Expenses Vs Revenues..."
             : error instanceof Error
             ? `Error: ${error.message}`
             : "No stats available";
+    }
 
-        return (
-            <Box className="bg-[#FFFFFF] rounded-xl p-6 flex flex-col gap-3 w-full h-full">
-                <DashboardTitle title="Expenses vs Revenues" width={20} />
+    const months: string[] = [];
+    const revenuesData: number[] = [];
+    const expensesData: number[] = [];
+
+    if (data?.data) {
+        data.data.forEach((item) => {
+            months.push(item.month);
+            revenuesData.push(Number(item.bills) || 0);
+            expensesData.push(Number(item.expenses) || 0);
+        });
+    }
+    
+    const totalsData = revenuesData.map((value, index) => value + (expensesData[index] || 0));
+
+    const graphMaxValue: number = Math.max(...revenuesData, ...expensesData, ...totalsData, 0);
+    let axisMax = 10000;
+    if (graphMaxValue > 0) {
+        const magnitude = Math.pow(10, Math.floor(Math.log10(graphMaxValue)));
+        const normalized = graphMaxValue / magnitude;
+        const roundedUp = Math.ceil(normalized * 2) / 2;
+        axisMax = Math.ceil(roundedUp * magnitude);
+    }
+
+    const formatLargeNumber = (value: number): string => {
+        const num = Number(value);
+        if (num >= 1000000) {
+            return `$${(num / 1000000).toFixed(1)}M`;
+        }
+        if (num >= 1000) {
+            return `$${(num / 1000).toFixed(0)}K`;
+        }
+        return `$${num.toLocaleString()}`;
+    };
+    return (
+        <Box className="bg-[#FFFFFF] rounded-xl p-6 pb-0 flex flex-col gap-3 w-full">
+            <DashboardTitle title="Expenses vs Revenues" width={20} />
+            {message&&(
                 <Box className="flex flex-1 w-full items-center justify-center">
                     <Typography className="w-full py-6 text-center text-sm font-medium text-[#707070] animate-pulse">
                         {message}
                     </Typography>
                 </Box>
-            </Box>
-        );
-    }
-
-    const months:string[]=[];
-    const revenuesData:number[]=[];
-    const expensesData:number[]=[];
-
-    data.data.forEach((item) => {
-        months.push(item.month);
-        revenuesData.push(item.bills);
-        expensesData.push(item.expenses);
-    });
-
-    const maxDataValue:number = Math.max(...revenuesData, ...expensesData);
-    const axisMax = Math.ceil(maxDataValue / 5000) * 5000;
-    return (
-        <Box className="bg-[#FFFFFF] rounded-xl p-6 pb-0 flex flex-col gap-3 w-full">
-            <DashboardTitle title="Expenses vs Revenues" width={20} />
+            )}
             <Box
                 ref={containerRef}
                 className="relative w-[calc(100%+3rem)] -mx-12"
@@ -164,8 +182,7 @@ export default function ExpensesVsRevenues() {
                         disableLine: true,
                         min: 0,
                         max: axisMax,
-                        valueFormatter: (value: number) =>
-                            `$${value.toLocaleString()}`,
+                        valueFormatter: formatLargeNumber,
                     },
                 ]}
                         series={[
@@ -208,7 +225,7 @@ export default function ExpensesVsRevenues() {
                         height={360}
                         xAxis={[{ scaleType: "band", data: months }]}
                         yAxis={[{ min: 0, max: axisMax }]}
-                        series={[{ data: revenuesData, color: "#5792ffc8", curve: "linear" }]} 
+                        series={[{ data: totalsData, color: "#5792ffc8", curve: "linear" }]} 
                         margin={{ top: 24, right: 16, bottom: 36, left: 72 }}
                         sx={{
                             position: "absolute",
