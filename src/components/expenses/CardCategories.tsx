@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { useExpensesCategoriesBreakdown } from "./hooks/useExpensesCategoriesBreakdown";
 
 type CategoryCardProps = {
   icon: React.ReactNode;

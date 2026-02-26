@@ -1,5 +1,5 @@
+import AskAIChat from '@/src/components/askAIChat/AskAIChat'
 import React from 'react'
-import AskAIChat from '@/src/modules/askAIChat/AskAIChat'
 const ChatAI = () => {
   return (
 <AskAIChat /> 
