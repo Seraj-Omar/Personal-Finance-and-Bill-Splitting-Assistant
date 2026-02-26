@@ -3,13 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Typography, Box } from "@mui/material";
 import { BarChart } from "@mui/x-charts/BarChart";
 import DashboardTitle from "./DashboardTitle";
-
-const hours = [
-"00:00","02:00","04:00","06:00","08:00",
-"10:00","12:00","14:00","16:00","18:00","24:00",
-];
-
-const data = [9000, 8800, 2500, 14000, 2300, 7300, 22500, 3500, 23000, 11000, 19500];
+import { useDashboardPeakHours } from "@/src/modules/dashboard/hooks/useDashboardPeakHours";
 
 const mostActiveHours = "9 AM - 5 PM";
 
@@ -77,7 +71,9 @@ const BottomRoundedBar = (props: BottomRoundedBarProps) => {
 export default function PeakUsageHours() {
     const containerRef = useRef<HTMLDivElement | null>(null);
     const [width, setWidth] = useState(0);
+    const {data,isLoading,error}=useDashboardPeakHours();
 
+    
     useEffect(() => {
         if (!containerRef.current) return;
 
@@ -103,6 +99,22 @@ export default function PeakUsageHours() {
         };
     }, []);
 
+    if (isLoading || error || !data) {
+        const message = isLoading? "Loading Peak Hours...": error instanceof Error? `Error: ${error.message}`: "No stats available";
+
+        return (
+            <Typography className="w-full py-6 text-center text-sm font-medium text-[#707070] animate-pulse">
+                {message}
+            </Typography>
+        );
+    }
+    const values: number[] = [];
+    const hours: string[] = [];
+
+    data.data.forEach((item: { hour: string; count: number }) => {
+        hours.push(item.hour);
+        values.push(item.count);
+    });
     return (
         <Box className="flex flex-col h-full bg-[#ffffff] w-full justify-start items-center gap-3 p-6 rounded-2xl">
             <DashboardTitle title="Peak Usage Hours" />
@@ -142,7 +154,7 @@ export default function PeakUsageHours() {
                     ]}
                         series={[
                             {
-                                data,
+                                data: values,
                                 color: "#3448aacf",
                             },
                         ]}
