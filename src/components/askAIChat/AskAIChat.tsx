@@ -4,11 +4,11 @@ import React from "react";
 import { Box, Paper, Typography, Divider, Container, Stack, Button } from "@mui/material";
 
 import { suggestedQuestions } from "./constants";
-import type { ChatMessage } from "./type/type";
 import ChatInput from "./ChatInput";
 import ChatBubble from "./ChatBubble";
-import { useSuggestedBudget } from "./ hooks/useSuggestedBudget";
-import { useAskAIChat } from "./ hooks/useAskAIChat";
+import { useSuggestedBudget } from "@/src/modules/askAIChat/ hooks/useSuggestedBudget";
+import { useAskAIChat } from "@/src/modules/askAIChat/ hooks/useAskAIChat";
+import { ChatMessage } from "@/src/modules/askAIChat/type/type";
 
 
 const initialMessages: ChatMessage[] = [

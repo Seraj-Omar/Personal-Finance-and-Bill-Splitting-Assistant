@@ -19,9 +19,9 @@ export async function apiFetch<T>(path: string, options: ApiFetchOptions = {}): 
     ...options,
     credentials: options.withCredentials ? "include" : "omit",
     headers: {
-      ...(options.headers || {}),
       "Content-Type": "application/json",
       ...(!options.skipAuthHeader && token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(options.headers || {}), 
     },
     cache: "no-store",
   });

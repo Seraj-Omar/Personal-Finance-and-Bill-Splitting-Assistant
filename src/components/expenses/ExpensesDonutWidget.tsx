@@ -5,7 +5,7 @@ import { Paper, Tabs, Tab, Box, Typography, IconButton } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { PieChart } from "@mui/x-charts/PieChart";
-import { useExpensesDonutChart } from "./hooks/useExpensesDonutChart";
+import { useExpensesDonutChart } from "@/src/modules/expenses/hooks/useExpensesDonutChart";
 
 const donutColors = ["#2F46B8", "#5E74E6", "#BFC7EA", "#F4B9C2", "#E9A3AD"];
 
