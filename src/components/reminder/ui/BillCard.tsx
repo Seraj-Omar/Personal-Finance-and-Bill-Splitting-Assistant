@@ -2,7 +2,7 @@
 
 import { Pencil, Trash2 } from "lucide-react"
 import { DateIcon } from "@/src/components/DateIcon"
-import { Bill } from "../type"
+import { Bill } from "@/src/modules/reminder/type"
 
 type BillCardProps = {
   bill: Bill

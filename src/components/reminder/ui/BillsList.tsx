@@ -1,6 +1,6 @@
 "use client";
 
-import { Reminder } from "../type";
+import { Reminder } from "@/src/modules/reminder/type";
 import BillCard from "./BillCard";
 
 const BillsList = ({ reminders }: { reminders: Reminder[] }) => {

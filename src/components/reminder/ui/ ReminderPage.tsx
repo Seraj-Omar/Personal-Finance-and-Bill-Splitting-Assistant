@@ -4,7 +4,7 @@ import Image from "next/image";
 import BillsList from "./BillsList";
 import ImportantReminder from "./ImportantReminder";
 import { useState } from "react";
-import { useMyReminders } from "../hook/useMyReminders";
+import { useMyReminders } from "@/src/modules/reminder/hook/useMyReminders";
 
 const ReminderPage = () => {
   const [page, setPage] = useState(1);
