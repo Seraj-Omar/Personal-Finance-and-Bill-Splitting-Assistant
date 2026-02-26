@@ -69,14 +69,12 @@ export default function AuthForm({ type }: { type: AuthType }) {
 
       const loginData = data as LoginForm;
 
-      await loginMutation.mutateAsync({
-        email: loginData.email,
-        password: loginData.password,
-      });
+await loginMutation.mutateAsync({
+  email: loginData.email,
+  password: loginData.password,
+});
 
-      router.push("/currency");
     } catch (e) {
-      // React Query mutation will hold the error in `apiError`
       console.error(e);
     }
   };
@@ -212,13 +210,22 @@ export default function AuthForm({ type }: { type: AuthType }) {
         <div className="flex gap-3 flex-wrap">
           <button
             type="button"
-            onClick={() => {
-              window.location.href = `${process.env.NEXT_PUBLIC_BASE_URL}/auth/google`;
-            }}
+         onClick={() => {
+  sessionStorage.removeItem("token");
+  sessionStorage.removeItem("cached_user");
+
+  sessionStorage.setItem("auth_provider", "GOOGLE");
+  window.dispatchEvent(new Event("auth:changed"));
+
+  window.location.href = `${process.env.NEXT_PUBLIC_BASE_URL}/auth/google`;
+}}
+
+
             className="flex flex-1 items-center justify-center gap-2 bg-white text-black rounded-xl py-3 text-sm font-medium hover:bg-gray-100 transition"
           >
             <FcGoogle className="text-lg" />
             Log in with Google
+            
           </button>
 
           <button

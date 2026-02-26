@@ -1,4 +1,4 @@
-import Budget from '@/src/modules/budget/Budget'
+import Budget from '@/src/components/budgets/Budget'
 import React from 'react'
 
 const BudgetPage = () => {

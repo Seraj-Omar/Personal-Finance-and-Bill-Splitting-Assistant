@@ -47,6 +47,7 @@ export default function ProfileLayout() {
     fetchUserProfile();
   }, [fetchUserProfile]);
 
+
   useEffect(() => {
     if (tabFromUrl === "password" || tabFromUrl === "info") {
       setActiveTab(tabFromUrl);

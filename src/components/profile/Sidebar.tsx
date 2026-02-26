@@ -79,7 +79,7 @@ const logout = useLogout();
             />
           </svg>
         }
-        onClick={() => router.push("profile/report")}
+        onClick={() => router.push("/report")}
       />
 
       <SidebarItem
