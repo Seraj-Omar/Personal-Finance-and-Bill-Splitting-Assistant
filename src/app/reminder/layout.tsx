@@ -2,7 +2,7 @@ import Footer from "@/src/components/footer/Footer"
 import PageHero from "@/src/shared/ui/page-hero/PageHero"
 import Providers from "../providers"
 import Header from "@/src/components/Header"
-import AuthGateWrapper from "@/src/modules/auth/components/AuthGateWrapper"
+import AuthGateWrapper from "@/src/components/auth/AuthGateWrapper"
 
 
 export default function Layout({ children }: { children: React.ReactNode }) {

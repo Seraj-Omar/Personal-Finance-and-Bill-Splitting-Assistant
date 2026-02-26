@@ -1,4 +1,4 @@
-import AuthGateWrapper from "@/src/modules/auth/components/AuthGateWrapper";
+import AuthGateWrapper from "@/src/components/auth/AuthGateWrapper";
 import Dashboard from "../../components/dashboard/home/Dashboard";
 export default function DashboardPage() {
     return (<AuthGateWrapper> 

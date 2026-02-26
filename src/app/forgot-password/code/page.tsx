@@ -1,11 +1,11 @@
-import CodeFromPass from '@/src/modules/auth/pages/CodeFromPassword'
+import ForgetPasswordCode from '@/src/components/auth/ForgetPasswordCode';
 import React, { Suspense } from 'react'
 
 const CodeFromPassword = () => {
   return (
 
         <Suspense fallback={null}>
-      <CodeFromPass />
+      <ForgetPasswordCode />
     </Suspense>
   );
   
