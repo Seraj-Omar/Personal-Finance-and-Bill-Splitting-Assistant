@@ -1,9 +1,10 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import { Box } from "@mui/material";
+import { Box,Typography } from "@mui/material";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { LineChart } from "@mui/x-charts/LineChart";
 import DashboardTitle from "./DashboardTitle";
+import { useBillsVsExpenses } from "@/src/modules/dashboard/hooks/useBillsVsExpenses";
 
 // Custom bar shape: fully rounded ends
 type BottomRoundedBarProps = {
@@ -67,15 +68,10 @@ const BottomRoundedBar = (props: BottomRoundedBarProps) => {
     );
 };
 
-const categories = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-const revenuesData = [17000, 4000, 8000, 5000, 10000, 3000, 14000, 4000, 14000, 12000, 23000, 10000];
-const expensesData = [10000, 12000, 8500, 20500, 3500, 3500, 13500, 9000, 23500, 23500, 13500, 3500];
-const maxDataValue = Math.max(...revenuesData, ...expensesData);
-const axisMax = Math.ceil(maxDataValue / 5000) * 5000;
-
 export default function ExpensesVsRevenues() {
     const containerRef = useRef<HTMLDivElement | null>(null);
     const [width, setWidth] = useState(0);
+    const {data,isLoading,error}=useBillsVsExpenses();
 
     useEffect(() => {
         if (!containerRef.current) return;
@@ -102,6 +98,28 @@ export default function ExpensesVsRevenues() {
         };
     }, []);
 
+    if (isLoading || error || !data) {
+        const message = isLoading? "Loading Expenses Vs Revenues...": error instanceof Error? `Error: ${error.message}`: "No stats available";
+
+        return (
+            <Typography className="w-full py-6 text-center text-sm font-medium text-[#707070] animate-pulse">
+                {message}
+            </Typography>
+        );
+    }
+
+    const months:string[]=[];
+    const revenuesData:number[]=[];
+    const expensesData:number[]=[];
+
+    data.data.forEach((item) => {
+        months.push(item.month);
+        revenuesData.push(item.bills);
+        expensesData.push(item.expenses);
+    });
+
+    const maxDataValue:number = Math.max(...revenuesData, ...expensesData);
+    const axisMax = Math.ceil(maxDataValue / 5000) * 5000;
     return (
         <Box className="bg-[#FFFFFF] rounded-xl p-6 pb-0 flex flex-col gap-3 w-full">
             <DashboardTitle title="Expenses vs Revenues" width={20} />
@@ -117,7 +135,7 @@ export default function ExpensesVsRevenues() {
                 xAxis={[
                     {
                         scaleType: "band",
-                        data: categories,
+                        data: months,
                         barGapRatio: 0.8,
                         categoryGapRatio: 0.8,
                         tickLabelStyle: {
@@ -179,7 +197,7 @@ export default function ExpensesVsRevenues() {
                     <LineChart
                         width={width}
                         height={360}
-                        xAxis={[{ scaleType: "band", data: categories }]}
+                        xAxis={[{ scaleType: "band", data: months }]}
                         yAxis={[{ min: 0, max: axisMax }]}
                         series={[{ data: revenuesData, color: "#5792ffc8", curve: "linear" }]} 
                         margin={{ top: 24, right: 16, bottom: 36, left: 72 }}
