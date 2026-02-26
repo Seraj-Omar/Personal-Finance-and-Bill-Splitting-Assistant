@@ -100,12 +100,21 @@ export default function PeakUsageHours() {
     }, []);
 
     if (isLoading || error || !data) {
-        const message = isLoading? "Loading Peak Hours...": error instanceof Error? `Error: ${error.message}`: "No stats available";
+        const message = isLoading
+            ? "Loading Peak Hours..."
+            : error instanceof Error
+            ? `Error: ${error.message}`
+            : "No stats available";
 
         return (
-            <Typography className="w-full py-6 text-center text-sm font-medium text-[#707070] animate-pulse">
-                {message}
-            </Typography>
+            <Box className="flex flex-col h-full bg-[#ffffff] w-full items-center gap-3 p-6 rounded-2xl">
+                <DashboardTitle title="Peak Usage Hours" />
+                <Box className="flex flex-1 w-full items-center justify-center">
+                    <Typography className="w-full py-6 text-center text-sm font-medium text-[#707070] animate-pulse">
+                        {message}
+                    </Typography>
+                </Box>
+            </Box>
         );
     }
     const values: number[] = [];

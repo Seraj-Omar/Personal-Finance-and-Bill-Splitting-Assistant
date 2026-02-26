@@ -16,12 +16,25 @@ export default function Stats() {
     const {data,isLoading,error}=useDashboardStats();
 
     if (isLoading || error || !data) {
-        const message = isLoading? "Loading dashboard stats...": error instanceof Error? `Error: ${error.message}`: "No stats available";
+        const message = isLoading
+            ? "Loading dashboard stats..."
+            : error instanceof Error
+            ? `Error: ${error.message}`
+            : "No stats available";
 
         return (
-            <Typography className="w-full py-6 text-center text-sm font-medium text-[#707070] animate-pulse">
-                {message}
-            </Typography>
+            <Box component="section" aria-label="Dashboard statistics" className="w-full">
+                <Box className="flex h-full min-h-[168px] w-full flex-col items-start rounded-lg gap-4 bg-[#FFFFFF] border-[0.5px] border-[#D9D9D980] p-4">
+                    <Typography className="!text-[14px] !font-[500] text-[#3447AA]">
+                        Dashboard statistics
+                    </Typography>
+                    <Box className="flex w-full items-center justify-center">
+                        <Typography className="w-full py-6 text-center text-sm font-medium text-[#707070] animate-pulse">
+                            {message}
+                        </Typography>
+                    </Box>
+                </Box>
+            </Box>
         );
     }
         

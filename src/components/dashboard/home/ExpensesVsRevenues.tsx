@@ -99,12 +99,21 @@ export default function ExpensesVsRevenues() {
     }, []);
 
     if (isLoading || error || !data) {
-        const message = isLoading? "Loading Expenses Vs Revenues...": error instanceof Error? `Error: ${error.message}`: "No stats available";
+        const message = isLoading
+            ? "Loading Expenses Vs Revenues..."
+            : error instanceof Error
+            ? `Error: ${error.message}`
+            : "No stats available";
 
         return (
-            <Typography className="w-full py-6 text-center text-sm font-medium text-[#707070] animate-pulse">
-                {message}
-            </Typography>
+            <Box className="bg-[#FFFFFF] rounded-xl p-6 flex flex-col gap-3 w-full h-full">
+                <DashboardTitle title="Expenses vs Revenues" width={20} />
+                <Box className="flex flex-1 w-full items-center justify-center">
+                    <Typography className="w-full py-6 text-center text-sm font-medium text-[#707070] animate-pulse">
+                        {message}
+                    </Typography>
+                </Box>
+            </Box>
         );
     }
 

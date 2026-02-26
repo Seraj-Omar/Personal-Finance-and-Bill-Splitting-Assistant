@@ -58,10 +58,13 @@
             : "No data available";
 
         return (
-            <Box className="flex flex-col h-full bg-[#ffffff] w-full justify-center items-center gap-3 p-6 rounded-2xl">
-                <Typography className="w-full py-6 text-center text-sm font-medium text-[#707070] animate-pulse">
-                    {message}
-                </Typography>
+            <Box className="flex flex-col h-full bg-[#ffffff] w-full items-center gap-4 p-6 rounded-2xl">
+                <DashboardTitle title="Financial snapshot" />
+                <Box className="flex flex-1 w-full items-center justify-center">
+                    <Typography className="w-full py-6 text-center text-sm font-medium text-[#707070] animate-pulse">
+                        {message}
+                    </Typography>
+                </Box>
             </Box>
         );
     }
