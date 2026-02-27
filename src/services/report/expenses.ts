@@ -1,5 +1,5 @@
 import { DonutItem, Period } from "../../types/report/expenses";
-import { apiFetch } from "../../lib/api"; 
+import { apiFetch } from "../../lib/api";
 
 type FetchParams = {
   currencyId?: string;

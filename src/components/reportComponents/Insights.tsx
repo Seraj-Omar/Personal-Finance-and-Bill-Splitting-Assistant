@@ -1,54 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { Insight } from "../../types/report/insight";
 import { InsightItem } from "./InsightItem";
 import { InsightModal } from "./InsightModal";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-
-const mockInsights: Insight[] = [
-  // {
-  //   id: "1",
-  //   type: "DANGER",
-  //   title: "High Spending",
-  //   message: "Entertainment expenses are 35% higher than usual",
-  //   isRead: false,
-  // },
-  // {
-  //   id: "2",
-  //   type: "WARNING",
-  //   title: "Budget Alert",
-  //   message: "You have exceeded 80% of your Food budget",
-  //   isRead: false,
-  // },
-  // {
-  //   id: "3",
-  //   type: "SUCCESS",
-  //   title: "Savings Boost",
-  //   message: "Your savings increased by 18% compared to last month",
-  //   isRead: false,
-  // },
-  // {
-  //   id: "4",
-  //   type: "SUCCESS",
-  //   title: "Goal Achieved",
-  //   message: "You reached your monthly financial goal!",
-  //   isRead: false,
-  // },
-  // {
-  //   id: "5",
-  //   type: "WARNING",
-  //   title: "Subscription Alert",
-  //   message: "Your streaming service subscription renews tomorrow",
-  //   isRead: false,
-  // },
-];
+import { fetchInsights } from "../../services/report/insights";
 
 export default function Insights() {
-  const [insights, setInsights] = useState<Insight[]>(mockInsights);
+  const [insights, setInsights] = useState<Insight[]>([]);
   const [selectedInsight, setSelectedInsight] = useState<Insight | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true);
 
   const itemsPerPage = 3;
   const totalPages = Math.ceil(insights.length / itemsPerPage);
@@ -57,6 +21,13 @@ export default function Insights() {
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage,
   );
+
+  useEffect(() => {
+    setLoading(true);
+    fetchInsights()
+      .then((data) => setInsights(data))
+      .finally(() => setLoading(false));
+  }, []);
 
   const handleCloseModal = () => {
     if (!selectedInsight) return;
@@ -76,7 +47,9 @@ export default function Insights() {
           activity.
         </p>
 
-        {insights.length === 0 ? (
+        {loading ? (
+          <p className="text-gray-400">Loading insights...</p>
+        ) : insights.length === 0 ? (
           <p className="text-[#1C1A1A80] font-medium m-4">
             No insights available.
           </p>
@@ -130,7 +103,7 @@ export default function Insights() {
       <div className="relative w-full lg:w-[50%] h-[444px] rounded-[16px] hidden lg:block overflow-hidden">
         <Image
           src="/Insights.jpg"
-          alt="Insights illustration - woman with tablet and financial dashboard"
+          alt="Insights illustration"
           fill
           className="object-cover"
           priority
