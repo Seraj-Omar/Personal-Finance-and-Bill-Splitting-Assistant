@@ -1,15 +1,19 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
-import { Box, Typography, Tabs, Tab, Button, Avatar, AvatarGroup } from "@mui/material";
+import { Box, Typography, Tabs, Tab, Button, Avatar, AvatarGroup, CircularProgress } from "@mui/material";
 import { Plus, Trash2, Pencil } from "lucide-react";
 import AddIndividualClient from "./AddIndividualClient";
 import AddGroupClient from "./AddGroupClient";
 import Table, { Column } from "@/src/components/Table";
+import { useBills } from "@/src/modules/budget/hooks/useBills";
+import { useDeleteBill } from "@/src/modules/budget/hooks/useDeleteBill";
+import { Bill } from "@/src/modules/budget/type/types";
 
 type BillStatus = "Paid" | "Unpaid" | "Pending" | "Overdue";
 
 type IndividualBillRow = {
+  id: string;
   name: string;
   num: string;
   amount: string;
@@ -18,6 +22,7 @@ type IndividualBillRow = {
 };
 
 type GroupBillRow = {
+  id: string;
   name: string;
   num: string;
   total: string;
@@ -37,9 +42,61 @@ const statusConfig: Record<BillStatus, { bg: string; dot: string; text: string }
   Overdue: { bg: "#FEF2F2", dot: "#EF4444", text: "#991B1B" },
 };
 
+function normalizeStatus(s: string): BillStatus {
+  const map: Record<string, BillStatus> = {
+    paid: "Paid",
+    unpaid: "Unpaid",
+    pending: "Pending",
+    overdue: "Overdue",
+  };
+  return map[s?.toLowerCase()] ?? "Unpaid";
+}
+
+function formatAmount(amount: string | number) {
+  const num = Number(amount);
+  return isNaN(num) ? String(amount) : `$${num.toFixed(2)}`;
+}
+
+function mapToRow(bill: Bill, index: number): BillRow {
+  const status = normalizeStatus(String(bill.status));
+  const num = `INV-${new Date(bill.date).getFullYear()}-${String(index + 1).padStart(3, "0")}`;
+  const amount = formatAmount(bill.amount);
+  const date = new Date(bill.date).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+
+  if (bill.type === "group") {
+    const myShare = bill.participants?.[0]?.amount ?? bill.amount;
+    return {
+      id: bill.id,
+      name: bill.name,
+      num,
+      total: amount,
+      share: formatAmount(myShare),
+      date,
+      percentage: bill.participants?.[0]?.percentage ? `${bill.participants[0].percentage}%` : "—",
+      status,
+      members: (bill.participants ?? []).map(() => ""),
+    } as GroupBillRow;
+  }
+
+  return { id: bill.id, name: bill.name, num, amount, date, status } as IndividualBillRow;
+}
+
 export default function BillsClient() {
   const [activeTab, setActiveTab] = useState(0);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  const billType = activeTab === 0 ? "individual" : "group";
+  const { data, isLoading, isError } = useBills({ page: 1, limit: 50, type: billType });
+  const { mutate: deleteBill } = useDeleteBill();
+
+  const currentData: BillRow[] = useMemo(() => {
+    const items = data?.data?.items ?? [];
+    return items.map((bill, i) => mapToRow(bill, i));
+  }, [data]);
 
   const columns: Column<BillRow>[] = useMemo(
     () => [
@@ -131,9 +188,13 @@ export default function BillsClient() {
       {
         key: "action",
         title: "Action",
-        render: () => (
+        render: (row) => (
           <Box className="flex justify-center gap-3">
-            <button className="p-1.5 hover:bg-gray-50 text-red-400 rounded-md transition-all" type="button">
+            <button
+              className="p-1.5 hover:bg-gray-50 text-red-400 rounded-md transition-all"
+              type="button"
+              onClick={() => deleteBill(row.id)}
+            >
               <Trash2 size={18} />
             </button>
             <button className="p-1.5 hover:bg-gray-50 text-gray-400 rounded-md transition-all" type="button">
@@ -143,40 +204,8 @@ export default function BillsClient() {
         ),
       },
     ],
-    [activeTab]
+    [activeTab, deleteBill]
   );
-
-  const individualBills: IndividualBillRow[] = [
-    { name: "Anas AbuJaber", num: "INV-2026-001", amount: "$2,450.00", date: "Jan 20, 2024", status: "Paid" },
-    { name: "Seraj Omar", num: "INV-2026-002", amount: "$1,850.00", date: "Jan 21, 2024", status: "Pending" },
-    { name: "Noor Al-Afifi", num: "INV-2026-003", amount: "$1,850.00", date: "Jan 21, 2024", status: "Overdue" },
-    { name: "Nour Anwar", num: "INV-2026-004", amount: "$1,850.00", date: "Jan 25, 2026", status: "Unpaid" },
-  ];
-
-  const groupBills: GroupBillRow[] = [
-    {
-      name: "Water Bill",
-      num: "INV-2025-001",
-      total: "$2,450.00",
-      share: "$60.00",
-      date: "Sep 25, 2024",
-      percentage: "100%",
-      status: "Paid",
-      members: ["https://i.pravatar.cc/150?u=1", "https://i.pravatar.cc/150?u=2", "https://i.pravatar.cc/150?u=3"],
-    },
-    {
-      name: "Electricity Bill",
-      num: "INV-2025-002",
-      total: "$1,850.00",
-      share: "$10.00",
-      date: "Sep 25, 2024",
-      percentage: "60%",
-      status: "Pending",
-      members: ["https://i.pravatar.cc/150?u=4", "https://i.pravatar.cc/150?u=5"],
-    },
-  ];
-
-  const currentData: BillRow[] = activeTab === 0 ? individualBills : groupBills;
 
   return (
     <Box className="relative flex w-full flex-col px-20 py-10 gap-6 bg-white min-h-screen">
@@ -226,7 +255,17 @@ export default function BillsClient() {
         </Button>
       </Box>
 
-      <Table columns={columns} data={currentData} />
+      {isLoading ? (
+        <Box className="flex justify-center py-20">
+          <CircularProgress />
+        </Box>
+      ) : isError ? (
+        <Box className="flex justify-center py-20">
+          <Typography color="error">Failed to load bills. Please try again.</Typography>
+        </Box>
+      ) : (
+        <Table columns={columns} data={currentData} />
+      )}
     </Box>
   );
 }

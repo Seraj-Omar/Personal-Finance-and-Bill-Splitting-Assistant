@@ -3,17 +3,22 @@ import React from "react";
 
 function BillFoter({
   onClose,
+  onSave,
   disabled,
+  loading,
 }: {
   onClose: () => void;
+  onSave?: () => void;
   disabled?: boolean;
+  loading?: boolean;
 }) {
   return (
     <Box className="flex gap-4 mt-4">
       <Button
         fullWidth
         variant="contained"
-        disabled={disabled}
+        disabled={disabled || loading}
+        onClick={onSave}
         sx={{
           backgroundColor: "#3F51B5",
           "&:hover": { backgroundColor: "#303F9F" },

@@ -6,6 +6,10 @@ import type {
   BudgetSummary,
   CreateBudgetPayload,
   GetBudgetsParams,
+  Bill,
+  BillsApiResponse,
+  CreateBillPayload,
+  UpdateBillPayload,
 } from "../type/types";
 
 /* ---------- helpers ---------- */
@@ -71,7 +75,32 @@ export function fetchBills(params?: {
   if (params?.type) sp.set("type", params.type);
 
   const qs = sp.toString();
-  return apiFetch(`/bills${qs ? `?${qs}` : ""}`, { method: "GET" });
+  return apiFetch<BillsApiResponse>(`/bills${qs ? `?${qs}` : ""}`, { method: "GET" });
+}
+
+export function createBill(payload: CreateBillPayload) {
+  return apiFetch<ApiResponse<Bill>>("/bills", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function updateBill(id: string, payload: UpdateBillPayload) {
+  return apiFetch<ApiResponse<Bill>>(`/bills/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function deleteBill(id: string) {
+  return apiFetch(`/bills/${id}`, { method: "DELETE" });
+}
+
+export function updateBillStatus(id: string, status: "paid" | "unpaid") {
+  return apiFetch<ApiResponse<Bill>>(`/bills/${id}/status`, {
+    method: "PATCH",
+    body: JSON.stringify({ status }),
+  });
 }
 export type DebtDirection = "I_OWE" | "OWED_TO_ME";
 export type DebtStatus = "PAID" | "UNPAID";

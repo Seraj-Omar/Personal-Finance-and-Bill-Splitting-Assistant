@@ -11,6 +11,7 @@ import BillFoter from "./ui/BillFoter";
 import ParticipantItem from "./ui/ParticipantItem";
 import SplitMethodTabs from "./ui/SplitMethodTabs";
 import SplitDetailCard from "./ui/SplitDetailCard";
+import { useCreateBill } from "@/src/modules/budget/hooks/useCreateBill";
 
 export interface BillItem {
   id: string;
@@ -75,6 +76,8 @@ export default function AddGroupClient({ onClose }: { onClose: () => void }) {
   const [newName, setNewName] = useState("");
   const [showAddParticipant, setShowAddParticipant] = useState(false);
 
+  const { mutate: createBill, isPending } = useCreateBill();
+
   const updateParticipant = (id: string, data: Partial<Participant>) => {
     setParticipants((prev) =>
       prev.map((p) => (p.id === id ? { ...p, ...data } : p)),
@@ -104,6 +107,20 @@ export default function AddGroupClient({ onClose }: { onClose: () => void }) {
       ? totalPercentage === 100
       : Math.abs(totalSplit - billAmount) < 0.01;
   const diff = billAmount - totalSplit;
+
+  const handleSave = () => {
+    if (!isValid()) return;
+    createBill(
+      {
+        name: billName,
+        amount: billAmount,
+        date: billDate,
+        type: "group",
+        status: paymentStatus ?? "unpaid",
+      },
+      { onSuccess: onClose },
+    );
+  };
 
   return (
     <BillModalWrapper onClose={onClose} title="Add Group Bill">
@@ -308,7 +325,7 @@ export default function AddGroupClient({ onClose }: { onClose: () => void }) {
       </Box>
 
       <ReminderToggle checked={true} onChange={() => {}} />
-      <BillFoter onClose={onClose} disabled={!isValid()} />
+      <BillFoter onClose={onClose} onSave={handleSave} disabled={!isValid()} loading={isPending} />
     </BillModalWrapper>
   );
 }

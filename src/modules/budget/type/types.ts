@@ -61,3 +61,61 @@ export type CreateBudgetPayload = {
   endDate: string;         
   description?: string;
 };
+
+/* ---------- BILLS ---------- */
+export type BillType = "individual" | "group";
+export type BillPaymentStatus = "paid" | "unpaid";
+
+export type BillParticipant = {
+  id: string;
+  name: string;
+  amount: string | number;
+  percentage?: string | number;
+};
+
+export type Bill = {
+  id: string;
+  name: string;
+  amount: string | number;
+  date: string;
+  type: BillType;
+  status: BillPaymentStatus;
+  currencyId?: string;
+  description?: string;
+  assetId?: string;
+  participants?: BillParticipant[];
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type BillsApiResponse = {
+  success: boolean;
+  data: {
+    items: Bill[];
+    meta: {
+      page: number;
+      limit: number;
+      total: number;
+    };
+  };
+};
+
+export type CreateBillPayload = {
+  name: string;
+  amount: number;
+  date: string;
+  type: BillType;
+  status?: BillPaymentStatus;
+  currencyId?: string;
+  description?: string;
+  assetId?: string;
+};
+
+export type UpdateBillPayload = {
+  name?: string;
+  amount?: number;
+  date?: string;
+  currencyId?: string;
+  description?: string;
+  assetId?: string;
+};
