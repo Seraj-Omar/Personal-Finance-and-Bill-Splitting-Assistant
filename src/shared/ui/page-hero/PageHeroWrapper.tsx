@@ -8,11 +8,23 @@ const HERO_MAP: Record<
   { title: string; breadcrumb: string[]; bgImage?: string }
 > = {
   "/about-us": { title: "About Us", breadcrumb: ["Home", "About Us"] },
-  "/report": { title: "Report", breadcrumb: ["Profile", "Report"] },
+
+  // main pages
+  "/settings/profile/report": {
+    title: "Report",
+    breadcrumb: ["Profile", "Report"],
+  },
+  "/budget": { title: "Budget", breadcrumb: ["Home", "Budget"] },
+  "/reminder": { title: "Reminder", breadcrumb: ["Home", "Reminder"] },
+  "/profile": { title: "Profile", breadcrumb: ["Home", "Profile"] },
+
+  // settings / profile
   "/settings/profile": {
     title: "My Profile",
     breadcrumb: ["Settings", "My Profile"],
   },
+
+  // services
   "/services": { title: "Services", breadcrumb: ["Home", "Service"] },
   "/services/bills": {
     title: "Bills",
@@ -22,6 +34,8 @@ const HERO_MAP: Record<
     title: "Debts",
     breadcrumb: ["Home", "Service", "Debts"],
   },
+
+  // rewards
   "/settings/profile/rewards": {
     title: "Rewards",
     breadcrumb: ["Profile", "Rewards"],
@@ -34,7 +48,7 @@ export default function PageHeroWrapper() {
 
   const hero = HERO_MAP[pathname];
 
-  if (hero)
+  if (hero) {
     return (
       <PageHero
         title={hero.title}
@@ -42,6 +56,12 @@ export default function PageHeroWrapper() {
         bgImage={hero.bgImage}
       />
     );
+  }
+
+  // fallback for nested routes
+  if (pathname.startsWith("/profile")) {
+    return <PageHero title="Profile" breadcrumb={["Home", "Profile"]} />;
+  }
 
   if (pathname.startsWith("/services")) {
     return <PageHero title="Services" breadcrumb={["Home", "Service"]} />;

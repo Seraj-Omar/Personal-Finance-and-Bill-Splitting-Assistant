@@ -11,7 +11,7 @@ export default function Sidebar({
   onChange: (tab: "info" | "password") => void;
 }) {
   const router = useRouter();
-const logout = useLogout();
+  const logout = useLogout();
 
   return (
     <div className="w-16 sm:w-20 lg:w-[280px] bg-white rounded-2xl p-2 lg:p-4">
@@ -79,7 +79,7 @@ const logout = useLogout();
             />
           </svg>
         }
-        onClick={() => router.push("/report")}
+        onClick={() => router.push("/settings/profile/report")}
       />
 
       <SidebarItem
@@ -126,7 +126,7 @@ const logout = useLogout();
             </svg>
           }
           danger
-onClick={() => logout.mutate()}
+          onClick={() => logout.mutate()}
         />
       </div>
     </div>

@@ -39,6 +39,7 @@ export type ApiResponse<T> = {
 };
 
 export type MePayload = {
+  currencyId(arg0: string, currencyId: any): unknown;
   user: {
     id: string;
     email: string;

@@ -33,7 +33,7 @@ export default function Navbar() {
       { name: "Debt", href: "/services/debts" },
       { name: "Bill", href: "/services/bills" },
       { name: "Expenses", href: "/services/expenses" },
-      { name: "Income", href: "/services/incomes" },
+      { name: "Income", href: "/services/income" },
     ],
     [],
   );
