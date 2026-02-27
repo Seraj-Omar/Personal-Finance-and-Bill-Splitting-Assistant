@@ -38,6 +38,7 @@ const HERO_MAP: Record<
     breadcrumb: ["Profile", "Rewards"],
     bgImage: "/Rewards.png",
   },
+
 };
 
 export default function PageHeroWrapper() {
