@@ -1,14 +1,14 @@
 "use client";
 
+import { useCreateBudget } from "@/src/modules/budget/hooks/useCreateBudget";
 import React, { useMemo, useState } from "react";
 
 type Props = {
   open: boolean;
   onClose: () => void;
 };
-import { useCreateBudget } from "./hooks/useCreateBudget";
 
-const CATEGORIES = ["FOOD", "RENT", "TRANSPORT", "UTILITIES", "ENTERTAINMENT", "OTHER"];
+const CATEGORIES = ["FOOD", "RENT", "TRANSPORT", "HEALTH" ,"SHOPPING", "ENTERTAINMENT", "OTHER"];
 
 function toISOStart(dateOnly: string) {
   return new Date(dateOnly + "T00:00:00.000Z").toISOString();

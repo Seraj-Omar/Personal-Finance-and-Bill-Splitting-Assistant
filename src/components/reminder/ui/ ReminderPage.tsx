@@ -1,11 +1,15 @@
 "use client";
-import BillsList from "./BillsList";
+
 import Image from "next/image";
+import BillsList from "./BillsList";
 import ImportantReminder from "./ImportantReminder";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useMyReminders } from "@/src/modules/reminder/hook/useMyReminders";
 
 const ReminderPage = () => {
-  const router = useRouter();
+  const [page, setPage] = useState(1);
+
+  const { data, isLoading } = useMyReminders({ page, limit: 10 });
 
   return (
     <div className="container mx-auto py-5 px-4">
@@ -20,9 +24,16 @@ const ReminderPage = () => {
         <div className="flex flex-col lg:flex-row gap-6 justify-center items-stretch w-full">
           {/* LEFT – Bills */}
           <div className="w-full flex-1">
-            <BillsList />
-            <BillsList />
-            <BillsList />
+           {isLoading ? (
+  <div>Loading...</div>
+) : (data?.data?.length ?? 0) === 0 ? (
+  <div className="flex items-center justify-center p-10 rounded-2xl border border-dashed border-slate-300 bg-white/30">
+    <p className="text-slate-600  text-left font-medium">No reminders yet </p>
+  </div>
+) : (
+  <BillsList reminders={data!.data} />
+)}
+  
           </div>
 
           {/* RIGHT – Image */}
@@ -34,7 +45,7 @@ const ReminderPage = () => {
                 width={400}
                 height={400}
               />
-              <div className="absolute inset-0 bg-[#3447AA] opacity-40"></div>
+              <div className="absolute inset-0 bg-[#3447AA] opacity-40" />
             </div>
           </div>
         </div>

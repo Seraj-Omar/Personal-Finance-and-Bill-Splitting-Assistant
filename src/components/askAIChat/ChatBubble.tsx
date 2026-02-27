@@ -1,8 +1,8 @@
 "use client";
 
 import { Box, Typography, Avatar } from "@mui/material";
-import { ChatMessage } from "./type/type";
 import SuggestedBudgetChart from "./SuggestedBudgetChart";
+import { ChatMessage } from "@/src/modules/askAIChat/type/type";
 
 
 export default function ChatBubble({ msg }: { msg: ChatMessage }) {

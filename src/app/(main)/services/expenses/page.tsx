@@ -1,4 +1,4 @@
-import ExpenesPage from '@/src/modules/expenses/ExpenesPage'
+import ExpenesPage from '@/src/components/expenses/ExpenesPage'
 import React from 'react'
 
 const Expenses = () => {

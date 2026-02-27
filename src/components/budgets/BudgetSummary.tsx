@@ -1,7 +1,4 @@
-"use client";
-
 import React from "react";
-import { Stack, Typography, Box, Button } from "@mui/material";
 
 type Props = {
   totalBudget: number;
@@ -23,24 +20,37 @@ export default function BudgetSummary({
   const remainingBalance = totalBudget - totalExpenses;
 
   return (
-    <Stack spacing={1.2} sx={{ mt: 2 }}>
+    <div className="mt-4 space-y-2 text-black">
       <Row label="Total Budget:" value={formatMoney(totalBudget, currency)} />
       <Row label="Total Expenses:" value={formatMoney(totalExpenses, currency)} />
-      <Row label="Remaining Balance:" value={formatMoney(remainingBalance, currency)} />
-
-
-    </Stack>
+      <Row
+        label="Remaining Balance:"
+        value={formatMoney(remainingBalance, currency)}
+        highlight={remainingBalance < 0}
+      />
+    </div>
   );
 }
 
-function Row({ label, value }: { label: string; value: string }) {
+function Row({
+  label,
+  value,
+  highlight,
+}: {
+  label: string;
+  value: string;
+  highlight?: boolean;
+}) {
   return (
-    <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-      <Typography color="text.secondary">{label}</Typography>
-      <Typography fontWeight={700}>{value}</Typography>
-
-
-    </Box>
-
+    <div className="flex items-center justify-between">
+      <p className="text-sm text-slate-500 ">{label}</p>
+      <p
+        className={`text-sm font-semibold ${
+          highlight ? "text-red-500" : "text-slate-900"
+        }`}
+      >
+        {value}
+      </p>
+    </div>
   );
 }

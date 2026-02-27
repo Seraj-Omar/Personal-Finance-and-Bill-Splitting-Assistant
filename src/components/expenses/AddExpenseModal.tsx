@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from "react"
 import { X } from "lucide-react"
-import { useCreateExpense } from "./hooks/useCreateExpense"
+import { useCreateExpense } from "@/src/modules/expenses/hooks/useCreateExpense"
 
 type CategoryItem = {
   key: string
