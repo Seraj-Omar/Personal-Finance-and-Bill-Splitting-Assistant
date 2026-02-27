@@ -1,5 +1,3 @@
-import { number, string } from "zod";
-
 const CARD_BASE =
   "relative flex flex-col  h-[137px] bg-white rounded-[16px] p-[16px] gap-1 border-[#D9D9D980] border-[0.5px]";
 const svgrise = (
@@ -63,11 +61,9 @@ interface OverviewProps {
   da: Data[];
 }
 
-// دالة لاختيار أيقونة الاتجاه
 const trendIcon = (trend: "UP" | "DOWN") =>
   trend === "UP" ? svgrise : svgdown;
 
-// دالة لاختيار لون الأيقونة والخلفية حسب الكارد
 const cardColors = (id: string) => {
   switch (id) {
     case "total-users":
