@@ -32,7 +32,7 @@ export default function Input({
             className="absolute right-4 top-1/2 -translate-y-1/2 text-[#AEAEAE] hover:text-[#3447AA] transition-colors"
           >
             {showPassword ? (
-              <HiOutlineEyeOff size={22} className="bg-white text-white" />
+              <HiOutlineEyeOff size={22} className="bg-white " />
             ) : (
               <HiOutlineEye size={22} />
             )}
