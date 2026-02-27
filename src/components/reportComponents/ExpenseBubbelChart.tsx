@@ -7,34 +7,29 @@ type Expense = {
   value: number;
 };
 
-const expenses: Expense[] = [
-  { label: "Food", value: 492.2 },
-  { label: "Transport", value: 400 },
-  { label: "Entertainment", value: 386.7 },
-  { label: "Health", value: 1000 },
-  { label: "Housing", value: 900 },
-  { label: "Others", value: 200 },
-];
+type Props = {
+  data: Expense[];
+};
 
 const categoryColors: Record<string, string> = {
-  Food: "rgba(79,110,247,0.15)",
-  Transport: "rgba(255,189,188,0.15)",
-  Entertainment: "rgba(255,221,153,0.15)",
-  Health: "rgba(252,121,200,0.15)",
-  Housing: "rgba(87,146,255,0.15)",
-  Others: "rgba(87, 255, 193, 0.15)",
+  FOOD: "rgba(79,110,247,0.15)",
+  TRANSPORT: "rgba(255,189,188,0.15)",
+  ENTERTAINMENT: "rgba(255,221,153,0.15)",
+  HEALTH: "rgba(252,121,200,0.15)",
+  HOUSING: "rgba(87,146,255,0.15)",
+  OTHER: "rgba(87, 255, 193, 0.15)",
 };
 
 const textColors: Record<string, string> = {
-  Food: "rgba(79,110,247,0.9)",
-  Transport: "rgba(255,189,188,0.9)",
-  Entertainment: "rgba(255,221,153,0.9)",
-  Health: "rgba(252,121,200,0.9)",
-  Housing: "rgba(87,146,255,0.9)",
-  Others: "rgba(87, 255, 193, 0.9)",
+  FOOD: "rgba(79,110,247,0.9)",
+  TRANSPORT: "rgba(255,189,188,0.9)",
+  ENTERTAINMENT: "rgba(255,221,153,0.9)",
+  HEALTH: "rgba(252,121,200,0.9)",
+  HOUSING: "rgba(87,146,255,0.9)",
+  OTHER: "rgba(87, 255, 193, 0.9)",
 };
 
-export default function PackedBubbleChart() {
+export default function ExpenseBubbelChart({ data }: Props) {
   const svgRef = useRef<SVGSVGElement | null>(null);
 
   useEffect(() => {
@@ -45,13 +40,13 @@ export default function PackedBubbleChart() {
     const padding = 20;
     const gap = 10;
 
-    const data = expenses.filter((d) => d.value > 0);
-    if (!data.length) return;
+    const filteredData = data.filter((d) => d.value > 0);
+    if (!filteredData.length) return;
 
-    const total = data.reduce((s, d) => s + d.value, 0);
+    const total = filteredData.reduce((s, d) => s + d.value, 0);
     const maxRadius = Math.min(width, height) * 0.38;
 
-    const nodes = data.map((d) => ({
+    const nodes = filteredData.map((d) => ({
       ...d,
       radius: Math.sqrt(d.value / total) * maxRadius,
     }));
@@ -130,7 +125,7 @@ export default function PackedBubbleChart() {
       g.appendChild(text);
       svg.appendChild(g);
     });
-  }, []);
+  }, [data]);
 
   return (
     <>
@@ -140,12 +135,12 @@ export default function PackedBubbleChart() {
       <div className="w-full border-t border-dashed border-gray-300 opacity-70"></div>
 
       <div className="mt-4 flex flex-wrap gap-x-6 gap-y-3 justify-start sm:justify-between">
-        {expenses
+        {data
           .filter((item) => item.value > 0)
           .map((item) => (
             <div
               key={item.label}
-              className="flex items-start gap-2 text-xs sm:text-sm"
+              className="flex items-center gap-2 text-xs sm:text-sm"
             >
               <span
                 style={{
@@ -159,9 +154,9 @@ export default function PackedBubbleChart() {
               />
               <div>
                 <span style={{ color: textColors[item.label] }}>
-                  {item.label}
+                  {item.label.toLowerCase()}
                 </span>
-                <br></br>
+                <br />
                 <span className="text-[#707070]">{"$" + item.value}</span>
               </div>
             </div>

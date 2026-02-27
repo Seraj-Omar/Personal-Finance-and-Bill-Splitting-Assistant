@@ -123,7 +123,7 @@ Last month: $142.30
           <div className="w-[88px] h-[2px] rounded-[16px] hero-gradient"></div>
         </div>
 
-        <p className="text-[#1C1A1A80] text-[16px]  max-w-[483px] leading-tight">
+        <p className="text-[#1C1A1A80] text-[16px] leading-tight">
           A quick summary of key financial observations based on your recent
           activity.
         </p>

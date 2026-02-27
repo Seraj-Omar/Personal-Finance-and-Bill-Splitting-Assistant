@@ -9,17 +9,29 @@ type ApiData = {
 };
 
 const CARD_BASE =
-  "flex flex-1  h-[99px] bg-white rounded-[16px] p-[16px]";
+  "flex flex-1 items-center gap-1  h-[99px] bg-white rounded-[16px] p-[16px]";
 
 const ICON_BASE =
   "flex items-center justify-center w-[45px] h-[45px] rounded-[8px]";
 
-const formatMoney = (num: number) => `$${num.toLocaleString()}`;
-
+const formatMoney = (num: number, currencyCode: string) => {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: currencyCode,
+  }).format(num);
+};
 export default function FinancialOverview() {
   const [data, setData] = useState<ApiData | null>(null);
   const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+  type Currency = {
+    id: string;
+    code: string;
+    symbol: string;
+    name: string;
+  };
 
+  const [currencies, setCurrencies] = useState<Currency[]>([]);
+  const [selectedCurrency, setSelectedCurrency] = useState<string>("USD");
   useEffect(() => {
     const token = sessionStorage.getItem("token");
 
@@ -36,12 +48,22 @@ export default function FinancialOverview() {
         return res.json();
       })
       .then((result) => {
-        console.log(result.data)
+        console.log(result.data);
         setData(result.data ?? []);
       })
       .catch((err) => console.error(err));
   }, []);
-
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/currencies`)
+      .then((res) => res.json())
+      .then((result) => {
+        setCurrencies(result.data);
+        if (result.data.length > 0) {
+          setSelectedCurrency(result.data[0].code);
+        }
+      })
+      .catch((err) => console.error(err));
+  }, []);
   const netBalance = data ? data.totalIncome - data.totalExpenses : 0;
 
   return (
@@ -80,11 +102,11 @@ export default function FinancialOverview() {
                 Total balance
               </span>
               <span className="text-base">
-                {data ? formatMoney(data.totalBalance) : "--"}
+                {data ? formatMoney(data.totalBalance, selectedCurrency) : "--"}
               </span>
 
               <div className="flex text-xs text-green-500 gap-2">
-                <svg
+                {/* <svg
                   width="14"
                   height="14"
                   viewBox="0 0 14 14"
@@ -96,7 +118,7 @@ export default function FinancialOverview() {
                     fill="#16C087"
                   />
                 </svg>
-                +8.2% from last month
+                +8.2% from last month */}
               </div>
             </div>
           </div>
@@ -121,10 +143,12 @@ export default function FinancialOverview() {
                 Total expense
               </span>
               <span className="text-base">
-                {data ? formatMoney(data.totalExpenses) : "--"}
+                {data
+                  ? formatMoney(data.totalExpenses, selectedCurrency)
+                  : "--"}
               </span>
               <div className="flex text-xs text-[rgba(255,80,80,1)] gap-2">
-                <svg
+                {/* <svg
                   width="14"
                   height="14"
                   viewBox="0 0 14 14"
@@ -143,7 +167,7 @@ export default function FinancialOverview() {
                     </clipPath>
                   </defs>
                 </svg>
-                8.3% vs last month
+                8.3% vs last month */}
               </div>
             </div>
           </div>
@@ -168,10 +192,10 @@ export default function FinancialOverview() {
                 Total Income
               </span>
               <span className="text-base">
-                {data ? formatMoney(data.totalIncome) : "--"}
+                {data ? formatMoney(data.totalIncome, selectedCurrency) : "--"}
               </span>
               <div className="flex text-xs text-[rgba(72,185,113,1)] gap-2">
-                <svg
+                {/* <svg
                   width="14"
                   height="14"
                   viewBox="0 0 14 14"
@@ -190,7 +214,7 @@ export default function FinancialOverview() {
                     </clipPath>
                   </defs>
                 </svg>
-                12% vs last month
+                12% vs last month */}
               </div>
             </div>
           </div>
@@ -223,10 +247,10 @@ export default function FinancialOverview() {
                 Net balance
               </span>
               <span className="text-base">
-                {data ? formatMoney(netBalance) : "--"}
+                {data ? formatMoney(netBalance, selectedCurrency) : "--"}
               </span>
               <div className="flex text-xs text-[rgba(104,111,255,1)] gap-2">
-                <svg
+                {/* <svg
                   width="14"
                   height="14"
                   viewBox="0 0 14 14"
@@ -239,7 +263,7 @@ export default function FinancialOverview() {
                   />
                 </svg>
 
-                {netBalance >= 0 ? "Positive" : "Negative"}
+                {netBalance >= 0 ? "Positive" : "Negative"} */}
               </div>
             </div>
           </div>
