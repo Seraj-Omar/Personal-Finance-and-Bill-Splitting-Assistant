@@ -11,25 +11,35 @@ export function useLogin() {
   return useMutation({
     mutationFn: loginUser,
 
-    onSuccess: (res) => {
-      const token = res.data.token;
-      const user = res.data.user;
+onSuccess: (res) => {
+  const token = res.data.token;
+  const user = res.data.user;
 
-      sessionStorage.setItem("auth_provider", "LOCAL");
-      sessionStorage.setItem("token", token);
-      sessionStorage.setItem("cached_user", JSON.stringify(user));
-      window.dispatchEvent(new Event("auth:changed"));
+  sessionStorage.setItem("auth_provider", "LOCAL");
+  sessionStorage.setItem("token", token);
+  sessionStorage.setItem("cached_user", JSON.stringify(user));
 
-      queryClient.setQueryData(["session"], res);
-      queryClient.removeQueries({ queryKey: ["me"] });
+  if (user?.defaultCurrencyId) {
+    sessionStorage.setItem("currencyId", user.defaultCurrencyId);
+  }
 
-      const hasCurrency = Boolean(user?.defaultCurrencyId);
+  window.dispatchEvent(new Event("auth:changed"));
 
-      if (hasCurrency) {
-        router.replace("/"); 
-      } else {
-        router.replace("/currency");
-      }
-    },
+  queryClient.setQueryData(["session"], res);
+  queryClient.removeQueries({ queryKey: ["me"] });
+
+  if (user?.role === "ADMIN") {
+    router.replace("/dashboard");
+    return;
+  }
+
+  const hasCurrency = Boolean(user?.defaultCurrencyId);
+
+  if (hasCurrency) {
+    router.replace("/");
+  } else {
+    router.replace("/currency");
+  }
+}
   });
 }

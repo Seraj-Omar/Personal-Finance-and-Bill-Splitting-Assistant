@@ -53,3 +53,11 @@ export type GetBudgetsParams = {
   endDate?: string;   // ISO date-time
 };
 
+
+export type CreateBudgetPayload = {
+  category: string;          
+  allocatedAmount: string;   
+  startDate: string;        
+  endDate: string;         
+  description?: string;
+};

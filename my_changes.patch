@@ -1,0 +1,397 @@
+diff --git a/src/components/reportComponents/FinancialOverview.tsx b/src/components/reportComponents/FinancialOverview.tsx
+index 2755067..a23cb9a 100644
+--- a/src/components/reportComponents/FinancialOverview.tsx
++++ b/src/components/reportComponents/FinancialOverview.tsx
+@@ -18,20 +18,28 @@ const formatMoney = (num: number) => `$${num.toLocaleString()}`;
+ 
+ export default function FinancialOverview() {
+   const [data, setData] = useState<ApiData | null>(null);
++  const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+ 
+   useEffect(() => {
+-    const response = {
+-      success: true,
+-      data: {
+-        totalBalance: 1758,
+-        totalIncome: 2500,
+-        totalExpenses: 1758,
+-      },
+-    };
++    const token = sessionStorage.getItem("token");
++
++    if (!token) return;
+ 
+-    if (response.success) {
+-      setData(response.data);
+-    }
++    fetch(`${API_BASE_URL}/expenses/overview`, {
++      headers: {
++        "Content-Type": "application/json",
++        Authorization: `Bearer ${token}`,
++      },
++    })
++      .then((res) => {
++        if (!res.ok) throw new Error("Unauthorized");
++        return res.json();
++      })
++      .then((result) => {
++        console.log(result.data)
++        setData(result.data ?? []);
++      })
++      .catch((err) => console.error(err));
+   }, []);
+ 
+   const netBalance = data ? data.totalIncome - data.totalExpenses : 0;
+diff --git a/src/components/reportComponents/billschart.tsx b/src/components/reportComponents/billschart.tsx
+index e5d423a..15be11e 100644
+--- a/src/components/reportComponents/billschart.tsx
++++ b/src/components/reportComponents/billschart.tsx
+@@ -1,6 +1,6 @@
+ "use client";
+ 
+-import { useEffect, useMemo, useRef } from "react";
++import { useEffect, useMemo, useRef, useState } from "react";
+ import Chart from "chart.js/auto";
+ 
+ type BillStatus = "paid" | "unpaid" | "overdue";
+@@ -8,42 +8,66 @@ type BillStatus = "paid" | "unpaid" | "overdue";
+ type Bill = {
+   id: number;
+   title: string;
+-  amount: number;
++  amount: string;
+   status: BillStatus;
+ };
+ 
+-const bills: Bill[] = [
+-  { id: 1, title: "Electricity", amount: 120, status: "unpaid" },
+-  { id: 2, title: "Internet", amount: 80, status: "paid" },
+-  { id: 3, title: "Water", amount: 60, status: "overdue" },
+-  { id: 4, title: "Water", amount: 60, status: "unpaid" },
+-  { id: 5, title: "Water", amount: 60, status: "overdue" },
+-  { id: 6, title: "Water", amount: 60, status: "overdue" },
+-];
++// const bills: Bill[] = [
++//   { id: 1, title: "Electricity", amount: 120, status: "unpaid" },
++//   { id: 2, title: "Internet", amount: 80, status: "paid" },
++//   { id: 3, title: "Water", amount: 60, status: "overdue" },
++//   { id: 4, title: "Water", amount: 60, status: "unpaid" },
++//   { id: 5, title: "Water", amount: 60, status: "overdue" },
++//   { id: 6, title: "Water", amount: 60, status: "overdue" },
++// ];
+ 
+ export default function DonutChart() {
+   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+   const chartRef = useRef<Chart | null>(null);
++  const [bills, setBills] = useState<Bill[]>([]);
++  const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+ 
++  useEffect(() => {
++    const token = sessionStorage.getItem("token");
++
++    if (!token) return;
++
++    fetch(`${API_BASE_URL}/bills`, {
++      headers: {
++        "Content-Type": "application/json",
++        Authorization: `Bearer ${token}`,
++      },
++    })
++      .then((res) => {
++        if (!res.ok) throw new Error("Unauthorized");
++        return res.json();
++      })
++      .then((result) => {
++        console.log(result.data);
++        setBills(result.data.items ?? []);
++      })
++      .catch((err) => console.error(err));
++  }, []);
+   const { values, total } = useMemo(() => {
++    const parseAmount = (b: Bill) => Number(b.amount);
++
+     const paid = bills
+       .filter((b) => b.status === "paid")
+-      .reduce((s, b) => s + b.amount, 0);
++      .reduce((s, b) => s + parseAmount(b), 0);
+ 
+     const unpaid = bills
+       .filter((b) => b.status === "unpaid")
+-      .reduce((s, b) => s + b.amount, 0);
++      .reduce((s, b) => s + parseAmount(b), 0);
+ 
+     const overdue = bills
+       .filter((b) => b.status === "overdue")
+-      .reduce((s, b) => s + b.amount, 0);
++      .reduce((s, b) => s + parseAmount(b), 0);
+ 
+     const values = [paid, unpaid, overdue];
+     const total = values.reduce((a, b) => a + b, 0);
+ 
+     return { values, total };
+-  }, []);
+-
++  }, [bills]);
+   const stats = useMemo(() => {
+     const totalBills = bills.length;
+ 
+@@ -51,8 +75,7 @@ export default function DonutChart() {
+     const unpaidBills = bills.filter((b) => b.status === "unpaid");
+     const overdueBills = bills.filter((b) => b.status === "overdue");
+ 
+-    const sum = (arr: Bill[]) => arr.reduce((s, b) => s + b.amount, 0);
+-
++    const sum = (arr: Bill[]) => arr.reduce((s, b) => s + Number(b.amount), 0);
+     const totalAmount = sum(bills);
+ 
+     const paidPercent =
+@@ -95,7 +118,7 @@ export default function DonutChart() {
+       remainingBills,
+       breakdown,
+     };
+-  }, []);
++  }, [bills]);
+ 
+   useEffect(() => {
+     if (!canvasRef.current) return;
+@@ -121,20 +144,28 @@ export default function DonutChart() {
+         const centerX = (chart.chartArea.left + chart.chartArea.right) / 2;
+         const centerY = (chart.chartArea.top + chart.chartArea.bottom) / 2;
+ 
+-        const radius = 45;
+-        ctx.save();
+-        ctx.beginPath();
+-        ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+-        ctx.fillStyle = "#ffffff00";
+-        ctx.fill();
+-        ctx.lineWidth = 0.5;
+-        ctx.strokeStyle = "rgba(215, 214, 214, 0.69)";
+-        ctx.stroke();
+-        ctx.restore();
++        const radius = 45; // نصف قطر الدائرة الداخلية
++
++        // دالة لضبط حجم الخط حتى لا يتجاوز حدود الدائرة
++        function fitTextInCircle(text: string, maxRadius: number) {
++          let fontSize = 24; // البداية
++          ctx.font = `700 ${fontSize}px Roboto`;
++          let width = ctx.measureText(text).width;
++
++          while (width > maxRadius * 2 && fontSize > 10) {
++            fontSize -= 1;
++            ctx.font = `700 ${fontSize}px Roboto`;
++            width = ctx.measureText(text).width;
++          }
++
++          return fontSize;
++        }
++
++        const fontSize = fitTextInCircle(`$${total}`, radius);
+ 
+         ctx.save();
+         ctx.fillStyle = "#111";
+-        ctx.font = "700 24px Roboto";
++        ctx.font = `700 ${fontSize}px Roboto`;
+         ctx.textAlign = "center";
+         ctx.textBaseline = "middle";
+         ctx.fillText(`$${total}`, centerX, centerY);
+diff --git a/src/components/reportComponents/expenseReport.tsx b/src/components/reportComponents/expenseReport.tsx
+index 619922e..dff4e43 100644
+--- a/src/components/reportComponents/expenseReport.tsx
++++ b/src/components/reportComponents/expenseReport.tsx
+@@ -4,7 +4,7 @@ import ExpenseBubbelChart from "./ExpenseBubbelChart";
+ import { useState } from "react";
+ 
+ export default function ExpenseReport() {
+-  const [selected, setSelected] = useState("Week");
++  const [selected, setSelected] = useState("Week"); 
+   return (
+     <div
+       className="
+diff --git a/src/components/userManagement/notification.tsx b/src/components/userManagement/notification.tsx
+index f604079..6c71485 100644
+--- a/src/components/userManagement/notification.tsx
++++ b/src/components/userManagement/notification.tsx
+@@ -29,11 +29,26 @@ const typeStyles: Record<NotificationType, string> = {
+ };
+ 
+ const typeIcons: Record<NotificationType, any> = {
+-  ERROR: <ErrorOutlineIcon className="text-[#FF5050] mr-2" fontSize="small" />,
+-  INFO: <InfoIcon className="text-[#125DDB] mr-2" fontSize="small" />,
+-  SUCCESS: <CheckCircleIcon className="text-green-500 mr-2" fontSize="small" />,
++  ERROR: (
++    <div className="bg-[#F74850] w-[20px] h-[20px] rounded-full flex items-center justify-center ">
++      <svg
++        width="9"
++        height="9"
++        viewBox="0 0 9 9"
++        fill="none"
++        xmlns="http://www.w3.org/2000/svg"
++      >
++        <path
++          d="M5.94627 4.39967L8.64971 7.10311C8.74554 7.19932 8.79934 7.32958 8.79934 7.46537C8.79934 7.60117 8.74554 7.73143 8.64971 7.82764L7.82764 8.64971C7.73143 8.74554 7.60117 8.79934 7.46537 8.79934C7.32958 8.79934 7.19932 8.74554 7.10311 8.64971L4.39967 5.94627L1.69624 8.64971C1.60003 8.74554 1.46977 8.79934 1.33397 8.79934C1.19818 8.79934 1.06792 8.74554 0.971705 8.64971L0.149639 7.82764C0.0538067 7.73143 0 7.60117 0 7.46537C0 7.32958 0.0538067 7.19932 0.149639 7.10311L2.85307 4.39967L0.149639 1.69624C0.0538067 1.60003 0 1.46977 0 1.33397C0 1.19818 0.0538067 1.06792 0.149639 0.971705L0.971705 0.149639C1.06792 0.0538067 1.19818 0 1.33397 0C1.46977 0 1.60003 0.0538067 1.69624 0.149639L4.39967 2.85307L7.10311 0.149639C7.19932 0.0538067 7.32958 0 7.46537 0C7.60117 0 7.73143 0.0538067 7.82764 0.149639L8.64971 0.971705C8.74554 1.06792 8.79934 1.19818 8.79934 1.33397C8.79934 1.46977 8.74554 1.60003 8.64971 1.69624L5.94627 4.39967Z"
++          fill="white"
++        />
++      </svg>
++    </div>
++  ),
++  INFO: <InfoIcon className="text-[#125DDB] "  fontSize="medium" />,
++  SUCCESS: <CheckCircleIcon className="text-green-500 mr-2" fontSize="medium" />,
+   WARNING: (
+-    <WarningAmberIcon className="text-yellow-500 mr-2" fontSize="small" />
++    <WarningAmberIcon className="text-yellow-500 mr-2" fontSize="medium" />
+   ),
+ };
+ 
+@@ -51,22 +66,22 @@ export default function Notifications({ items }: NotificationsProps) {
+       {notifications.map((notification) => (
+         <div
+           key={notification.id}
+-          className={`relative border-l-[10px] p-4 rounded-[16px] ${typeStyles[notification.type]}`}
++          className={`relative border-l-[10px] py-[16px] pr-[16px] rounded-[16px] ${typeStyles[notification.type]}`}
+         >
+-          <div className="flex justify-between items-start">
+-            <div className="flex ">
++          <div className="flex justify-between items-start gap-[16px] ml-2">
++            
+               {typeIcons[notification.type]}
+-              <div>
++              <div className="w-[96%]">
+                 <h4>{notification.title}</h4>
+                 <p className="text-[#707070] text-[14px] mt-1">
+                   {notification.message}
+                 </p>
+               </div>
+-            </div>
++           
+             {notification.dismissible && (
+               <button
+                 onClick={() => handleDismiss(notification.id)}
+-                className="ml-4 hover:opacity-70 transition"
++                className="my-1 hover:opacity-70 transition"
+               >
+                 <X size={18} />
+               </button>
+diff --git a/src/components/userManagement/overview.tsx b/src/components/userManagement/overview.tsx
+index 1fba317..8073705 100644
+--- a/src/components/userManagement/overview.tsx
++++ b/src/components/userManagement/overview.tsx
+@@ -1,7 +1,7 @@
+ import { number, string } from "zod";
+ 
+ const CARD_BASE =
+-  "relative flex flex-col  h-[137px] bg-white rounded-[16px] p-[16px] gap-1";
++  "relative flex flex-col  h-[137px] bg-white rounded-[16px] p-[16px] gap-1 border-[#D9D9D980] border-[0.5px]";
+ const svgrise = (
+   <svg
+     width="16"
+diff --git a/src/components/userManagement/users.tsx b/src/components/userManagement/users.tsx
+index c9f1e3e..fa893ff 100644
+--- a/src/components/userManagement/users.tsx
++++ b/src/components/userManagement/users.tsx
+@@ -14,65 +14,68 @@ interface User {
+   updatedAt: string;
+   status: UserStatus;
+ }
+-
++const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+ export default function Users() {
+   const [da, setDa] = useState<User[]>([]);
+ 
+   useEffect(() => {
+-    const token =
+-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZWJlN2VlOS1kNzVkLTQ4ZjItYWNkYS1kMGI0NjJiYjc0MzUiLCJyb2xlIjoiVVNFUiIsImVtYWlsIjoibW9hbWVuQGV4YW1wbGUuY29tIiwiZnVsbE5hbWUiOiJNb2FtZW4gQWwtWWF6b3VyaSIsInByb3ZpZGVyIjoiTE9DQUwiLCJzdGF0dXMiOiJBQ1RJVkUiLCJpYXQiOjE3NzA4NDE5MTJ9.MaMV0j46xuotYzeoU2xzdvo9TGWzmTnuKVxmhOhMAPU";
++    const token = sessionStorage.getItem("token");
++
++    if (!token) return;
+ 
+-    fetch("https://gsg-project-group-5.vercel.app/api/v1/users", {
++    fetch(`${API_BASE_URL}/users`, {
+       headers: {
+         "Content-Type": "application/json",
+         Authorization: `Bearer ${token}`,
+       },
+     })
+-      .then((res) => res.json())
++      .then((res) => {
++        if (!res.ok) throw new Error("Unauthorized");
++        return res.json();
++      })
+       .then((result) => {
+-        console.log(result);
+         setDa(result.data ?? []);
+       })
+       .catch((err) => console.error(err));
+   }, []);
++
+   const handleDelete = async (id: string) => {
+-    const confirmed = window.confirm(
+-      "Are you sure you want to delete this user?",
+-    );
+-    if (!confirmed) return;
++  const confirmed = window.confirm(
++    "Are you sure you want to delete this user?",
++  );
++  if (!confirmed) return;
+ 
+-    const token =
+-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZWJlN2VlOS1kNzVkLTQ4ZjItYWNkYS1kMGI0NjJiYjc0MzUiLCJyb2xlIjoiVVNFUiIsImVtYWlsIjoibW9hbWVuQGV4YW1wbGUuY29tIiwiZnVsbE5hbWUiOiJNb2FtZW4gQWwtWWF6b3VyaSIsInByb3ZpZGVyIjoiTE9DQUwiLCJzdGF0dXMiOiJBQ1RJVkUiLCJpYXQiOjE3NzA4NDE5MTJ9.MaMV0j46xuotYzeoU2xzdvo9TGWzmTnuKVxmhOhMAPU"; // Replace with your valid token
++  const token = sessionStorage.getItem("token");
++  if (!token) {
++    alert("You are not authenticated");
++    return;
++  }
+ 
+-    try {
+-      const res = await fetch(
+-        `https://gsg-project-group-5.vercel.app/api/v1/users/${id}`,
+-        {
+-          method: "DELETE",
+-          headers: {
+-            "Content-Type": "application/json",
+-            Authorization: `Bearer ${token}`,
+-          },
++  try {
++    const res = await fetch(
++      `${API_BASE_URL}/users/${id}`,
++      {
++        method: "DELETE",
++        headers: {
++          "Content-Type": "application/json",
++          Authorization: `Bearer ${token}`,
+         },
+-      );
+-
+-      if (!res.ok) {
+-        const errorData = await res.json();
+-        console.error("Delete failed:", errorData);
+-        alert(
+-          "Failed to delete user: " + (errorData.message ?? "Unknown error"),
+-        );
+-        return;
+-      }
++      },
++    );
+ 
+-      setDa((prev) => prev.filter((user) => user.id !== id));
+-      alert("User deleted successfully!");
+-    } catch (err) {
+-      console.error("Error deleting user:", err);
+-      alert("An error occurred while deleting the user");
++    if (!res.ok) {
++      const errorData = await res.json();
++      alert(errorData.message ?? "Delete failed");
++      return;
+     }
+-  };
+-  const itemsPerPage = 7;
++
++    setDa((prev) => prev.filter((user) => user.id !== id));
++  } catch (err) {
++    console.error(err);
++  }
++};
++ 
++  const itemsPerPage = 10;
+   const [currentPage, setCurrentPage] = useState(1);
+   const totalPages = Math.ceil(da.length / itemsPerPage);
+   const startIndex = (currentPage - 1) * itemsPerPage;

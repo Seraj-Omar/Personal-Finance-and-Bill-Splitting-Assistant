@@ -73,8 +73,8 @@ const Footer = () => {
               </Link>
             </li>
             <li>
-              <Link href="/pages" className="cursor-pointer hover:opacity-100">
-                Pages
+              <Link href="/reports" className="cursor-pointer hover:opacity-100">
+                Reports
               </Link>
             </li>
           </ul>
@@ -86,7 +86,7 @@ const Footer = () => {
           <ul className="space-y-3 text-sm opacity-90">
             <li>
               <Link
-                href="/service/budget"
+                href="/budget"
                 className="cursor-pointer hover:opacity-100"
               >
                 Budget
@@ -94,7 +94,7 @@ const Footer = () => {
             </li>
             <li>
               <Link
-                href="/service/debts"
+                href="/services/debts"
                 className="cursor-pointer hover:opacity-100"
               >
                 Debts
@@ -102,14 +102,14 @@ const Footer = () => {
             </li>
             <li>
               <Link
-                href="/service/expense"
+                href="/services/expenses"
                 className="cursor-pointer hover:opacity-100"
               >
                 Expense
               </Link>
             </li>
             <li>
-              <Link href="/" className="cursor-pointer hover:opacity-100">
+              <Link href="/services/bills" className="cursor-pointer hover:opacity-100">
                 Invoice
               </Link>
             </li>
