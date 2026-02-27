@@ -226,7 +226,7 @@ export default function ExpensesVsRevenues() {
                         xAxis={[{ scaleType: "band", data: months }]}
                         yAxis={[{ min: 0, max: axisMax }]}
                         series={[{ data: totalsData, color: "#5792ffc8", curve: "linear" }]} 
-                        margin={{ top: 24, right: 16, bottom: 36, left: 72 }}
+                        margin={{ top: 24, right: 16, bottom: 51, left: 72 }}
                         sx={{
                             position: "absolute",
                             inset: 0,
