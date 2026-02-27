@@ -1,3 +1,4 @@
+import { useLogout } from "@/src/modules/auth/hooks/useLogout";
 import SidebarItem from "./SidebarItem";
 import { User, Lock, BarChart2, Gift, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -10,6 +11,7 @@ export default function Sidebar({
   onChange: (tab: "info" | "password") => void;
 }) {
   const router = useRouter();
+const logout = useLogout();
 
   return (
     <div className="w-16 sm:w-20 lg:w-[280px] bg-white rounded-2xl p-2 lg:p-4">
@@ -77,7 +79,7 @@ export default function Sidebar({
             />
           </svg>
         }
-        onClick={() => router.push("profile/report")}
+        onClick={() => router.push("/report")}
       />
 
       <SidebarItem
@@ -124,6 +126,7 @@ export default function Sidebar({
             </svg>
           }
           danger
+onClick={() => logout.mutate()}
         />
       </div>
     </div>
