@@ -54,12 +54,36 @@ export default function FinancialOverview() {
       .catch((err) => console.error(err));
   }, []);
   useEffect(() => {
-    fetch(`${API_BASE_URL}/currencies`)
-      .then((res) => res.json())
+    const token = sessionStorage.getItem("token");
+    const storedCurrencyId = sessionStorage.getItem("currencyId");
+
+    if (!token) return;
+
+    fetch(`${API_BASE_URL}/currencies`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Unauthorized");
+        return res.json();
+      })
       .then((result) => {
-        setCurrencies(result.data);
-        if (result.data.length > 0) {
-          setSelectedCurrency(result.data[0].code);
+        const list: Currency[] = result.data;
+        setCurrencies(list);
+
+        if (storedCurrencyId) {
+          const matched = list.find((c) => c.id === storedCurrencyId);
+
+          if (matched) {
+            setSelectedCurrency(matched.code);
+            return;
+          }
+        }
+
+        if (list.length > 0) {
+          setSelectedCurrency(list[0].code);
         }
       })
       .catch((err) => console.error(err));

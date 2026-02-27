@@ -18,7 +18,7 @@ export default function ExpenseReport() {
   };
   useEffect(() => {
     setLoading(true);
-    fetchExpensesDonutChart({ period: selected })
+    fetchExpensesDonutChart({ period: selected.toLowerCase() as Period })
       .then((res) => {
         console.log("API Response:", res);
         const mappedData = res.data.map((item: any) => ({
