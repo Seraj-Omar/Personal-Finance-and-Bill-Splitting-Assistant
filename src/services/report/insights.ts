@@ -1,10 +1,19 @@
 import { Insight } from "../../types/report/insight";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 export const fetchInsights = async (): Promise<Insight[]> => {
   const token = sessionStorage.getItem("token");
-  if (!token) return []; 
+
+  if (!token) {
+    console.warn("No token found in sessionStorage");
+    return [];
+  }
+
+  if (!API_BASE_URL) {
+    console.error("NEXT_PUBLIC_API_BASE_URL is not set");
+    return [];
+  }
 
   try {
     const res = await fetch(`${API_BASE_URL}/financial-reports`, {
@@ -14,7 +23,12 @@ export const fetchInsights = async (): Promise<Insight[]> => {
       },
     });
 
-    if (!res.ok) throw new Error("Failed to fetch insights");
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(
+        `Failed to fetch insights. Status: ${res.status}. Response: ${text}`
+      );
+    }
 
     const result = await res.json();
     const report = result.data;
@@ -39,8 +53,8 @@ export const fetchInsights = async (): Promise<Insight[]> => {
       if (a.isRead !== b.isRead) return a.isRead ? 1 : -1;
       return (typePriority[a.type] || 4) - (typePriority[b.type] || 4);
     });
-  } catch (err) {
-    console.error("Error fetching insights:", err);
+  } catch (err: any) {
+    console.error("Error fetching insights:", err.message || err);
     return [];
   }
 };
