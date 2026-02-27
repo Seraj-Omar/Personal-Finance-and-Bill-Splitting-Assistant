@@ -73,7 +73,10 @@ const Footer = () => {
               </Link>
             </li>
             <li>
-              <Link href="/reports" className="cursor-pointer hover:opacity-100">
+              <Link
+                href="/settings/profile/report"
+                className="cursor-pointer hover:opacity-100"
+              >
                 Reports
               </Link>
             </li>
@@ -85,10 +88,7 @@ const Footer = () => {
           <h4 className="font-semibold mb-4">Featured Service</h4>
           <ul className="space-y-3 text-sm opacity-90">
             <li>
-              <Link
-                href="/budget"
-                className="cursor-pointer hover:opacity-100"
-              >
+              <Link href="/budget" className="cursor-pointer hover:opacity-100">
                 Budget
               </Link>
             </li>
@@ -109,7 +109,10 @@ const Footer = () => {
               </Link>
             </li>
             <li>
-              <Link href="/services/bills" className="cursor-pointer hover:opacity-100">
+              <Link
+                href="/services/bills"
+                className="cursor-pointer hover:opacity-100"
+              >
                 Invoice
               </Link>
             </li>

@@ -72,7 +72,7 @@ export default function Users() {
     }
   };
 
-  const itemsPerPage = 10;
+  const itemsPerPage = 8;
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(da.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -302,7 +302,7 @@ export default function Users() {
           </tbody>
         </table>
         {totalPages > 1 && (
-          <div className="flex justify-center items-center gap-4 mt-6">
+          <div className="flex justify-center items-center gap-4 mt-1">
             <button
               onClick={() => setCurrentPage((prev) => prev - 1)}
               disabled={currentPage === 1}
