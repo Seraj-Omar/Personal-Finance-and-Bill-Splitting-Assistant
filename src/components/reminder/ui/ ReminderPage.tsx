@@ -3,14 +3,16 @@
 import Image from "next/image";
 import BillsList from "./BillsList";
 import ImportantReminder from "./ImportantReminder";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMyReminders } from "@/src/modules/reminder/hook/useMyReminders";
 
 const ReminderPage = () => {
+  useEffect(() => {
+    console.log("token in page:", sessionStorage.getItem("token"));
+  }, []);
   const [page, setPage] = useState(1);
 
   const { data, isLoading } = useMyReminders({ page, limit: 10 });
-
   return (
     <div className="container mx-auto py-5 px-4">
       <section

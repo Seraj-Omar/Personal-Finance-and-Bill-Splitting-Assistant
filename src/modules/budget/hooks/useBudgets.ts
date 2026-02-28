@@ -5,6 +5,7 @@ import type { GetBudgetsParams } from "../type/types";
 import { fetchBudgets } from "../services/budget.api";
 
 export function useBudgets(params?: GetBudgetsParams, enabled = true) {
+  
   return useQuery({
     queryKey: ["budgets", params],
     queryFn: () => fetchBudgets(params),

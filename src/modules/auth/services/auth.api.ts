@@ -15,13 +15,23 @@ export async function revalidate() {
     withCredentials: false,
   });
 }
-
 export async function fetchMe() {
-  return apiFetch<ApiResponse<MePayload>>("/auth/me", {
+  const res = await apiFetch("/auth/me", {
     method: "GET",
     withCredentials: true,
     skipAuthHeader: true,
   });
+
+  const token = (res as any)?.data?.token;
+  if (token && typeof window !== "undefined") {
+    sessionStorage.setItem("token", token);
+    console.log("token from /auth/me:", token);
+console.log("stored token:", sessionStorage.getItem("token"));
+    sessionStorage.setItem("auth_provider", "GOOGLE"); // خليها GOOGLE
+    window.dispatchEvent(new Event("auth:changed"));
+  }
+
+  return res;
 }
 
 export function registerUser(payload: RegisterPayload) {

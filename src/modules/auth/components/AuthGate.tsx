@@ -9,8 +9,12 @@ type Provider = "LOCAL" | "GOOGLE" | null;
 
 function readProvider(): Provider {
   if (typeof window === "undefined") return null;
+
   const p = sessionStorage.getItem("auth_provider");
-  return p === "LOCAL" || p === "GOOGLE" ? p : null;
+  if (p === "LOCAL" || p === "GOOGLE") return p;
+
+  // fallback: token means we were previously authenticated locally
+  return sessionStorage.getItem("token") ? "LOCAL" : null;
 }
 
 function readToken(): string | null {
@@ -26,18 +30,21 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
   const [provider, setProvider] = useState<Provider>(null);
   const [token, setToken] = useState<string | null>(null);
 
-  useEffect(() => {
-    const sync = () => {
-      setProvider(readProvider());
-      setToken(readToken());
-      setReady(true);
-    };
+useEffect(() => {
+  const sync = () => {
+    const p = readProvider();
+    const t = readToken();
+    console.log("[AuthGate] provider:", p, "token?", !!t);
 
-    sync();
-    window.addEventListener("auth:changed", sync);
-    return () => window.removeEventListener("auth:changed", sync);
-  }, []);
+    setProvider(p);
+    setToken(t);
+    setReady(true);
+  };
 
+  sync();
+  window.addEventListener("auth:changed", sync);
+  return () => window.removeEventListener("auth:changed", sync);
+}, []);
   const sessionQ = useQuery({
     queryKey: ["session"],
     queryFn: revalidate,
@@ -48,15 +55,16 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
     refetchOnReconnect: false,
   });
 
-  const meQ = useQuery({
-    queryKey: ["me"],
-    queryFn: fetchMe,
-    enabled: ready && provider === "GOOGLE",
-    retry: false,
-    staleTime: 5 * 60 * 1000,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-  });
+const meQ = useQuery({
+  queryKey: ["me"],
+  queryFn: fetchMe,
+  // run when we know we should use the cookie (explicit GOOGLE) or when
+  // nothing is known yet and no token exists. avoids calling on every render
+  enabled: ready && (provider === "GOOGLE" || (provider === null && !token)),
+  staleTime: 5 * 60 * 1000,
+  refetchOnWindowFocus: false,
+  refetchOnReconnect: false,
+});
 
   const loading =
     !ready ||

@@ -1,3 +1,4 @@
+
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 function getToken() {
@@ -25,17 +26,19 @@ export async function apiFetch<T>(
   if (!BASE_URL) throw new Error("Missing NEXT_PUBLIC_BASE_URL in env");
 
   const token = getToken();
+console.log("token:", sessionStorage.getItem("token"));
 
   const res = await fetch(`${BASE_URL}${path}`, {
     ...options,
     credentials: options.withCredentials ? "include" : "omit",
     headers: {
       "Content-Type": "application/json",
-      ...(!options.skipAuthHeader && token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(!options.skipAuthHeader && token ? {   Authorization: `Bearer ${token}` } : {}),
       ...(options.headers || {}),
     },
     cache: "no-store",
   });
+console.log("token:", sessionStorage.getItem("token"));
 
   const text = await res.text();
   const data = safeJsonParse(text);
