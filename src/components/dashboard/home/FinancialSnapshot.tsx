@@ -1,28 +1,14 @@
     "use client";
-    import { useEffect, useRef, useState } from "react";
+    import { useEffect, useRef, useState, useMemo } from "react";
     import { Box, Typography } from "@mui/material";
     import { PieChart } from "@mui/x-charts/PieChart";
     import DashboardTitle from "./DashboardTitle";
-
-    const data = [
-    { id: 0, value: 12847, label: "Expenses added", color: "#3447aa" },
-    { id: 1, value: 8432, label: "Revenues added", color: "#ffbdbc" },
-    { id: 2, value: 3219, label: "Debts created", color: "#686fff" },
-    ];
-
-    let sum = 0;
-    data.forEach((item) => {
-    sum += item.value;
-    });
-
-    const chartData = data.map((item) => ({
-    ...item,
-    value: (item.value / sum) * 100,
-    }));
+    import { useFinancialSnapshot } from "@/src/modules/dashboard/hooks/useFinancialSnapshot";
 
     export default function FinancialSnapshot() {
     const containerRef = useRef<HTMLDivElement | null>(null);
     const [size, setSize] = useState(260);
+    const { data: apiData, isLoading, error } = useFinancialSnapshot();
 
     useEffect(() => {
         if (!containerRef.current) return;
@@ -42,6 +28,46 @@
     const innerRadius = size * 0.27;
     const outerRadius = size * 0.42;
     const labelRadius = size * 0.55;
+
+    const { data, chartData } = useMemo(() => {
+        if (!apiData?.data) {
+            return { data: [], chartData: [] };
+        }
+
+        const rawData = [
+            { id: 0, value: apiData.data.expenses.count, label: "Expenses added", color: "#3447aa" },
+            { id: 1, value: apiData.data.revenues.count, label: "Revenues added", color: "#ffbdbc" },
+            { id: 2, value: apiData.data.debts.count, label: "Debts created", color: "#686fff" },
+        ];
+
+        const sum = rawData.reduce((acc, item) => acc + item.value, 0);
+        
+        const chartData = sum > 0 ? rawData.map((item) => ({
+            ...item,
+            value: (item.value / sum) * 100,
+        })) : rawData;
+
+        return { data: rawData, chartData };
+    }, [apiData]);
+
+    if (isLoading || error || !apiData) {
+        const message = isLoading
+            ? "Loading financial snapshot..."
+            : error instanceof Error
+            ? `Error: ${error.message}`
+            : "No data available";
+
+        return (
+            <Box className="flex flex-col h-full bg-[#ffffff] w-full items-center gap-4 p-6 rounded-2xl">
+                <DashboardTitle title="Financial snapshot" />
+                <Box className="flex flex-1 w-full items-center justify-center">
+                    <Typography className="w-full py-6 text-center text-sm font-medium text-[#707070] animate-pulse">
+                        {message}
+                    </Typography>
+                </Box>
+            </Box>
+        );
+    }
 
     return (
         <Box className="flex flex-col h-full bg-[#ffffff] w-full justify-between items-center gap-4 p-6 rounded-2xl">
