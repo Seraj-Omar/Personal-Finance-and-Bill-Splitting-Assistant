@@ -6,7 +6,7 @@ import { User } from "../../types/user";
 import { fetchUsers, deleteUser } from "../../services/user.service";
 import { formatDate } from "../../utils/userManagement/date";
 import { paginate } from "../../utils/userManagement/pagination";
-import StatusBadge from "./common/StatusBadge";
+import StatusBadge from "./StatusBadge";
 
 const ITEMS_PER_PAGE = 15;
 
