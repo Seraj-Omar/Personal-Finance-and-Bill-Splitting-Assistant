@@ -4,9 +4,9 @@ import { useEffect, useState } from "react";
 import { Trash2, ChevronLeft, ChevronRight } from "lucide-react";
 import { User } from "../../types/user";
 import { fetchUsers, deleteUser } from "../../services/user.service";
-import { formatDate } from "../../utils/date";
-import { paginate } from "../../utils/pagination";
-import StatusBadge from "./StatusBadge";
+import { formatDate } from "../../utils/userManagement/date";
+import { paginate } from "../../utils/userManagement/pagination";
+import StatusBadge from "./common/StatusBadge";
 
 const ITEMS_PER_PAGE = 15;
 
