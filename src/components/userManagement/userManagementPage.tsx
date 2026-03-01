@@ -132,7 +132,7 @@ export default function UserManagementPage() {
         </div>
         <Time />
       </div>
-      <Overview da={statsArray} />
+      <Overview data={statsArray} />
       <Notification items={notifications} />
       <Users />
     </div>
