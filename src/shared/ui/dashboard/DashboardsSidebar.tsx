@@ -36,10 +36,12 @@ function SidebarContent() {
     <div className="bg-white pt-8 pb-8">
       {/* Logo */}
       <div className="px-12">
+      <Link href="/dashboard">
         <div className="text-[32px] font-extrabold leading-none">
           <span className="text-[#355FC7]">Fin</span>
           <span className="text-[#1C1A1A]">Admin</span>
         </div>
+      </Link>
       </div>
 
       {/* Navigation */}
@@ -98,9 +100,9 @@ function SidebarContent() {
         <button
           type="button"
           onClick={() => {
-            localStorage.removeItem("token");
+            sessionStorage.removeItem("token");
 
-            window.location.href = "/";
+            window.location.href = "/login";
           }}
           className="flex h-[49px] w-full items-center gap-4 pl-12 pr-6 text-sm font-semibold text-[#FF5050]"
         >
