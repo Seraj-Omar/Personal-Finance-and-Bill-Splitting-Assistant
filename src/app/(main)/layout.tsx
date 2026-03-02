@@ -12,7 +12,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   const pathname = usePathname();
 
   // صفحات بدنا فيها الشريط الأبيض فقط (بدون الهيرو الأزرق)
-  const hideHeroOnRoutes = ["/services/incomes", "/services/income"];
+  const hideHeroOnRoutes = ["/services/income", "/services/income"];
   const shouldShowHero = !hideHeroOnRoutes.includes(pathname);
 
   return (
