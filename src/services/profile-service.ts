@@ -4,7 +4,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 export const profileService = {
   getProfile: async (): Promise<UserProfile> => {
-    const user = JSON.parse(sessionStorage.getItem("user") || "null");
+    const user = JSON.parse(sessionStorage.getItem("cached_user") || "null");
     const token = sessionStorage.getItem("token");
     if (!token) throw new Error("No token found");
 
