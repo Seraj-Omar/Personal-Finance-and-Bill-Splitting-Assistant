@@ -50,7 +50,7 @@ const servicesList: Service[] = [
 </svg>
 ,
         iconBg: "bg-[#FFA9DC1A]",
-        href: "/services/incomes",
+        href: "/services/income",
     },
     {
         id: 3,
