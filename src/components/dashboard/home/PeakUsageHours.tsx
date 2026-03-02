@@ -3,15 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Typography, Box } from "@mui/material";
 import { BarChart } from "@mui/x-charts/BarChart";
 import DashboardTitle from "./DashboardTitle";
-
-const hours = [
-"00:00","02:00","04:00","06:00","08:00",
-"10:00","12:00","14:00","16:00","18:00","24:00",
-];
-
-const data = [9000, 8800, 2500, 14000, 2300, 7300, 22500, 3500, 23000, 11000, 19500];
-
-const mostActiveHours = "9 AM - 5 PM";
+import { useDashboardPeakHours } from "@/src/modules/dashboard/hooks/useDashboardPeakHours";
 
 // Custom bar shape: rounded both ends
 type BottomRoundedBarProps = {
@@ -77,7 +69,9 @@ const BottomRoundedBar = (props: BottomRoundedBarProps) => {
 export default function PeakUsageHours() {
     const containerRef = useRef<HTMLDivElement | null>(null);
     const [width, setWidth] = useState(0);
+    const {data,isLoading,error}=useDashboardPeakHours();
 
+    
     useEffect(() => {
         if (!containerRef.current) return;
 
@@ -103,15 +97,80 @@ export default function PeakUsageHours() {
         };
     }, []);
 
+    let message;
+    if (isLoading || error || !data) {
+        message = isLoading
+            ? "Loading Peak Hours..."
+            : error instanceof Error
+            ? `Error: ${error.message}`
+            : "No stats available";
+    }
+
+    const values: number[] = [];
+    const hours: string[] = [];
+    let mostActiveHours = "";
+
+    if (data?.data) {
+        const groupedData: { label: string; count: number; startHour: string; endHour: string }[] = [];
+        
+        for (let i = 0; i < data.data.length; i += 2) {
+            const first = data.data[i];
+            const second = data.data[i + 1];
+            
+            const startHour = first.hour;
+            const endHour = second ? second.hour : first.hour;
+            const totalCount = first.count + (second ? second.count : 0);
+            
+            const hourNumber = parseInt(startHour.split(':')[0], 10).toString();
+            const label = `${hourNumber}:00`;
+            
+            groupedData.push({
+                label: label,
+                count: totalCount,
+                startHour: startHour,
+                endHour: endHour
+            });
+        }
+
+        let maxCount = 0;
+        let maxStartHour = "";
+        let maxEndHour = "";
+
+        groupedData.forEach((item, index) => {
+            hours.push(item.label);
+            values.push(item.count);
+            
+            if (item.count > maxCount) {
+                maxCount = item.count;
+                maxStartHour = item.startHour;
+                if (index < groupedData.length - 1) {
+                    maxEndHour = groupedData[index + 1].startHour;
+                } else {
+                    maxEndHour = item.endHour;
+                }
+            }
+        });
+
+        if (maxStartHour && maxEndHour) {
+            mostActiveHours = `${maxStartHour} - ${maxEndHour}`;
+        }
+    }
+
     return (
         <Box className="flex flex-col h-full bg-[#ffffff] w-full justify-start items-center gap-3 p-6 rounded-2xl">
             <DashboardTitle title="Peak Usage Hours" />
-
+            {message&&(
+                <Box className="flex flex-1 w-full items-center justify-center">
+                    <Typography className="w-full py-6 text-center text-sm font-medium text-[#707070] animate-pulse">
+                        {message}
+                    </Typography>
+                </Box>
+            )}
 			<Box
 				ref={containerRef}
 				className="w-[calc(100%+3rem)] -mx-6 flex items-center justify-center"
 			>
-                {width > 0 && (
+                {width > 0 && !message && (
                     <BarChart
                         width={width}
                         height={400}
@@ -142,7 +201,7 @@ export default function PeakUsageHours() {
                     ]}
                         series={[
                             {
-                                data,
+                                data: values,
                                 color: "#3448aacf",
                             },
                         ]}
@@ -157,12 +216,14 @@ export default function PeakUsageHours() {
                 )}
             </Box>
 
-            <Typography
-                align="center"
-                sx={{ width: "100%", color: "text.secondary", fontSize: 14 }}
-            >
-                Highest activity between {mostActiveHours}
-            </Typography>
+            {!message && (
+                <Typography
+                    align="center"
+                    sx={{ width: "100%", color: "text.secondary", fontSize: 14 }}
+                >
+                    Highest activity between {mostActiveHours}
+                </Typography>
+            )}
         </Box>
     );
 }
