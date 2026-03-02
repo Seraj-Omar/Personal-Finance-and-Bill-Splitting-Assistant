@@ -1,10 +1,8 @@
-import { useEffect, useState } from "react";
-import Input from "./Input";
-import Select from "./Select";
 import { useCurrencies } from "@/src/modules/auth/hooks/useCurrencies";
-import UpdateButton from "./UpdateButton";
-import { IconEye, IconEyeOff } from "@tabler/icons-react";
-import { set } from "zod";
+import Input from "../profile/Input";
+import Select from "../profile/Select";
+import UpdateButton from "../profile/UpdateButton";
+import { useEffect, useState } from "react";
 
 export default function PasswordForm({
   defaultCurrencyId,
@@ -14,7 +12,7 @@ export default function PasswordForm({
   const { data: currencies } = useCurrencies();
   const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
-  const [tempCurrencyId, setTempCurrencyId] = useState(defaultCurrencyId);
+  
   const [errorMsg, setErrorMsg] = useState("");
   const [passwords, setPasswords] = useState({
     currentPassword: "",
@@ -29,10 +27,6 @@ export default function PasswordForm({
       id: c.id,
       label: `${c.code} - ${c.name}`,
     })) || [];
-
-  useEffect(() => {
-    setTempCurrencyId(defaultCurrencyId);
-  }, [defaultCurrencyId]);
 
   const handleFinalSubmit = async () => {
     setErrorMsg("");
@@ -62,10 +56,6 @@ export default function PasswordForm({
         newPassword: "",
         confirmNewPassword: "",
       });
-    }
-
-    if (tempCurrencyId !== defaultCurrencyId) {
-      await onChange({ defaultCurrencyId: tempCurrencyId });
     }
   };
   return (
@@ -97,15 +87,7 @@ export default function PasswordForm({
           setPasswords({ ...passwords, confirmNewPassword: e.target.value })
         }
       />
-
-      <Select
-        label="Virtual currency"
-        defaultValue={tempCurrencyId}
-        options={currencyOptions}
-        onChange={(id: string) => setTempCurrencyId(id)}
-      />
-
-      <div className="text-red-600">{errorMsg}</div>
+      {errorMsg && <div className="text-red-600 font-medium">{errorMsg}</div>}
       <div className="w-full lg:w-1/2">
         <UpdateButton onClick={handleFinalSubmit} />
       </div>

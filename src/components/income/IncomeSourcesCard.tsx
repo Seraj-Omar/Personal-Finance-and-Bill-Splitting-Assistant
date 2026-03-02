@@ -166,8 +166,7 @@ export default function IncomeSourcesCard() {
 
           {/* View Reports */}
           <Link
-            href="/report"
-            
+            href="/settings/profile/report"
             className="w-full h-[56px] rounded-[16px] px-[16px] py-[8px] bg-[#F2F3F7] relative flex items-center cursor-pointer hover:bg-[#E9EBF3] transition"
           >
             <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-[8px]">
