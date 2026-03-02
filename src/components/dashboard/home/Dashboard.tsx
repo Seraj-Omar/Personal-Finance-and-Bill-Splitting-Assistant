@@ -11,7 +11,7 @@ import MonthlyOverview from "./MonthlyOverview";
 import Users from "../../userManagement/users";
 export default function Dashboard() {
     return (
-        <Box className="flex flex-col h-screen bg-[#f9f9fa] gap-4 pt-4">
+        <Box className="flex flex-col min-h-screen  bg-[#f9f9fa] gap-4 pt-4">
             <Box className="w-full">
                 <Header />
             </Box>
