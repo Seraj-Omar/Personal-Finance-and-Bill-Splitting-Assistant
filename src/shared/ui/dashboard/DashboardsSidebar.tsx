@@ -125,9 +125,9 @@ export default function DashboardsSidebar() {
   return (
     <>
       {/* Desktop */}
-      <aside className="hidden h-[1185px] w-[236px] shrink-0 bg-white md:block">
-        <SidebarContent />
-      </aside>
+     <aside className="hidden md:fixed md:left-0 md:top-0 md:h-screen md:w-[236px] md:bg-white md:block md:z-40">
+  <SidebarContent />
+</aside>
 
       {/* Mobile toggle */}
       <button
