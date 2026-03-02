@@ -11,8 +11,8 @@ export default function DashboardLayout({
       <DashboardsSidebar />
 
       {/* main لازم ياخد padding-left قد عرض السايدبار على الديسكتوب */}
-      <main className="min-w-0 overflow-x-hidden md:pl-[236px]">
-        <DashboardsHeader />
+<main className="min-w-0 overflow-x-hidden md:pl-[236px] pt-[104px]">
+          <DashboardsHeader />
         <div className="min-w-0 px-4 pb-6 lg:px-6">{children}</div>
       </main>
     </div>
