@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { IconBell, IconChevronDown, IconSearch, IconSettings } from "./icons";
+import Link from "next/link";
 
 export default function DashboardsHeader() {
   return (
@@ -27,20 +28,23 @@ export default function DashboardsHeader() {
 
     
       <div className="flex flex-none items-center gap-4 lg:gap-6">
-      
+            <Link href ="/dashboard/notifications">
+
         <button className="relative h-[24px] w-[24px]" type="button">
           <IconBell />
           <span className="absolute -right-2 -top-2 grid h-[19px] w-[19px] place-items-center rounded-full bg-[#3447AA] text-[10px] font-extrabold leading-none text-white">
             13
           </span>
         </button>
+            </Link>
 
-       
+      <Link href ="/dashboard/settings">
         <button className="h-[24px] w-[24px]" type="button">
           <IconSettings />
         </button>
+      </Link>
 
-      
+      <Link href="/dashboard/profile">
         <div className="flex h-[53px] items-center gap-2 rounded-[8px] bg-[#5792FF1A] px-3 py-2 lg:w-[157px] lg:px-4">
           <div className="h-[37px] w-[37px] overflow-hidden rounded-full bg-[#E0E0E0]">
             <Image
@@ -67,6 +71,7 @@ export default function DashboardsHeader() {
             <IconChevronDown />
           </div>
         </div>
+        </Link>
       </div>
     </header>
   );
