@@ -20,7 +20,7 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 function readProvider(): Provider {
   if (typeof window === "undefined") return null;
   const p = sessionStorage.getItem("auth_provider");
-  return p === "LOCAL" || p === "GOOGLE" ? p : null; // ❌ بدون fallback
+  return p === "LOCAL" || p === "GOOGLE" ? p : null;
 }
 
 function hasToken() {
@@ -30,13 +30,23 @@ function hasToken() {
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const queryClient = useQueryClient();
-  const [provider, setProvider] = useState<Provider>(() => readProvider());
 
-  useEffect(() => {
-    const sync = () => setProvider(readProvider());
-    window.addEventListener("auth:changed", sync);
-    return () => window.removeEventListener("auth:changed", sync);
-  }, []);
+  const [provider, setProvider] = useState<Provider>(() => {
+    const p = readProvider();
+    if (p) return p;
+    if (hasToken()) return "LOCAL";
+    return null;
+  });
+
+  const meQ = useQuery({
+    queryKey: ["me"],
+    queryFn: fetchMe,
+    enabled: provider === "GOOGLE" || (provider === null && !hasToken()),
+    retry: false,
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
 
   const sessionQ = useQuery({
     queryKey: ["session"],
@@ -48,25 +58,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     refetchOnReconnect: false,
   });
 
-  const meQ = useQuery({
-    queryKey: ["me"],
-    queryFn: fetchMe,
-    enabled: provider === "GOOGLE",
-    retry: false,
-    staleTime: 5 * 60 * 1000,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-  });
+useEffect(() => {
+  const token = (meQ.data as any)?.data?.token;
+  const user = (meQ.data as any)?.data?.user;
+
+  if ((provider === "GOOGLE" || provider === null) && user && token) {
+    sessionStorage.setItem("token", token);              //
+    sessionStorage.setItem("auth_provider", "GOOGLE");   //  
+    setProvider("GOOGLE");
+    window.dispatchEvent(new Event("auth:changed"));
+  }
+}, [meQ.data, provider]);
+
+  useEffect(() => {
+    if (provider === null && hasToken() && (sessionQ.data as any)?.data?.user) {
+      sessionStorage.setItem("auth_provider", "LOCAL");
+      setProvider("LOCAL");
+      window.dispatchEvent(new Event("auth:changed"));
+    }
+  }, [provider, sessionQ.data]);
 
   const user =
     provider === "LOCAL"
-      ? (sessionQ.data as any)?.data?.user ?? null
+      ? ((sessionQ.data as any)?.data?.user ?? null)
       : provider === "GOOGLE"
-      ? (meQ.data as any)?.data?.user ?? null
-      : null;
+      ? ((meQ.data as any)?.data?.user ?? null)
+      : ((sessionQ.data as any)?.data?.user ?? (meQ.data as any)?.data?.user ?? null);
 
   const loading =
-    provider === "LOCAL" ? sessionQ.isLoading : provider === "GOOGLE" ? meQ.isLoading : false;
+    provider === "LOCAL"
+      ? sessionQ.isLoading
+      : provider === "GOOGLE"
+      ? meQ.isLoading
+      : meQ.isLoading || sessionQ.isLoading;
 
   const logoutLocal = () => {
     sessionStorage.removeItem("token");
@@ -74,6 +98,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     sessionStorage.removeItem("auth_provider");
     queryClient.removeQueries({ queryKey: ["session"] });
     queryClient.removeQueries({ queryKey: ["me"] });
+    setProvider(null);
     window.dispatchEvent(new Event("auth:changed"));
   };
 
