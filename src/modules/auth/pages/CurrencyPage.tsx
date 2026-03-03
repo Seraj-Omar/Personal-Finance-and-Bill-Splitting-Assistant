@@ -119,7 +119,6 @@ export default function CurrencyPage() {
           <div className="grid h-full grid-cols-1 lg:grid-cols-2 rounded-[16px] overflow-hidden">
             {/* LEFT */}
             <div className="h-full w-full flex items-start">
-              {/* نفس الستايل: مش بالنص 100% — شوي لليسار */}
               <div className="w-full pl-10 pr-6 pt-28">
                 <Box
                   component="form"
