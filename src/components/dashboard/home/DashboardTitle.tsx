@@ -1,4 +1,3 @@
-"use client";
 
 import { Box, Typography } from "@mui/material";
 export default function DashboardTitle({ title, width }: { title: string, width?: number }) {

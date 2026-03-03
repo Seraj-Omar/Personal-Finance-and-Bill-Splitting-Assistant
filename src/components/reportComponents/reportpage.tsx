@@ -1,4 +1,3 @@
-"use client";
 import FinancialOverview from "./FinancialOverview";
 import DonutChart from "./billschart";
 import ExpenseReport from "./expenseReport";

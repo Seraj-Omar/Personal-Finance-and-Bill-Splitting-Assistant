@@ -7,6 +7,7 @@ import CommitmentSection from "../../../shared/ui/about/CommitmentSection";
 export default function AboutUsPage() {
   return (
     <main className="flex flex-col gap-20 pb-24">
+      
       <IntroSection />
       <AboutUsSection />
       <HelpSolutionsSection />
