@@ -24,7 +24,7 @@ export const profileService = {
   data: Omit<Partial<UserProfile>, "avatar"> & { avatar?: File }
 ): Promise<UserProfile> => {
   const token = sessionStorage.getItem("token");
-  const user = JSON.parse(sessionStorage.getItem("user") || "null");
+  const user = JSON.parse(sessionStorage.getItem("cached_user") || "null");
   const userId = user?.id;
   
   if (!token) throw new Error("No token");
@@ -67,7 +67,7 @@ export const profileService = {
 },
 changePassword: async (data: { currentPassword: string; newPassword: string; confirmNewPassword: string }) => {
   const token = sessionStorage.getItem("token");
-  const user = JSON.parse(sessionStorage.getItem("user") || "null");
+  const user = JSON.parse(sessionStorage.getItem("cached_user") || "null");
   const userId = user?.id;
   console.log("data:", data);
   
