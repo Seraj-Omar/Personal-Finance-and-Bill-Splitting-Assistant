@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useState } from "react"
 import { X } from "lucide-react"
 import { useCreateExpense } from "@/src/modules/expenses/hooks/useCreateExpense"
+import { useAuth } from "@/src/context/AuthContext"
 
 type CategoryItem = {
   key: string
@@ -62,9 +63,10 @@ const AddExpenseModal = ({
 </svg>
 
 ) },
-    ],
+],
     []
   )
+  const { user } = useAuth();
 
   const cats = categories?.length ? categories : defaultCategories
 
@@ -101,14 +103,15 @@ const AddExpenseModal = ({
   }, [open])
 
   if (!open) return null
+
 const handleSubmit = (e: React.FormEvent) => {
   e.preventDefault();
 
   if (!name.trim()) return;
 
-  const currencyId = getCurrencyId();
+  const currencyId = user?.defaultCurrencyId; //  
   if (!currencyId) {
-    console.log("❌ currencyId missing in sessionStorage");
+    console.log("❌ defaultCurrencyId missing on user");
     return;
   }
 
@@ -120,8 +123,6 @@ const handleSubmit = (e: React.FormEvent) => {
     dueDate: date,
     description: "",
   };
-
-  console.log("✅ create expense payload:", payload);
 
   mutate(payload, {
     onSuccess: () => {
