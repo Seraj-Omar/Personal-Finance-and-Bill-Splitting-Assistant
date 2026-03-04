@@ -8,21 +8,33 @@ const getToken = () => {
   return sessionStorage.getItem("token");
 };
 
-// ✅ safe JSON parser (prevents "Unexpected end of JSON input")
 async function safeJson<T = any>(response: Response): Promise<T | null> {
-  // 204 No Content
   if (response.status === 204) return null;
 
+  const ct = response.headers.get("content-type") || "";
   const text = await response.text();
-  if (!text) return null;
+
+  if (!text?.trim()) {
+    console.warn("Empty response body:", response.status, ct);
+    return null;
+  }
+
+  if (!ct.includes("application/json")) {
+    console.error("Non-JSON response:", {
+      status: response.status,
+      contentType: ct,
+      snippet: text.slice(0, 200),
+    });
+    return null;
+  }
 
   try {
     return JSON.parse(text) as T;
   } catch (err) {
+    console.error("JSON parse failed:", err, "snippet:", text.slice(0, 200));
     return null;
   }
 }
-
 function ensureBaseUrl() {
   if (!API_BASE_URL) {
     throw new Error("NEXT_PUBLIC_BASE_URL is missing");
@@ -48,6 +60,10 @@ export const debtService = {
       params.append("status", status.toUpperCase());
     }
 
+
+const url = `${API_BASE_URL}/debts?${params.toString()}`;
+
+
     const response = await fetch(`${API_BASE_URL}/debts?${params.toString()}`, {
       method: "GET",
       headers: {
@@ -55,6 +71,7 @@ export const debtService = {
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
     });
+console.log("RES", response.status, response.headers.get("content-type"));
 
     const data = await safeJson<DebtResponse & { message?: string }>(response);
 
@@ -62,7 +79,6 @@ export const debtService = {
       throw new Error(data?.message || `Failed to fetch debts (${response.status})`);
     }
 
-    // لو رجع OK بس body فاضي (نادر) منعاً للكراش
     if (!data) {
       return { data: [], meta: { page, totalPages: 1, totalItems: 0 } } as any;
     }
