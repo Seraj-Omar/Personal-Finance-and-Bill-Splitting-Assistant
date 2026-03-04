@@ -38,10 +38,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return null;
   });
 
+  // ✅ NEW: sync provider state when auth changes (no refresh needed)
+  useEffect(() => {
+    const sync = () => {
+      const p = readProvider();
+      setProvider(p);
+    };
+
+    window.addEventListener("auth:changed", sync);
+    return () => window.removeEventListener("auth:changed", sync);
+  }, []);
+
+  // ✅ IMPORTANT: enable meQ if sessionStorage says GOOGLE even if state not updated yet
+  const providerInStorage = readProvider();
+
   const meQ = useQuery({
     queryKey: ["me"],
     queryFn: fetchMe,
-    enabled: provider === "GOOGLE",
+    enabled: provider === "GOOGLE" || providerInStorage === "GOOGLE",
     retry: false,
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
@@ -58,21 +72,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     refetchOnReconnect: false,
   });
 
-  // ✅ لا تغيّر تسجيل جوجل: بس خزّني token/provider إذا provider GOOGLE
   useEffect(() => {
-    if (provider !== "GOOGLE") return;
-
     const token = (meQ.data as any)?.data?.token;
     const user = (meQ.data as any)?.data?.user;
 
-    if (user && token) {
+    if (user && token && (provider === "GOOGLE" || providerInStorage === "GOOGLE")) {
       sessionStorage.setItem("token", token);
       sessionStorage.setItem("auth_provider", "GOOGLE");
+
+      setProvider("GOOGLE");
+
       window.dispatchEvent(new Event("auth:changed"));
     }
-  }, [meQ.data, provider]);
+  }, [meQ.data, provider, providerInStorage]);
 
-  // ✅ لو provider null وفي token وفي session user → LOCAL
   useEffect(() => {
     if (provider === null && hasToken() && (sessionQ.data as any)?.data?.user) {
       sessionStorage.setItem("auth_provider", "LOCAL");
@@ -107,7 +120,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     sessionStorage.removeItem("auth_provider");
     sessionStorage.removeItem("currencyId");
 
-    // أهم شيء: امسحي كاش React Query
     queryClient.clear();
 
     setProvider(null);
