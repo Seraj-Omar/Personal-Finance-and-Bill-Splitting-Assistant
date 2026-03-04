@@ -37,7 +37,7 @@ export default function FinancialOverview() {
   const netBalance = data ? data.totalIncome - data.totalExpenses : 0;
 
   return (
-    <div className="mt-[-40px] pt-[60px] flex justify-center w-full min-h-[252px] bg-[#f6f6f7b3] rounded-[16px] pb-3">
+    <div id="FinancialOverview" className="mt-[-40px] pt-[60px] flex justify-center w-full min-h-[252px] bg-[#f6f6f7b3] rounded-[16px] pb-3">
       <div className="w-[89%] flex flex-col">
         <div className="w-[210px]">
           <h3 className="font-medium text-2xl">Financial Overview</h3>
