@@ -1,4 +1,3 @@
-"use client";
 import OurServices from "./OurServices";
 import WhyChooseUs from "./WhyThisServiceMatters";
 import { Box } from "@mui/material";

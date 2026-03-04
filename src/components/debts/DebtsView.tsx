@@ -55,9 +55,11 @@ export default function DebtsView() {
   const fetchAllForCalculation = async () => {
     try {
       // Pass a very high limit or a specific 'all' flag if your backend supports it
-      const response = await debtService.getDebts(1, 9999); 
+      const response = await debtService.getDebts(1, 50); 
       setAllDebtsForCalc(response.data);
     } catch (error) {
+          setAllDebtsForCalc([]); // مهم عشان ما يكراش
+
       console.error("Calculation fetch failed", error);
     }
   };

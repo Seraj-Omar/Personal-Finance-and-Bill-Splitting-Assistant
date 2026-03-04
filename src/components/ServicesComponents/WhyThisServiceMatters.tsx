@@ -1,4 +1,3 @@
-"use client";
 import { Box, Typography } from "@mui/material";
 import { Check } from "lucide-react";
 // import ContactUsForm from "./ContactUsForm";
