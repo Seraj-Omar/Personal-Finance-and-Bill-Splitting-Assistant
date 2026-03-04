@@ -18,7 +18,7 @@ async function safeJson<T = any>(response: Response): Promise<T | null> {
 
   try {
     return JSON.parse(text) as T;
-  } catch {
+  } catch (err) {
     return null;
   }
 }
