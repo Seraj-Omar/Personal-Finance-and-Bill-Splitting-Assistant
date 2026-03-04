@@ -109,12 +109,14 @@ const handleSubmit = (e: React.FormEvent) => {
 
   if (!name.trim()) return;
 
-  const currencyId = user?.defaultCurrencyId; //  
-  if (!currencyId) {
-    console.log("❌ defaultCurrencyId missing on user");
-    return;
-  }
 
+
+const currencyId = user?.defaultCurrencyId ?? null;
+
+if (!currencyId) {
+  console.log("❌ defaultCurrencyId missing on user");
+  return;
+}
   const payload = {
     name: name.trim(),
     amount: Number(amount || 0),

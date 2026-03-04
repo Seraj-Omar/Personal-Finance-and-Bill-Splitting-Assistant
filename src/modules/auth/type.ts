@@ -16,6 +16,7 @@ export type User = {
   id: string;
   fullName: string;
   email: string;
+  defaultCurrencyId?: string;
 
   role: UserRole;
   status: UserStatus;
