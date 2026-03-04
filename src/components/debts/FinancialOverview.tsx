@@ -19,9 +19,10 @@ const {
     isLoading: currenciesLoading,
     error,
   } = useCurrencies();
-  const currencyId = JSON.parse(sessionStorage.getItem("cached_user")|| "").defaultCurrencyId;
-  const currencyCode = currenciesRes?.data.find((currency: any) => currency.id === currencyId)?.code;
-  console.log(currencyCode);
+const raw = sessionStorage.getItem("cached_user");
+const cachedUser = raw ? (() => { try { return JSON.parse(raw); } catch { return null; } })() : null;
+const currencyId = cachedUser?.defaultCurrencyId;
+const currencyCode = currenciesRes?.data?.find((c: any) => c.id === currencyId)?.code ?? "USD";
   
 
   const formatCurrency = (val: number) => 
