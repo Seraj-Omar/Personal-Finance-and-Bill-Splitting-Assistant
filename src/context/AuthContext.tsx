@@ -41,7 +41,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const meQ = useQuery({
     queryKey: ["me"],
     queryFn: fetchMe,
-    enabled: provider === "GOOGLE" || (provider === null && !hasToken()),
+    enabled: provider === "GOOGLE",
     retry: false,
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
@@ -58,18 +58,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     refetchOnReconnect: false,
   });
 
-useEffect(() => {
-  const token = (meQ.data as any)?.data?.token;
-  const user = (meQ.data as any)?.data?.user;
+  // ✅ لا تغيّر تسجيل جوجل: بس خزّني token/provider إذا provider GOOGLE
+  useEffect(() => {
+    if (provider !== "GOOGLE") return;
 
-  if ((provider === "GOOGLE" || provider === null) && user && token) {
-    sessionStorage.setItem("token", token);              //
-    sessionStorage.setItem("auth_provider", "GOOGLE");   //  
-    setProvider("GOOGLE");
-    window.dispatchEvent(new Event("auth:changed"));
-  }
-}, [meQ.data, provider]);
+    const token = (meQ.data as any)?.data?.token;
+    const user = (meQ.data as any)?.data?.user;
 
+    if (user && token) {
+      sessionStorage.setItem("token", token);
+      sessionStorage.setItem("auth_provider", "GOOGLE");
+      window.dispatchEvent(new Event("auth:changed"));
+    }
+  }, [meQ.data, provider]);
+
+  // ✅ لو provider null وفي token وفي session user → LOCAL
   useEffect(() => {
     if (provider === null && hasToken() && (sessionQ.data as any)?.data?.user) {
       sessionStorage.setItem("auth_provider", "LOCAL");
@@ -78,26 +81,35 @@ useEffect(() => {
     }
   }, [provider, sessionQ.data]);
 
-  const user =
-    provider === "LOCAL"
-      ? ((sessionQ.data as any)?.data?.user ?? null)
-      : provider === "GOOGLE"
-      ? ((meQ.data as any)?.data?.user ?? null)
-      : ((sessionQ.data as any)?.data?.user ?? (meQ.data as any)?.data?.user ?? null);
+  const tokenExists = hasToken();
 
-  const loading =
-    provider === "LOCAL"
-      ? sessionQ.isLoading
-      : provider === "GOOGLE"
-      ? meQ.isLoading
-      : meQ.isLoading || sessionQ.isLoading;
+  const user: User | null = useMemo(() => {
+    if (!tokenExists) return null;
+
+    if (provider === "LOCAL") return ((sessionQ.data as any)?.data?.user ?? null);
+    if (provider === "GOOGLE") return ((meQ.data as any)?.data?.user ?? null);
+
+    return null;
+  }, [tokenExists, provider, sessionQ.data, meQ.data]);
+
+  const loading = useMemo(() => {
+    if (!tokenExists) return false;
+
+    if (provider === "LOCAL") return sessionQ.isLoading;
+    if (provider === "GOOGLE") return meQ.isLoading;
+
+    return false;
+  }, [tokenExists, provider, sessionQ.isLoading, meQ.isLoading]);
 
   const logoutLocal = () => {
     sessionStorage.removeItem("token");
     sessionStorage.removeItem("cached_user");
     sessionStorage.removeItem("auth_provider");
-    queryClient.removeQueries({ queryKey: ["session"] });
-    queryClient.removeQueries({ queryKey: ["me"] });
+    sessionStorage.removeItem("currencyId");
+
+    // أهم شيء: امسحي كاش React Query
+    queryClient.clear();
+
     setProvider(null);
     window.dispatchEvent(new Event("auth:changed"));
   };
