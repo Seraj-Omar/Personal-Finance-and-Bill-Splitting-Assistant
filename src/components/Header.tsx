@@ -7,24 +7,18 @@ import { usePathname } from "next/navigation";
 import { Search, ChevronDown, User, Menu, X, Bell } from "lucide-react";
 import Notifactions from "./Notifactions";
 import { useAuth } from "../context/AuthContext";
-import { searchItems } from "../services/searchItems"; // المسار حسب مشروعك
+import { searchItems } from "../services/searchItems";
 import { useRouter } from "next/navigation";
 export default function Navbar() {
   const pathname = usePathname();
   const { user, isAuthed, loading } = useAuth();
   const router = useRouter();
-  const [mounted, setMounted] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isServiceOpenMobile, setIsServiceOpenMobile] = useState(false);
   const [isServiceOpen, setIsServiceOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
-
-  useEffect(() => {
-    const timer = setTimeout(() => setMounted(true), 0);
-    return () => clearTimeout(timer);
-  }, []);
 
   const isActiveExact = (path: string) =>
     pathname === path
@@ -106,8 +100,6 @@ export default function Navbar() {
     }
     return () => document.removeEventListener("keydown", handleEsc);
   }, [isSearchOpen]);
-
-  if (!mounted) return null;
 
   return (
     <>
@@ -213,29 +205,27 @@ export default function Navbar() {
             <span>Search</span>
           </button>
 
-          {loading ? null : !isAuthed ? (
+          {!isAuthed ? (
             <Link
               href="/register"
-              className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] transition "
+              className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] transition"
             >
               <User size={20} className="fill-current" />
               <span>Sign up</span>
             </Link>
           ) : (
-            <div className="flex items-center gap-3">
-              <Link
-                href="/settings/profile"
-                className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] transition overflow-hidden"
-              >
-                <User size={20} className="fill-current" />
-                <span className="flex xl:hidden">
-                  {user?.fullName?.split(" ")[0] || "Account"}
-                </span>
-                <span className="hidden xl:flex">
-                  {user?.fullName || "Account"}
-                </span>
-              </Link>
-            </div>
+            <Link
+              href="/settings/profile"
+              className="flex items-center gap-1 text-gray-700 hover:text-[#3447aaee] transition overflow-hidden"
+            >
+              <User size={20} className="fill-current" />
+              <span className="flex xl:hidden">
+                {user?.fullName?.split(" ")[0] || "Account"}
+              </span>
+              <span className="hidden xl:flex">
+                {user?.fullName || "Account"}
+              </span>
+            </Link>
           )}
         </div>
 
