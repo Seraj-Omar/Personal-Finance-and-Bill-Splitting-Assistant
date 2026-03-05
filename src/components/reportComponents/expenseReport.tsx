@@ -35,7 +35,10 @@ export default function ExpenseReport() {
   }, [selected]);
 
   return (
-    <div className="w-full lg:w-[40%] h-auto bg-[#F6F6F757] rounded-[16px] p-4 lg:p-6 flex flex-col justify-between items-center overflow-auto">
+    <div
+      id="expensesReport"
+      className="w-full lg:w-[40%] h-auto bg-[#F6F6F757] rounded-[16px] p-4 lg:p-6 flex flex-col justify-between items-center overflow-auto"
+    >
       <div className="gap-[8px] w-full">
         <h4 className="font-semibold text-[18px]">Expense</h4>
         <p className="text-[rgba(28,26,26,0.5)] text-[16px]">
