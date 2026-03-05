@@ -62,7 +62,7 @@ const attentionList: attentionItem[] = [
 ]
 export default function AttentionNeeded() {
     return (
-        <Box component="section" className="flex w-full justify-center px-4 py-8 sm:px-6 md:px-10 lg:px-24 lg:py-12">
+        <Box id= "alerts" component="section" className="flex w-full justify-center px-4 py-8 sm:px-6 md:px-10 lg:px-24 lg:py-12">
             <Box className="flex flex-col gap-10 lg:flex-row lg:items-stretch">
                 <Box component="article" className="flex flex-col gap-4 lg:w-1/2">
                     <Box component="header">

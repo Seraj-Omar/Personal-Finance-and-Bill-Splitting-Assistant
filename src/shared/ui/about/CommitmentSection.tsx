@@ -27,7 +27,7 @@ export default function CommitmentSection() {
   ];
 
   return (
-    <section className="w-full flex justify-center px-4 lg:px-0">
+    <section   id= "commitment" className="w-full flex justify-center px-4 lg:px-0">
       <div
         className="w-full"
         style={{
