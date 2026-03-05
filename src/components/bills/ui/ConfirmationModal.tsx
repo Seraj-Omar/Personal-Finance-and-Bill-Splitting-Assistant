@@ -1,6 +1,5 @@
 "use client";
-
-import { Box, Button, Typography } from "@mui/material";
+import React from "react";
 import { Check, AlertTriangle } from "lucide-react";
 
 type Variant = "success" | "warning";
@@ -42,98 +41,55 @@ export default function ConfirmationModal({
   const Icon = VARIANT_CONFIG[variant].icon;
 
   return (
-    <Box className="fixed inset-0 z-[1100] flex items-center justify-center bg-black/60">
-      <Box
-        sx={{
-          width: 390,
-          height: 318,
-          borderRadius: "16px",
-          backgroundColor: "#FFFFFF",
-          padding: "16px 16px 32px",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: "32px",
-        }}
+    // Backdrop
+    <div 
+      className="fixed inset-0 z-[1100] flex items-center justify-center bg-black/60 animate-in fade-in duration-200"
+      onClick={onClose}
+    >
+      {/* Modal Container */}
+      <div
+        className="w-[390px] h-[318px] rounded-[16px] bg-white flex flex-col items-center gap-[32px] px-[16px] pt-[16px] pb-[32px] shadow-xl animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
-        <Box
-          sx={{
-            width: 60,
-            height: 100,
-            borderRadius: "50%",
-            backgroundColor: VARIANT_CONFIG[variant].bg,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            mt: 2,
-          }}
+        {/* Icon Container */}
+        <div
+          className="w-[60px] h-[60px] rounded-full flex items-center justify-center mt-4 transition-transform hover:scale-110"
+          style={{ backgroundColor: VARIANT_CONFIG[variant].bg }}
         >
           <Icon size={36} color="#FFFFFF" />
-        </Box>
+        </div>
 
-        <Box textAlign="center">
-          <Typography
-            sx={{
-              fontSize: "18px",
-              fontWeight: 700,
-              color: "#111827",
-              mb: 1,
-            }}
-          >
+        {/* Text Section */}
+        <div className="text-center">
+          <h3 className="text-[18px] font-bold text-[#111827] mb-1">
             {title}
-          </Typography>
-
+          </h3>
           {description && (
-            <Typography
-              sx={{
-                fontSize: "14px",
-                color: "#6B7280",
-              }}
-            >
+            <p className="text-[14px] text-[#6B7280]">
               {description}
-            </Typography>
+            </p>
           )}
-        </Box>
+        </div>
 
-        <Box className="flex gap-4 w-full">
-          <Button
-            fullWidth
-            variant="contained"
+        {/* Buttons Group */}
+        <div className="flex gap-4 w-full">
+         ذ {/* Confirm Button */}
+          <button
             onClick={onConfirm}
-            sx={{
-              backgroundColor: "#3F51B5",
-              "&:hover": { backgroundColor: "#303F9F" },
-              borderRadius: "12px",
-              py: 1.6,
-              textTransform: "none",
-              fontWeight: 300,
-              boxShadow: "none",
-            }}
+            className="flex-1 bg-[#3F51B5] hover:bg-[#303F9F] text-white rounded-[12px] py-[12.8px] text-[15px] font-[300] transition-colors shadow-none"
           >
             {confirmText}
-          </Button>
+          </button>
 
-          <Button
-            fullWidth
-            variant="outlined"
+          {/* Cancel Button */}
+          <button
             onClick={onClose}
-            sx={{
-              borderRadius: "12px",
-              textTransform: "none",
-              fontWeight: 300,
-              color: "#111827",
-              borderColor: "#E5E7EB",
-              "&:hover": {
-                backgroundColor: "#F9FAFB",
-                borderColor: "#D1D5DB",
-              },
-            }}
+            className="flex-1 border border-[#E5E7EB] text-[#111827] bg-white hover:bg-[#F9FAFB] hover:border-[#D1D5DB] rounded-[12px] py-[12.8px] text-[15px] font-[300] transition-colors"
           >
             {cancelText}
-          </Button>
-        </Box>
-      </Box>
-    </Box>
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }

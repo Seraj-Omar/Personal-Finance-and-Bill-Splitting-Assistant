@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { Box } from "@mui/material";
 import { User, DollarSign, Calendar } from "lucide-react";
 import BillModalWrapper from "./ui/BillModalWrapper";
 import BillInput from "./ui/BillInput";
@@ -40,7 +39,7 @@ export default function AddIndividualClient({ onClose }: Props) {
 
   return (
     <BillModalWrapper onClose={onClose} title="Add Individual Bills">
-      <Box className="flex flex-col gap-5">
+      <div className="flex flex-col gap-5">
         <BillInput 
           label="Bill Name" 
           icon={User} 
@@ -74,10 +73,10 @@ export default function AddIndividualClient({ onClose }: Props) {
         <ReminderFrequency defaultValue="none" />
         <ReminderToggle checked={true} onChange={() => {}} />
 
-        <Box onClick={handleSave}>
+        <div onClick={handleSave} className="cursor-pointer">
            <BillFoter onClose={onClose} disabled={isPending || !billName || !amount} />
-        </Box>
-      </Box>
+        </div>
+      </div>
     </BillModalWrapper>
   );
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
-import { Box, Typography, Tabs, Tab, Button, Avatar, AvatarGroup, CircularProgress } from "@mui/material";
 import { Plus, Trash2, Pencil } from "lucide-react";
 import AddIndividualClient from "./AddIndividualClient";
 import AddGroupClient from "./AddGroupClient";
@@ -49,24 +48,28 @@ export default function BillsClient() {
               title: "Group members",
               render: (row) => {
                 if (!row.members || !Array.isArray(row.members)) return null;
+                const max = 3;
+                const visibleMembers = row.members.slice(0, max);
+                const extraMembers = row.members.length - max;
+                
                 return (
-                  <Box className="flex items-center justify-center h-full">
-                    <AvatarGroup
-                      max={3}
-                      sx={{
-                        "& .MuiAvatar-root": {
-                          width: 32,
-                          height: 32,
-                          fontSize: 12,
-                          border: "2px solid white",
-                        },
-                      }}
-                    >
-                      {row.members.map((m: string, i: number) => (
-                        <Avatar key={i} src={m} />
+                  <div className="flex items-center justify-center h-full">
+                    <div className="flex items-center">
+                      {visibleMembers.map((m: string, i: number) => (
+                        <img 
+                          key={i} 
+                          src={m} 
+                          alt="avatar" 
+                          className={`w-[32px] h-[32px] rounded-full border-2 border-white object-cover ${i > 0 ? '-ml-2' : ''}`} 
+                        />
                       ))}
-                    </AvatarGroup>
-                  </Box>
+                      {extraMembers > 0 && (
+                        <div className="w-[32px] h-[32px] rounded-full border-2 border-white bg-gray-200 flex items-center justify-center text-[12px] font-medium -ml-2 z-10">
+                          +{extraMembers}
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 );
               },
             },
@@ -120,15 +123,15 @@ export default function BillsClient() {
           const statusKey = row.status || "unpaid";
           const config = statusConfig[statusKey] ?? statusConfig.unpaid;
           return (
-            <Box
-              className="flex items-center gap-2 px-3 py-1.5 rounded-full w-fit"
+            <div
+              className="flex items-center gap-2 px-3 py-1.5 rounded-full w-fit mx-auto"
               style={{ backgroundColor: config.bg }}
             >
-              <Box className="w-2 h-2 rounded-full" style={{ backgroundColor: config.dot }} />
-              <Typography className="text-[13px] font-bold" style={{ color: config.text, textTransform: 'capitalize' }}>
+              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: config.dot }} />
+              <span className="text-[13px] font-bold capitalize" style={{ color: config.text }}>
                 {statusKey}
-              </Typography>
-            </Box>
+              </span>
+            </div>
           );
         },
       },
@@ -137,7 +140,7 @@ export default function BillsClient() {
         key: "action",
         title: "Action",
         render: (row) => (
-          <Box className="flex justify-center gap-3">
+          <div className="flex justify-center gap-3">
             <button 
                 onClick={() => deleteMutate(row.id)}
                 className="p-1.5 hover:bg-gray-50 text-red-400 rounded-md transition-all" 
@@ -148,7 +151,7 @@ export default function BillsClient() {
             <button className="p-1.5 hover:bg-gray-50 text-gray-400 rounded-md transition-all" type="button">
               <Pencil size={18} />
             </button>
-          </Box>
+          </div>
         ),
       },
     ],
@@ -156,7 +159,7 @@ export default function BillsClient() {
   );
 
   return (
-    <Box className="relative flex w-full flex-col px-20 py-10 gap-6 bg-white min-h-screen">
+    <div className="relative flex w-full flex-col px-20 py-10 gap-6 bg-white min-h-screen">
       {isAddModalOpen &&
         (activeTab === 0 ? (
           <AddIndividualClient onClose={() => setIsAddModalOpen(false)} />
@@ -164,52 +167,47 @@ export default function BillsClient() {
           <AddGroupClient onClose={() => setIsAddModalOpen(false)} />
         ))}
 
-      <Box className="border-b border-gray-200">
-        <Tabs
-          value={activeTab}
-          onChange={(_, v) => setActiveTab(v)}
-          variant="fullWidth"
-          sx={{
-            "& .MuiTabs-indicator": { backgroundColor: "#3447AA", height: 3 },
-            "& .MuiTab-root": { fontWeight: "bold", textTransform: "none", fontSize: "15px" },
-          }}
-        >
-          <Tab label="Individual Bills" />
-          <Tab label="Group Bills" />
-        </Tabs>
-      </Box>
+      {/* Tabs Custom Implementation */}
+      <div className="border-b border-gray-200 flex w-full">
+        {["Individual Bills", "Group Bills"].map((tabLabel, index) => (
+          <button
+            key={index}
+            className={`flex-1 pb-3 text-[15px] font-bold transition-all border-b-[3px] ${
+              activeTab === index 
+                ? "border-[#3447AA] text-black" 
+                : "border-transparent text-gray-500 hover:text-gray-700"
+            }`}
+            onClick={() => setActiveTab(index)}
+          >
+            {tabLabel}
+          </button>
+        ))}
+      </div>
 
-      <Box className="w-full bg-white flex justify-between items-center py-4">
-        <Typography variant="h6" className="font-extrabold text-[#374151]">
+      <div className="w-full bg-white flex justify-between items-center py-4">
+        <h6 className="text-xl font-extrabold text-[#374151]">
           {activeTab === 0 ? "Individual Bills." : "Group Bills."}
-        </Typography>
+        </h6>
 
-        <Button
-          variant="contained"
-          startIcon={<Plus size={20} />}
+        <button
           onClick={() => setIsAddModalOpen(true)}
-          sx={{
-            borderRadius: "14px",
-            px: 4,
-            py: 1.5,
-            backgroundColor: "#3A4CB1",
-            textTransform: "none",
-            fontWeight: "bold",
-            boxShadow: "none",
-            "&:hover": { backgroundColor: "#2D3B8E" },
-          }}
+          className="flex items-center gap-2 px-[32px] py-[12px] rounded-[14px] bg-[#3A4CB1] text-white font-bold text-sm shadow-none hover:bg-[#2D3B8E] transition-colors"
         >
+          <Plus size={20} />
           {activeTab === 0 ? "Create new Bills Bill" : "Create new Group Bills"}
-        </Button>
-      </Box>
+        </button>
+      </div>
 
       {isLoading ? (
-        <Box className="flex justify-center items-center p-20">
-           <CircularProgress size={40} sx={{ color: "#3447AA" }} />
-        </Box>
+        <div className="flex justify-center items-center p-20">
+          <svg className="animate-spin h-10 w-10 text-[#3447AA]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        </div>
       ) : (
         <Table columns={columns as any} data={currentData} />
       )}
-    </Box>
+    </div>
   );
 }
