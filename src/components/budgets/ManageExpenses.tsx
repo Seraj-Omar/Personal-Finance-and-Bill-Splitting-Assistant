@@ -86,8 +86,8 @@ const services = [
     ),
   },
   {
-    label: "Revenues",
-    href: "/revenues",
+    label: "Reports",
+    href: "/settings/profile/report",
     icon: (
       <svg
         width="22"
