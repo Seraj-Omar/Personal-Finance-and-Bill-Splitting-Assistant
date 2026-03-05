@@ -1,5 +1,5 @@
+"use client";
 import React from "react";
-import { Box, Typography, Avatar, IconButton } from "@mui/material";
 import { X } from "lucide-react";
 
 export default function ParticipantItem({ name, isMe, onDelete }: any) {
@@ -8,43 +8,41 @@ export default function ParticipantItem({ name, isMe, onDelete }: any) {
     .map((n: any) => n[0])
     .join("")
     .toUpperCase();
+
   return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        p: 1.5,
-        borderRadius: 4,
-        bgcolor: isMe ? "#F0F5FF" : "",
-        border: isMe ? "1.5px solid #4F46E5" : "",
-      }}
+    <div
+      className={`flex justify-between items-center p-[12px] rounded-[16px] transition-all ${
+        isMe 
+          ? "bg-[#F0F5FF] border-[1.5px] border-[#4F46E5]" 
+          : "bg-transparent border-[1.5px] border-transparent"
+      }`}
     >
-      <Box display="flex" alignItems="center" gap={2}>
-        <Avatar
-          sx={{
-            width: 32,
-            height: 32,
-            bgcolor: "#FFE7D9",
-            color: "#7A0C2E",
-            fontSize: 11,
-            fontWeight: 800,
-          }}
-        >
+      <div className="flex items-center gap-4">
+        {/* Avatar Replacement */}
+        <div className="w-8 h-8 rounded-full bg-[#FFE7D9] text-[#7A0C2E] flex items-center justify-center text-[11px] font-[800]">
           {initials}
-        </Avatar>
-        <Typography fontSize={14} fontWeight={400} color="#1E293B">
+        </div>
+
+        {/* Name Typography */}
+        <p className="text-[14px] font-[400] text-[#1E293B]">
           {name}{" "}
           {isMe && (
-            <span style={{ color: "#4F46E5", fontWeight: 400,fontSize:10 }}>(You)</span>
+            <span className="text-[#4F46E5] text-[10px] font-[400] ml-1">
+              (You)
+            </span>
           )}
-        </Typography>
-      </Box>
+        </p>
+      </div>
+
+      {/* Action Button */}
       {!isMe && (
-        <IconButton size="small" onClick={onDelete}>
-          <X size={16} color="#94A3B8" />
-        </IconButton>
+        <button
+          onClick={onDelete}
+          className="p-1 hover:bg-gray-100 rounded-full transition-colors group"
+        >
+          <X size={16} className="text-[#94A3B8] group-hover:text-red-500" />
+        </button>
       )}
-    </Box>
+    </div>
   );
 }

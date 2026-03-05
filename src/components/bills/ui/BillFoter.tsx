@@ -1,4 +1,4 @@
-import { Box, Button } from "@mui/material";
+"use client";
 import React from "react";
 
 function BillFoter({
@@ -9,48 +9,28 @@ function BillFoter({
   disabled?: boolean;
 }) {
   return (
-    <Box className="flex gap-4 mt-4">
-      <Button
-        fullWidth
-        variant="contained"
+    <div className="flex gap-4 mt-4">
+      {/* Save Button  */}
+      <button
         disabled={disabled}
-        sx={{
-          backgroundColor: "#3F51B5",
-          "&:hover": { backgroundColor: "#303F9F" },
-          "&.Mui-disabled": {
-            backgroundColor: "#E5E7EB",
-            color: "#9CA3AF",
-          },
-          borderRadius: "12px",
-          py: 1.6,
-          textTransform: "none",
-          fontWeight: 700,
-          boxShadow: "none",
-        }}
+        className={`w-full rounded-[12px] py-[12.8px] text-[16px] font-bold transition-all duration-200 outline-none
+          ${disabled 
+            ? "bg-[#E5E7EB] text-[#9CA3AF] cursor-not-allowed" 
+            : "bg-[#3F51B5] text-white hover:bg-[#303F9F]"
+          }`}
       >
         Save Expense
-      </Button>
+      </button>
 
-      <Button
-        fullWidth
-        variant="outlined"
+      {/* Cancel Button  */}
+      <button
+        type="button"
         onClick={onClose}
-        sx={{
-          borderColor: "#3F51B5",
-          color: "#3F51B5",
-          "&:hover": {
-            borderColor: "#303F9F",
-            backgroundColor: "#F5F7FF",
-          },
-          borderRadius: "12px",
-          py: 1.6,
-          textTransform: "none",
-          fontWeight: 700,
-        }}
+        className="w-full border border-[#3F51B5] text-[#3F51B5] rounded-[12px] py-[12.8px] text-[16px] font-bold transition-all duration-200 hover:border-[#303F9F] hover:bg-[#F5F7FF] outline-none"
       >
         Cancel
-      </Button>
-    </Box>
+      </button>
+    </div>
   );
 }
 

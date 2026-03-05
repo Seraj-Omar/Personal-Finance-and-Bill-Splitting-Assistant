@@ -1,4 +1,3 @@
-"use client";
 import FinancialOverview from "./FinancialOverview";
 import DonutChart from "./billschart";
 import ExpenseReport from "./expenseReport";
@@ -9,7 +8,7 @@ export default function ReportPage() {
       <FinancialOverview />
 
       <div className="flex flex-col justify-center lg:flex-row w-[89%] mx-[11%] gap-[24px]">
-        <ExpenseReport />
+        <ExpenseReport   />
         <DonutChart />
       </div>
 

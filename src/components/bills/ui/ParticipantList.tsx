@@ -1,4 +1,5 @@
-import { Box, Button } from "@mui/material";
+"use client";
+import React from "react";
 import { Plus } from "lucide-react";
 import ParticipantItem from "./ParticipantItem";
 
@@ -24,32 +25,26 @@ export default function ParticipantList({
   onAdd,
 }: ParticipantListProps) {
   return (
-    <Box className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 w-full">
       {participants.map((p) => (
-        <ParticipantItem
-          key={p.id}
-          name={p.name}
-          initials={p.name
-            .split(" ")
-            .map((n) => n[0])
-            .join("")}
-          color={p.color}
-          amount={p.amount}
-          isMe={p.isMe}
-          onRemove={() => onRemove(p.id)}
-          onClick={() => onSelectMe(p.id)}
-        />
+        <div key={p.id} onClick={() => onSelectMe(p.id)} className="cursor-pointer">
+          <ParticipantItem
+            name={p.name}
+            isMe={p.isMe}
+            onDelete={(e: React.MouseEvent) => {
+              e.stopPropagation(); 
+              onRemove(p.id);
+            }}
+          />
+        </div>
       ))}
-
-      <Button
-        variant="outlined"
-        fullWidth
+      <button
         onClick={onAdd}
-        startIcon={<Plus size={16} />}
-        className="border-dashed border-2 border-gray-300 text-gray-500 rounded-[12px] py-2 normal-case"
+        className="w-full flex items-center justify-center gap-2 border-2 border-dashed border-gray-300 text-gray-500 rounded-[12px] py-3 transition-all hover:bg-gray-50 hover:border-gray-400 active:scale-[0.98]"
       >
-        Add Participant
-      </Button>
-    </Box>
+        <Plus size={16} />
+        <span className="text-[14px] font-medium">Add Participant</span>
+      </button>
+    </div>
   );
 }

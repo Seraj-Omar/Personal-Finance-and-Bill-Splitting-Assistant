@@ -1,4 +1,3 @@
-"use client";
 import TitleWithGradient from "./TitleWithGradient";
 import { Box, Typography } from "@mui/material";
 import type { ReactNode } from "react";
@@ -118,6 +117,7 @@ const featuresList:Feature[] = [
 export default function WhyChooseUs() {
         return(
         <Box
+        id="why-choose-us"
             component="section"
             aria-labelledby="why-choose-us-heading"
             className="flex flex-col px-4 py-8 sm:px-6 md:px-10 lg:px-24 lg:py-12 gap-6 w-full items-start justify-center"

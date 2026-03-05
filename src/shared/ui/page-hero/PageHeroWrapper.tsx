@@ -10,7 +10,10 @@ const HERO_MAP: Record<
   "/about-us": { title: "About Us", breadcrumb: ["Home", "About Us"] },
 
   // main pages
-  "/report": { title: "Report", breadcrumb: ["Profile", "Report"] },
+  "/settings/profile/report": {
+    title: "Report",
+    breadcrumb: ["Profile", "Report"],
+  },
   "/budget": { title: "Budget", breadcrumb: ["Home", "Budget"] },
   "/reminder": { title: "Reminder", breadcrumb: ["Home", "Reminder"] },
   "/profile": { title: "Profile", breadcrumb: ["Home", "Profile"] },
@@ -38,6 +41,7 @@ const HERO_MAP: Record<
     breadcrumb: ["Profile", "Rewards"],
     bgImage: "/Rewards.png",
   },
+
 };
 
 export default function PageHeroWrapper() {

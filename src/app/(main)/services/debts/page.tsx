@@ -1,11 +1,5 @@
-"use client";
-
-import dynamic from "next/dynamic";
-
-const DebtsView = dynamic(
-  () => import("@/src/components/debts/DebtsView"),
-  { ssr: false }
-);
+export const dynamic = "force-dynamic";
+import DebtsView from "@/src/components/debts/DebtsView";
 
 export default function Page() {
   return <DebtsView />;

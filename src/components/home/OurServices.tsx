@@ -50,7 +50,7 @@ const servicesList: Service[] = [
 </svg>
 ,
         iconBg: "bg-[#FFA9DC1A]",
-        href: "/services/incomes",
+        href: "/services/income",
     },
     {
         id: 3,
@@ -94,6 +94,7 @@ export default function OurServices() {
     const router = useRouter();
     return (
         <Box
+         id= "services"
             component="section"
             aria-labelledby="our-services-heading"
             className="flex w-full justify-center px-4 py-8 sm:px-6 md:px-10 lg:px-24 lg:py-12"

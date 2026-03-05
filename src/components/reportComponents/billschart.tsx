@@ -2,134 +2,91 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Chart from "chart.js/auto";
-
-type BillStatus = "paid" | "unpaid" | "overdue";
-
-type Bill = {
-  id: number;
-  title: string;
-  amount: string;
-  status: BillStatus;
-};
-
-// const bills: Bill[] = [
-//   { id: 1, title: "Electricity", amount: 120, status: "unpaid" },
-//   { id: 2, title: "Internet", amount: 80, status: "paid" },
-//   { id: 3, title: "Water", amount: 60, status: "overdue" },
-//   { id: 4, title: "Water", amount: 60, status: "unpaid" },
-//   { id: 5, title: "Water", amount: 60, status: "overdue" },
-//   { id: 6, title: "Water", amount: 60, status: "overdue" },
-// ];
+import { fetchBills } from "../../services/report/bills";
+import { Bill } from "../../types/report/bill";
 
 export default function DonutChart() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const chartRef = useRef<Chart | null>(null);
   const [bills, setBills] = useState<Bill[]>([]);
-  const API_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
   useEffect(() => {
-    const token = sessionStorage.getItem("token");
-
-    if (!token) return;
-
-    fetch(`${API_BASE_URL}/bills`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Unauthorized");
-        return res.json();
-      })
-      .then((result) => {
-        console.log(result.data);
-        setBills(result.data.items ?? []);
-      })
-      .catch((err) => console.error(err));
+    fetchBills().then(setBills);
   }, []);
+
   const { values, total } = useMemo(() => {
     const parseAmount = (b: Bill) => Number(b.amount);
-
     const paid = bills
       .filter((b) => b.status === "paid")
       .reduce((s, b) => s + parseAmount(b), 0);
-
     const unpaid = bills
       .filter((b) => b.status === "unpaid")
       .reduce((s, b) => s + parseAmount(b), 0);
-
     const overdue = bills
       .filter((b) => b.status === "overdue")
       .reduce((s, b) => s + parseAmount(b), 0);
-
     const values = [paid, unpaid, overdue];
     const total = values.reduce((a, b) => a + b, 0);
-
     return { values, total };
   }, [bills]);
+
   const stats = useMemo(() => {
     const totalBills = bills.length;
-
-    const paidBills = bills.filter((b) => b.status === "paid");
-    const unpaidBills = bills.filter((b) => b.status === "unpaid");
-    const overdueBills = bills.filter((b) => b.status === "overdue");
-
     const sum = (arr: Bill[]) => arr.reduce((s, b) => s + Number(b.amount), 0);
-    const totalAmount = sum(bills);
-
-    const paidPercent =
-      totalBills === 0 ? 0 : Math.round((paidBills.length / totalBills) * 100);
-
-    const remainingBills = unpaidBills.length + overdueBills.length;
 
     const breakdown = [
       {
         label: "Paid",
         color: "#16C087",
         bg: "#BFF0D39E",
-        count: paidBills.length,
-        amount: sum(paidBills),
+        data: bills.filter((b) => b.status === "paid"),
       },
       {
         label: "Unpaid",
         color: "#FF5050",
         bg: "#F0CFD4",
-        count: unpaidBills.length,
-        amount: sum(unpaidBills),
+        data: bills.filter((b) => b.status === "unpaid"),
       },
       {
         label: "Overdue",
         color: "#FFC100",
         bg: "#FBE7CF",
-        count: overdueBills.length,
-        amount: sum(overdueBills),
+        data: bills.filter((b) => b.status === "overdue"),
       },
     ].map((item) => ({
       ...item,
-      percent:
-        totalAmount === 0 ? 0 : Math.round((item.amount / totalAmount) * 100),
+      count: item.data.length,
+      amount: sum(item.data),
+      percent: total === 0 ? 0 : Math.round((sum(item.data) / total) * 100),
     }));
+
+    const paidPercent =
+      totalBills === 0
+        ? 0
+        : Math.round((breakdown[0].count / totalBills) * 100);
+    const remainingBills = breakdown[1].count + breakdown[2].count;
 
     return {
       totalBills,
-      totalAmount,
+      totalAmount: total,
       paidPercent,
       remainingBills,
       breakdown,
     };
-  }, [bills]);
+  }, [bills, total]);
 
   useEffect(() => {
     if (!canvasRef.current) return;
 
-    const min = Math.min(...values);
-    const max = Math.max(...values);
+    const chart = chartRef.current;
+    chart?.destroy();
 
     const variableRadiusPlugin = {
       id: "variableRadius",
       beforeDatasetDraw(chart: any, args: any) {
         const meta = chart.getDatasetMeta(args.index);
+        const max = Math.max(...values);
+        const min = Math.min(...values);
         meta.data.forEach((arc: any, i: number) => {
           const t = max === min ? 0 : (values[i] - min) / (max - min);
           arc.outerRadius = (chart.chartArea.width / 2) * (0.6 + t * 0.35);
@@ -143,37 +100,25 @@ export default function DonutChart() {
         const ctx = chart.ctx;
         const centerX = (chart.chartArea.left + chart.chartArea.right) / 2;
         const centerY = (chart.chartArea.top + chart.chartArea.bottom) / 2;
+        const radius = 45;
 
-        const radius = 45; // نصف قطر الدائرة الداخلية
-
-        // دالة لضبط حجم الخط حتى لا يتجاوز حدود الدائرة
-        function fitTextInCircle(text: string, maxRadius: number) {
-          let fontSize = 24; // البداية
+        let fontSize = 24;
+        ctx.font = `700 ${fontSize}px Roboto`;
+        let width = ctx.measureText(`$${total}`).width;
+        while (width > radius * 2 && fontSize > 10) {
+          fontSize--;
           ctx.font = `700 ${fontSize}px Roboto`;
-          let width = ctx.measureText(text).width;
-
-          while (width > maxRadius * 2 && fontSize > 10) {
-            fontSize -= 1;
-            ctx.font = `700 ${fontSize}px Roboto`;
-            width = ctx.measureText(text).width;
-          }
-
-          return fontSize;
+          width = ctx.measureText(`$${total}`).width;
         }
-
-        const fontSize = fitTextInCircle(`$${total}`, radius);
 
         ctx.save();
         ctx.fillStyle = "#111";
-        ctx.font = `700 ${fontSize}px Roboto`;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText(`$${total}`, centerX, centerY);
         ctx.restore();
       },
     };
-
-    chartRef.current?.destroy();
 
     chartRef.current = new Chart(canvasRef.current, {
       type: "doughnut",
@@ -187,30 +132,15 @@ export default function DonutChart() {
           },
         ],
       },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { display: false },
-        },
-      },
+      options: { responsive: true, plugins: { legend: { display: false } } },
       plugins: [variableRadiusPlugin, centerTextPlugin],
     });
-
-    return () => chartRef.current?.destroy();
   }, [values, total]);
 
   return (
     <div
-      className="
-  w-full 
-  lg:w-[60%] 
-  h-auto 
-  bg-[#F6F6F757] 
-  rounded-[16px] 
-  p-4 
-  overflow-auto
-  lg:p-6
-"
+      id="billsReport"
+      className="w-full lg:w-[60%] h-auto bg-[#F6F6F757] rounded-[16px] p-4 lg:p-6 overflow-auto"
     >
       <div className="mb-4 gap-[8px]">
         <p className="text-sm font-semibold">
@@ -221,7 +151,7 @@ export default function DonutChart() {
         </p>
       </div>
 
-      <div className="flex  flex-wrap items-center justify-center gap-[16px]">
+      <div className="flex flex-wrap items-center justify-center gap-[16px]">
         <div className="w-full sm:w-[222px] h-[222px] flex justify-center items-center">
           <canvas ref={canvasRef} />
         </div>
@@ -240,7 +170,6 @@ export default function DonutChart() {
                 />
                 <div>
                   <div className="font-medium">{item.label}</div>
-
                   <div className="text-xs text-gray-600">
                     {item.count} bills
                   </div>

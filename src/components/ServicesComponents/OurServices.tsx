@@ -38,7 +38,7 @@ const servicesList: Service[] = [
         icon: TrendingUp,
         iconBg: "bg-[#FEE2F2]",
         iconColor: "text-[#DB2777]",
-        href: "/services/incomes",
+        href: "/services/income",
     },
     {
         id: 3,

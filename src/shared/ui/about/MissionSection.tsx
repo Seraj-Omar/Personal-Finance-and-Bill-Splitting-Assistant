@@ -36,7 +36,7 @@ export default function MissionSection() {
   ];
 
   return (
-    <section className="w-full flex justify-center -mt-[80px] px-4 lg:px-0">
+    <section id= "mission" className="w-full flex justify-center -mt-[80px] px-4 lg:px-0">
       <div
         className="w-full"
         style={{

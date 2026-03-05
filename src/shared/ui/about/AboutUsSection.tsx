@@ -348,7 +348,7 @@ export default function AboutUsSection() {
                 lg:gap-[96px]
               "
             >
-              <div className="w-full flex flex-col gap-4">
+              <div   id="download-app" className="w-full flex flex-col gap-4">
                 <h2
                   style={{
                     margin: 0,

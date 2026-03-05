@@ -20,7 +20,7 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 function readProvider(): Provider {
   if (typeof window === "undefined") return null;
   const p = sessionStorage.getItem("auth_provider");
-  return p === "LOCAL" || p === "GOOGLE" ? p : null; // ❌ بدون fallback
+  return p === "LOCAL" || p === "GOOGLE" ? p : null;
 }
 
 function hasToken() {
@@ -30,13 +30,37 @@ function hasToken() {
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const queryClient = useQueryClient();
-  const [provider, setProvider] = useState<Provider>(() => readProvider());
 
+  const [provider, setProvider] = useState<Provider>(() => {
+    const p = readProvider();
+    if (p) return p;
+    if (hasToken()) return "LOCAL";
+    return null;
+  });
+
+  // ✅ NEW: sync provider state when auth changes (no refresh needed)
   useEffect(() => {
-    const sync = () => setProvider(readProvider());
+    const sync = () => {
+      const p = readProvider();
+      setProvider(p);
+    };
+
     window.addEventListener("auth:changed", sync);
     return () => window.removeEventListener("auth:changed", sync);
   }, []);
+
+  // ✅ IMPORTANT: enable meQ if sessionStorage says GOOGLE even if state not updated yet
+  const providerInStorage = readProvider();
+
+  const meQ = useQuery({
+    queryKey: ["me"],
+    queryFn: fetchMe,
+    enabled: provider === "GOOGLE" || providerInStorage === "GOOGLE",
+    retry: false,
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
 
   const sessionQ = useQuery({
     queryKey: ["session"],
@@ -48,32 +72,57 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     refetchOnReconnect: false,
   });
 
-  const meQ = useQuery({
-    queryKey: ["me"],
-    queryFn: fetchMe,
-    enabled: provider === "GOOGLE",
-    retry: false,
-    staleTime: 5 * 60 * 1000,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-  });
+  useEffect(() => {
+    const token = (meQ.data as any)?.data?.token;
+    const user = (meQ.data as any)?.data?.user;
 
-  const user =
-    provider === "LOCAL"
-      ? (sessionQ.data as any)?.data?.user ?? null
-      : provider === "GOOGLE"
-      ? (meQ.data as any)?.data?.user ?? null
-      : null;
+    if (user && token && (provider === "GOOGLE" || providerInStorage === "GOOGLE")) {
+      sessionStorage.setItem("token", token);
+      sessionStorage.setItem("auth_provider", "GOOGLE");
 
-  const loading =
-    provider === "LOCAL" ? sessionQ.isLoading : provider === "GOOGLE" ? meQ.isLoading : false;
+      setProvider("GOOGLE");
+
+      window.dispatchEvent(new Event("auth:changed"));
+    }
+  }, [meQ.data, provider, providerInStorage]);
+
+  useEffect(() => {
+    if (provider === null && hasToken() && (sessionQ.data as any)?.data?.user) {
+      sessionStorage.setItem("auth_provider", "LOCAL");
+      setProvider("LOCAL");
+      window.dispatchEvent(new Event("auth:changed"));
+    }
+  }, [provider, sessionQ.data]);
+
+  const tokenExists = hasToken();
+
+  const user: User | null = useMemo(() => {
+    if (!tokenExists) return null;
+
+    if (provider === "LOCAL") return ((sessionQ.data as any)?.data?.user ?? null);
+    if (provider === "GOOGLE") return ((meQ.data as any)?.data?.user ?? null);
+
+    return null;
+  }, [tokenExists, provider, sessionQ.data, meQ.data]);
+
+  const loading = useMemo(() => {
+    if (!tokenExists) return false;
+
+    if (provider === "LOCAL") return sessionQ.isLoading;
+    if (provider === "GOOGLE") return meQ.isLoading;
+
+    return false;
+  }, [tokenExists, provider, sessionQ.isLoading, meQ.isLoading]);
 
   const logoutLocal = () => {
     sessionStorage.removeItem("token");
     sessionStorage.removeItem("cached_user");
     sessionStorage.removeItem("auth_provider");
-    queryClient.removeQueries({ queryKey: ["session"] });
-    queryClient.removeQueries({ queryKey: ["me"] });
+    sessionStorage.removeItem("currencyId");
+
+    queryClient.clear();
+
+    setProvider(null);
     window.dispatchEvent(new Event("auth:changed"));
   };
 
