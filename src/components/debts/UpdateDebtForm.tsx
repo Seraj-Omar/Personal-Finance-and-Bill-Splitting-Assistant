@@ -129,8 +129,7 @@ export default function UpdateDebtForm({
       };
       console.log("Updating with payload:", payload);
 
-      await debtService.UpdateDebt(defaultData.id, payload);
-      
+await debtService.updateDebt(defaultData.id, payload);
       onRefresh(); // Refresh table in DebtsView
       onClose();   // Close modal
     } catch (error) {
