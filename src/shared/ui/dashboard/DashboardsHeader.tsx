@@ -62,9 +62,7 @@ export default function DashboardsHeader() {
         <Link href="/dashboard/notifications">
           <button className="relative h-[24px] w-[24px]" type="button">
             <IconBell />
-            <span className="absolute -right-2 -top-2 grid h-[19px] w-[19px] place-items-center rounded-full bg-[#3447AA] text-[10px] font-extrabold leading-none text-white">
-              13
-            </span>
+      
           </button>
         </Link>
 
