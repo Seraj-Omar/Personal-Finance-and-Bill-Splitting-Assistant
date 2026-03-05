@@ -121,7 +121,7 @@ export default function Rewards() {
     const router=useRouter();
 
     return (
-        <Box component="section" className="flex w-full px-4 py-8 sm:px-6 md:px-10 lg:px-24 lg:py-12 ">
+        <Box id= "rewards" component="section" className="flex w-full px-4 py-8 sm:px-6 md:px-10 lg:px-24 lg:py-12 ">
             <Box className="flex flex-col xl:flex-row gap-6 justify-between w-full rounded-lg p-4 sm:p-6" sx={{backgroundImage: "linear-gradient(0deg, rgba(255, 255, 255, 0.41), rgba(255, 255, 255, 0.41)), linear-gradient(109.96deg, rgba(255, 255, 255, 0.2) 38.88%, rgba(255, 255, 255, 0.2) 97.14%), radial-gradient(19.21% 36.04% at 23.28% 40.12%, #FFFFFF 0%, rgba(246, 227, 231, 0.64) 100%)"}}>
                 <Box className="flex flex-col h-fit gap-8 w-full xl:w-[50%] bg-[#FFFFFF] rounded-2xl px-4 py-6 sm:px-6 sm:py-10" sx={{boxShadow: "0px 2px 2px rgba(52, 71, 170, 0.1)"}}>
 

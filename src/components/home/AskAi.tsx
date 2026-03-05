@@ -17,6 +17,7 @@ export default function AskAi() {
     const router = useRouter();
     return (
             <Box
+                    id= "ai-budget"
                     component="section"
                     aria-labelledby="ask-ai-heading"
                     className="flex w-full justify-start px-4 py-8 sm:px-6 md:px-10 lg:px-24 lg:py-12 "
