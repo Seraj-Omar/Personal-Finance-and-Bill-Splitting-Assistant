@@ -27,11 +27,14 @@ export default function BillsClient() {
   const { mutate: deleteMutate } = useDeleteBill();
 
   const currentData = useMemo(() => {
-    if (billsResponse?.success && billsResponse?.data?.items) {
-      return billsResponse.data.items;
+   if (billsResponse?.success && (billsResponse?.data as any)?.items) {
+     return (billsResponse.data as any).items;
     }
+   if (billsResponse?.success && Array.isArray(billsResponse?.data)) {
+    return billsResponse.data;
+   }
     return [];
-  }, [billsResponse]);
+   }, [billsResponse]);
 
   const columns: Column<any>[] = useMemo(
     () => [

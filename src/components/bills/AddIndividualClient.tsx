@@ -59,8 +59,8 @@ export default function AddIndividualClient({ onClose }: Props) {
         
         <PaymentStatusGroup 
           value={paymentStatus} 
-          onChange={(val) => setPaymentStatus(val)} 
-        />
+          onChange={(val: "paid" | "unpaid") => setPaymentStatus(val)}           
+       />
         
         <BillInput 
           label="Due date" 
