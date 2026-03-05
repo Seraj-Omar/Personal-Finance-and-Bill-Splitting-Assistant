@@ -1,104 +1,48 @@
 "use client";
-
 import React, { useState } from "react";
-import {
-  Box,
-  Typography,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-} from "@mui/material";
 import ConfirmationModal from "./ConfirmationModal";
 
-interface Props {
-  value: "paid" | "unpaid" | null;
-  onChange: (newValue: "paid" | "unpaid") => void;
-}
-
-export default function PaymentStatusGroup({ value, onChange }: Props) {
+export default function PaymentStatusGroup({ value, onChange }: any) {
   const [showConfirm, setShowConfirm] = useState(false);
-  const [pendingValue, setPendingValue] = useState<"paid" | "unpaid" | null>(
-    null,
-  );
+  const [pendingValue, setPendingValue] = useState<any>(null);
 
-  const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPendingValue(e.target.value as "paid" | "unpaid");
+  const handleSelect = (val: "paid" | "unpaid") => {
+    setPendingValue(val);
     setShowConfirm(true);
   };
 
-  const handleConfirm = () => {
-    if (pendingValue) {
-      onChange(pendingValue);
-    }
-    setShowConfirm(false);
-    setPendingValue(null);
-  };
-
   return (
-    <Box>
-      <Typography className="text-[14px] font-bold text-gray-700 mb-2 ml-1">
-        Payment Status
-      </Typography>
-
-      <RadioGroup
-        row
-        value={value ?? ""}
-        onChange={handleRadioChange}
-        className="gap-10"
-      >
-        <FormControlLabel
-          value="paid"
-          control={
-            <Radio
-              size="small"
-              sx={{ color: "#94A3B8", "&.Mui-checked": { color: "#3F51B5" } }}
+    <div className="w-full">
+      <p className="text-[14px] font-bold text-gray-700 mb-2 ml-1">Payment Status</p>
+      <div className="flex gap-10 ml-1">
+        {["paid", "unpaid"].map((status) => (
+          <label key={status} className="flex items-center gap-2 cursor-pointer group">
+            <input
+              type="radio"
+              name="paymentStatus"
+              checked={value === status}
+              onChange={() => handleSelect(status as any)}
+              className="w-4 h-4 text-[#3F51B5] border-gray-300 focus:ring-0 cursor-pointer"
             />
-          }
-          label={
-            <Typography
-              sx={{
-                fontSize: "14px",
-                fontWeight: value === "paid" ? 700 : 500,
-                color: value === "paid" ? "#1E293B" : "#64748B",
-              }}
-            >
-              Paid
-            </Typography>
-          }
-        />
-        <FormControlLabel
-          value="unpaid"
-          control={
-            <Radio
-              size="small"
-              sx={{ color: "#94A3B8", "&.Mui-checked": { color: "#3F51B5" } }}
-            />
-          }
-          label={
-            <Typography
-              sx={{
-                fontSize: "14px",
-                fontWeight: value === "unpaid" ? 700 : 500,
-                color: value === "unpaid" ? "#1E293B" : "#64748B",
-              }}
-            >
-              Unpaid
-            </Typography>
-          }
-        />
-      </RadioGroup>
+            <span className={`text-[14px] transition-all capitalize ${
+              value === status ? "font-bold text-[#1E293B]" : "font-medium text-[#64748B]"
+            }`}>
+              {status}
+            </span>
+          </label>
+        ))}
+      </div>
 
       <ConfirmationModal
         open={showConfirm}
         variant={pendingValue === "paid" ? "success" : "warning"}
-        title={
-          pendingValue === "paid"
-            ? "Are you sure you want to mark this transaction as paid?"
-            : "Are you sure you want to mark this transaction as unpaid?"
-        }
+        title={`Are you sure you want to mark this transaction as ${pendingValue}?`}
         onClose={() => setShowConfirm(false)}
-        onConfirm={handleConfirm}
+        onConfirm={() => {
+          onChange(pendingValue);
+          setShowConfirm(false);
+        }}
       />
-    </Box>
+    </div>
   );
 }
