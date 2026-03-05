@@ -1,47 +1,40 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
-import { Box, Typography, Tabs, Tab, Button, Avatar, AvatarGroup } from "@mui/material";
+import { Box, Typography, Tabs, Tab, Button, Avatar, AvatarGroup, CircularProgress } from "@mui/material";
 import { Plus, Trash2, Pencil } from "lucide-react";
 import AddIndividualClient from "./AddIndividualClient";
 import AddGroupClient from "./AddGroupClient";
 import Table, { Column } from "@/src/components/Table";
+import { useGetBills, useDeleteBill } from "@/src/modules/bills/hooks/hooks";
 
 type BillStatus = "Paid" | "Unpaid" | "Pending" | "Overdue";
 
-type IndividualBillRow = {
-  name: string;
-  num: string;
-  amount: string;
-  date: string;
-  status: BillStatus;
-};
-
-type GroupBillRow = {
-  name: string;
-  num: string;
-  total: string;
-  share: string;
-  date: string;
-  percentage: string;
-  status: BillStatus;
-  members: string[];
-};
-
-type BillRow = IndividualBillRow | GroupBillRow;
-
-const statusConfig: Record<BillStatus, { bg: string; dot: string; text: string }> = {
+const statusConfig: Record<string, { bg: string; dot: string; text: string }> = {
+  paid: { bg: "#F0FDF4", dot: "#22C55E", text: "#166534" },
+  unpaid: { bg: "#EFF6FF", dot: "#3B82F6", text: "#1E40AF" },
+  pending: { bg: "#FFF7ED", dot: "#D97706", text: "#9A3412" },
+  overdue: { bg: "#FEF2F2", dot: "#EF4444", text: "#991B1B" },
   Paid: { bg: "#F0FDF4", dot: "#22C55E", text: "#166534" },
   Unpaid: { bg: "#EFF6FF", dot: "#3B82F6", text: "#1E40AF" },
-  Pending: { bg: "#FFF7ED", dot: "#D97706", text: "#9A3412" },
-  Overdue: { bg: "#FEF2F2", dot: "#EF4444", text: "#991B1B" },
 };
 
 export default function BillsClient() {
   const [activeTab, setActiveTab] = useState(0);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
-  const columns: Column<BillRow>[] = useMemo(
+  const billType = activeTab === 0 ? "individual" : "group";
+  const { data: billsResponse, isLoading } = useGetBills(billType);
+  const { mutate: deleteMutate } = useDeleteBill();
+
+  const currentData = useMemo(() => {
+    if (billsResponse?.success && billsResponse?.data?.items) {
+      return billsResponse.data.items;
+    }
+    return [];
+  }, [billsResponse]);
+
+  const columns: Column<any>[] = useMemo(
     () => [
       {
         key: "name",
@@ -55,7 +48,7 @@ export default function BillsClient() {
               key: "members",
               title: "Group members",
               render: (row) => {
-                if (!("members" in row)) return null;
+                if (!row.members || !Array.isArray(row.members)) return null;
                 return (
                   <Box className="flex items-center justify-center h-full">
                     <AvatarGroup
@@ -69,7 +62,7 @@ export default function BillsClient() {
                         },
                       }}
                     >
-                      {row.members.map((m, i) => (
+                      {row.members.map((m: string, i: number) => (
                         <Avatar key={i} src={m} />
                       ))}
                     </AvatarGroup>
@@ -77,24 +70,35 @@ export default function BillsClient() {
                 );
               },
             },
-          ] as Column<BillRow>[])
+          ] as Column<any>[])
         : []),
 
-      { key: "num", title: "Bills num" },
+      { 
+        key: "num", 
+        title: "Bills num",
+        render: (row) => <span>{row.num || `INV-${row.id?.slice(0, 5).toUpperCase()}`}</span> 
+      },
 
       {
         key: "amount",
         title: activeTab === 1 ? "Total Amount" : "Amount",
         render: (row) => (
           <span className="font-bold text-gray-800">
-            {"total" in row ? row.total : row.amount}
+            ${Number(row.total || row.amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
           </span>
         ),
       },
 
-      ...(activeTab === 1 ? ([{ key: "share", title: "Your share" }] as Column<BillRow>[]) : []),
+      ...(activeTab === 1 ? ([{ key: "share", title: "Your share", render: (row) => <span>${row.share || "0.00"}</span> }] as Column<any>[]) : []),
 
-      { key: "date", title: "Date" },
+      { 
+        key: "date", 
+        title: "Date",
+        render: (row) => {
+            const date = new Date(row.date);
+            return <span>{date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+        }
+      },
 
       ...(activeTab === 1
         ? ([
@@ -102,26 +106,27 @@ export default function BillsClient() {
               key: "percentage",
               title: "Payment percentage",
               render: (row) =>
-                "percentage" in row ? (
-                  <span className="text-[#3A4CB1] font-bold">{row.percentage}</span>
-                ) : null,
+                row.percentage ? (
+                  <span className="text-[#3A4CB1] font-bold">{row.percentage}%</span>
+                ) : <span className="text-[#3A4CB1] font-bold">0%</span>,
             },
-          ] as Column<BillRow>[])
+          ] as Column<any>[])
         : []),
 
       {
         key: "status",
         title: "Payment Status",
         render: (row) => {
-          const config = statusConfig[row.status] ?? statusConfig.Unpaid;
+          const statusKey = row.status || "unpaid";
+          const config = statusConfig[statusKey] ?? statusConfig.unpaid;
           return (
             <Box
               className="flex items-center gap-2 px-3 py-1.5 rounded-full w-fit"
               style={{ backgroundColor: config.bg }}
             >
               <Box className="w-2 h-2 rounded-full" style={{ backgroundColor: config.dot }} />
-              <Typography className="text-[13px] font-bold" style={{ color: config.text }}>
-                {row.status}
+              <Typography className="text-[13px] font-bold" style={{ color: config.text, textTransform: 'capitalize' }}>
+                {statusKey}
               </Typography>
             </Box>
           );
@@ -131,9 +136,13 @@ export default function BillsClient() {
       {
         key: "action",
         title: "Action",
-        render: () => (
+        render: (row) => (
           <Box className="flex justify-center gap-3">
-            <button className="p-1.5 hover:bg-gray-50 text-red-400 rounded-md transition-all" type="button">
+            <button 
+                onClick={() => deleteMutate(row.id)}
+                className="p-1.5 hover:bg-gray-50 text-red-400 rounded-md transition-all" 
+                type="button"
+            >
               <Trash2 size={18} />
             </button>
             <button className="p-1.5 hover:bg-gray-50 text-gray-400 rounded-md transition-all" type="button">
@@ -143,40 +152,8 @@ export default function BillsClient() {
         ),
       },
     ],
-    [activeTab]
+    [activeTab, deleteMutate]
   );
-
-  const individualBills: IndividualBillRow[] = [
-    { name: "Anas AbuJaber", num: "INV-2026-001", amount: "$2,450.00", date: "Jan 20, 2024", status: "Paid" },
-    { name: "Seraj Omar", num: "INV-2026-002", amount: "$1,850.00", date: "Jan 21, 2024", status: "Pending" },
-    { name: "Noor Al-Afifi", num: "INV-2026-003", amount: "$1,850.00", date: "Jan 21, 2024", status: "Overdue" },
-    { name: "Nour Anwar", num: "INV-2026-004", amount: "$1,850.00", date: "Jan 25, 2026", status: "Unpaid" },
-  ];
-
-  const groupBills: GroupBillRow[] = [
-    {
-      name: "Water Bill",
-      num: "INV-2025-001",
-      total: "$2,450.00",
-      share: "$60.00",
-      date: "Sep 25, 2024",
-      percentage: "100%",
-      status: "Paid",
-      members: ["https://i.pravatar.cc/150?u=1", "https://i.pravatar.cc/150?u=2", "https://i.pravatar.cc/150?u=3"],
-    },
-    {
-      name: "Electricity Bill",
-      num: "INV-2025-002",
-      total: "$1,850.00",
-      share: "$10.00",
-      date: "Sep 25, 2024",
-      percentage: "60%",
-      status: "Pending",
-      members: ["https://i.pravatar.cc/150?u=4", "https://i.pravatar.cc/150?u=5"],
-    },
-  ];
-
-  const currentData: BillRow[] = activeTab === 0 ? individualBills : groupBills;
 
   return (
     <Box className="relative flex w-full flex-col px-20 py-10 gap-6 bg-white min-h-screen">
@@ -226,7 +203,13 @@ export default function BillsClient() {
         </Button>
       </Box>
 
-      <Table columns={columns} data={currentData} />
+      {isLoading ? (
+        <Box className="flex justify-center items-center p-20">
+           <CircularProgress size={40} sx={{ color: "#3447AA" }} />
+        </Box>
+      ) : (
+        <Table columns={columns as any} data={currentData} />
+      )}
     </Box>
   );
 }
