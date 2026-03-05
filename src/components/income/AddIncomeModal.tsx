@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
+import { incomeService } from "@/src/services/income-service";
 
 type Recurring = "none" | "daily" | "weekly" | "monthly";
 
@@ -9,14 +10,52 @@ type Props = {
   onClose: () => void;
 };
 
+type CurrencyOption = {
+  id: string;
+  code: string;
+  symbol?: string | null;
+  name?: string;
+};
+
+
+let cachedCurrencies: CurrencyOption[] | null = null;
+
 export default function AddIncomeModal({ open, onClose }: Props) {
   const [amount, setAmount] = useState<string>("0.00");
-  const [currency, setCurrency] = useState<string>("USD");
   const [source, setSource] = useState<string>("Salary");
   const [desc, setDesc] = useState<string>("");
-  const [date, setDate] = useState<string>(""); // ISO: YYYY-MM-DD
+  const [date, setDate] = useState<string>("");
+
+  const [currencies, setCurrencies] = useState<CurrencyOption[]>([]);
+  const [currencyId, setCurrencyId] = useState<string>("");
+
+
   const [recurring, setRecurring] = useState<Recurring>("weekly");
+
   const [fileName, setFileName] = useState<string>("");
+
+  const [saving, setSaving] = useState(false);
+  const [loadingCurrencies, setLoadingCurrencies] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string>("");
+
+  useEffect(() => {
+    if (!open) return;
+
+    setAmount("0.00");
+    setSource("Salary");
+    setDesc("");
+    setDate("");
+    setRecurring("weekly"); 
+    setFileName("");
+
+    if (cachedCurrencies?.length) {
+      const usd = cachedCurrencies.find((c) => c.code === "USD");
+      setCurrencyId(usd?.id || cachedCurrencies[0].id);
+    } else if (currencies.length) {
+      const usd = currencies.find((c) => c.code === "USD");
+      setCurrencyId(usd?.id || currencies[0].id);
+    }
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -27,11 +66,92 @@ export default function AddIncomeModal({ open, onClose }: Props) {
     };
   }, [open]);
 
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && !saving) onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, onClose, saving]);
+
+  const sourceToApi = useMemo(() => {
+    const s = source.trim().toUpperCase();
+    if (s === "SALARY" || s === "FREELANCE" || s === "BUSINESS") return s;
+    if (source === "Salary") return "SALARY";
+    if (source === "Freelance") return "FREELANCE";
+    if (source === "Business") return "BUSINESS";
+    return "SALARY";
+  }, [source]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    const load = async () => {
+      setErrorMsg("");
+      setLoadingCurrencies(true);
+
+      try {
+        if (cachedCurrencies?.length) {
+          setCurrencies(cachedCurrencies);
+          const usd = cachedCurrencies.find((c) => c.code === "USD");
+          setCurrencyId(usd?.id || cachedCurrencies[0].id);
+          return;
+        }
+
+        try {
+          const res = await incomeService.getCurrencies();
+          const list = Array.isArray(res) ? res : res?.data;
+
+          if (Array.isArray(list) && list.length) {
+            const mapped: CurrencyOption[] = list
+              .map((x: any) => ({
+                id: x.id,
+                code: String(x.code || "").toUpperCase(),
+                symbol: x.symbol ?? null,
+                name: x.name,
+              }))
+              .filter((x) => x.id && x.code);
+
+            if (mapped.length) {
+              cachedCurrencies = mapped;
+              setCurrencies(mapped);
+
+              const usd = mapped.find((c) => c.code === "USD");
+              setCurrencyId(usd?.id || mapped[0].id);
+              return;
+            }
+          }
+        } catch {
+          // ignore
+        }
+
+        const id = await incomeService.getDefaultCurrencyIdFromIncomes();
+        setCurrencyId(id);
+        setCurrencies([{ id, code: "USD", symbol: "$", name: "US Dollar" }]);
+      } catch (e: any) {
+        setErrorMsg(e?.message || "Failed to load currencies");
+      } finally {
+        setLoadingCurrencies(false);
+      }
+    };
+
+    load();
+  }, [open]);
+
+  const selectedCurrency = useMemo(() => {
+    return currencies.find((c) => c.id === currencyId) || null;
+  }, [currencies, currencyId]);
+
+  const currencyPrefix = useMemo(() => {
+    return selectedCurrency?.symbol || "$";
+  }, [selectedCurrency]);
+
   const summaryParts = useMemo(() => {
     const a = isNaN(Number(amount)) ? "0.00" : Number(amount).toFixed(2);
-    const rest = `a ${capitalize(recurring)} income of $${a} from ${source}.`;
+    const rest = `a One-time income of ${currencyPrefix}${a} from ${source}.`;
     return { prefix: "You are adding ", rest };
-  }, [amount, recurring, source]);
+  }, [amount, source, currencyPrefix]);
 
   if (!open) return null;
 
@@ -40,24 +160,67 @@ export default function AddIncomeModal({ open, onClose }: Props) {
     setAmount(next);
   };
 
-  
   const openDatePicker = () => {
     const el = document.getElementById("income-date") as
       | (HTMLInputElement & { showPicker?: () => void })
       | null;
 
     if (!el) return;
-  
     if (typeof el.showPicker === "function") el.showPicker();
     else el.focus();
   };
 
+  const handleSave = async () => {
+    try {
+      setErrorMsg("");
+
+      const numericAmount = Number(amount);
+      if (!numericAmount || isNaN(numericAmount) || numericAmount <= 0) {
+        setErrorMsg("Please enter a valid amount.");
+        return;
+      }
+
+      if (!date) {
+        setErrorMsg("Please select a date.");
+        return;
+      }
+
+      if (!currencyId) {
+        setErrorMsg("Currency is not ready yet. Please try again.");
+        return;
+      }
+
+      setSaving(true);
+
+      const payload: any = {
+        amount: numericAmount.toFixed(2),
+        currencyId,
+        source: sourceToApi,
+        description: desc?.trim() ? desc.trim() : undefined,
+        incomeDate: date,
+      };
+
+
+      await incomeService.createIncome(payload);
+
+      onClose();
+    } catch (e: any) {
+      console.error("Create income error:", e);
+      setErrorMsg(e?.message || "Failed to save income.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-[9999]">
-     
-      <div className="absolute inset-0 bg-[#8585859C]" onClick={onClose} />
+      <div
+        className="absolute inset-0 bg-[#8585859C]"
+        onClick={() => {
+          if (!saving) onClose();
+        }}
+      />
 
-    
       <div className="absolute inset-0 flex items-start justify-center px-[16px] pt-[104px] pb-[24px] overflow-y-auto">
         <div className="w-full max-w-[664px] rounded-[16px] bg-white shadow-[0px_60px_120px_0px_#26334D0D] overflow-hidden">
           {/* header */}
@@ -71,19 +234,15 @@ export default function AddIncomeModal({ open, onClose }: Props) {
               onClick={onClose}
               className="w-[24px] h-[24px] flex items-center justify-center"
               aria-label="Close"
+              disabled={saving}
             >
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 16 16"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <path
                   d="M3.5 3.5L12.5 12.5M12.5 3.5L3.5 12.5"
                   stroke="#141B34"
                   strokeWidth="1.6"
                   strokeLinecap="round"
+                  strokeLinejoin="round"
                 />
               </svg>
             </button>
@@ -91,6 +250,12 @@ export default function AddIncomeModal({ open, onClose }: Props) {
 
           {/* body */}
           <div className="p-[24px] flex flex-col gap-[24px] max-h-[calc(100vh-220px)] overflow-y-auto overflow-x-hidden">
+            {errorMsg ? (
+              <div className="w-full rounded-[12px] bg-[#FF50501A] border border-[#FF505033] px-[16px] py-[12px] text-[#FF5050] text-[14px]">
+                {errorMsg}
+              </div>
+            ) : null}
+
             {/* Amount */}
             <div className="w-full flex flex-col gap-[8px]">
               <label className="text-[16px] leading-[16px] font-medium text-[#1C1A1A]">
@@ -98,17 +263,18 @@ export default function AddIncomeModal({ open, onClose }: Props) {
               </label>
 
               <div className="w-full flex flex-col lg:flex-row gap-[8px]">
-                {/* amount input box */}
                 <div className="w-full lg:w-[511px] rounded-[16px] bg-[#F9F9FA] border border-[#E0E0E0] px-[16px] py-[10px] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-[10px] min-w-0">
-                  {/* left: $ + input */}
                   <div className="flex items-center gap-[10px] min-w-0">
-                    <span className="text-[#AEAEAE] text-[16px]">$</span>
+                    <span className="text-[#AEAEAE] text-[16px]">
+                      {currencyPrefix}
+                    </span>
                     <input
                       value={amount}
                       onChange={(e) => setAmount(e.target.value)}
                       className="w-full min-w-0 bg-transparent outline-none text-[16px] text-[#1C1A1A] placeholder:text-[#AEAEAE]"
                       placeholder="0.00"
                       inputMode="decimal"
+                      disabled={saving}
                     />
                   </div>
 
@@ -119,28 +285,29 @@ export default function AddIncomeModal({ open, onClose }: Props) {
                   </div>
                 </div>
 
-                {/* currency */}
+                {/* Currency dropdown */}
                 <div className="w-full lg:w-[97px] h-[55px] rounded-[16px] bg-[#F9F9FA] border border-[#E0E0E0] px-[16px] flex items-center justify-between relative">
-                  <span className="text-[16px] text-[#AEAEAE]">{currency}</span>
+                  <span className="text-[16px] text-[#AEAEAE]">
+                    {selectedCurrency?.code || "USD"}
+                  </span>
 
                   <select
-                    value={currency}
-                    onChange={(e) => setCurrency(e.target.value)}
+                    value={currencyId}
+                    onChange={(e) => setCurrencyId(e.target.value)}
                     className="absolute inset-0 opacity-0 cursor-pointer"
                     aria-label="Currency"
+                    disabled={
+                      saving || loadingCurrencies || currencies.length === 0
+                    }
                   >
-                    <option value="USD">USD</option>
-                    <option value="EUR">EUR</option>
-                    <option value="SAR">SAR</option>
+                    {currencies.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.code}
+                      </option>
+                    ))}
                   </select>
 
-                  <svg
-                    width="12"
-                    height="7"
-                    viewBox="0 0 12 7"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
+                  <svg width="12" height="7" viewBox="0 0 12 7" fill="none">
                     <path
                       d="M1 1L6 6L11 1"
                       stroke="#AEAEAE"
@@ -179,7 +346,6 @@ export default function AddIncomeModal({ open, onClose }: Props) {
                     height="20"
                     viewBox="0 0 20 20"
                     fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
                     className="rotate-90"
                   >
                     <path
@@ -197,6 +363,7 @@ export default function AddIncomeModal({ open, onClose }: Props) {
                   onChange={(e) => setSource(e.target.value)}
                   className="absolute inset-0 opacity-0 cursor-pointer"
                   aria-label="Source"
+                  disabled={saving}
                 >
                   <option value="Salary">Salary</option>
                   <option value="Freelance">Freelance</option>
@@ -223,6 +390,7 @@ export default function AddIncomeModal({ open, onClose }: Props) {
                   onChange={(e) => setDesc(e.target.value)}
                   placeholder="Add short note about this income..."
                   className="w-full h-full resize-none bg-transparent outline-none text-[16px] text-[#1C1A1A] placeholder:text-[#AEAEAE]"
+                  disabled={saving}
                 />
               </div>
             </div>
@@ -242,6 +410,7 @@ export default function AddIncomeModal({ open, onClose }: Props) {
                     const f = e.target.files?.[0];
                     setFileName(f ? f.name : "");
                   }}
+                  disabled={saving}
                 />
 
                 <div className="w-full flex flex-col items-center gap-[8px]">
@@ -257,12 +426,15 @@ export default function AddIncomeModal({ open, onClose }: Props) {
                     <p className="text-[16px] text-[#1C1A1A]">
                       {fileName || "Upload Receipt, Invoice or Screenshot"}
                     </p>
-                    <p className="text-[14px] text-[#AEAEAE]">PNG, JPG up to 5MB</p>
+                    <p className="text-[14px] text-[#AEAEAE]">
+                      PNG, JPG up to 5MB
+                    </p>
                   </div>
                 </div>
               </label>
             </div>
 
+            {/* Date */}
             <div className="w-full flex flex-col gap-[8px]">
               <label className="text-[16px] leading-[16px] font-medium text-[#1C1A1A]">
                 Date
@@ -285,6 +457,7 @@ export default function AddIncomeModal({ open, onClose }: Props) {
                   }}
                   className="shrink-0"
                   aria-label="Pick date"
+                  disabled={saving}
                 >
                   <img
                     src="/icons/date.svg"
@@ -311,6 +484,7 @@ export default function AddIncomeModal({ open, onClose }: Props) {
                   onChange={(e) => setDate(e.target.value)}
                   className="absolute inset-0 opacity-0 cursor-pointer"
                   aria-label="Date"
+                  disabled={saving}
                 />
               </div>
             </div>
@@ -331,13 +505,13 @@ export default function AddIncomeModal({ open, onClose }: Props) {
                   onChange={setRecurring}
                 />
                 <RecurringOption
-                  label="weekly"
+                  label="Weekly"
                   value="weekly"
                   current={recurring}
                   onChange={setRecurring}
                 />
                 <RecurringOption
-                  label="monthly"
+                  label="Monthly"
                   value="monthly"
                   current={recurring}
                   onChange={setRecurring}
@@ -348,6 +522,12 @@ export default function AddIncomeModal({ open, onClose }: Props) {
               <p className="text-[16px] leading-[21.92px] text-[#7E7E7E]">
                 Recurring incomes will be automatically added.
               </p>
+
+              {recurring !== "none" ? (
+                <p className="text-[14px] leading-[20px] text-[#AEAEAE]">
+                  Saved as one-time for now.
+                </p>
+              ) : null}
             </div>
 
             <div className="w-full bg-[#F2F2F5] px-[24px] py-[16px]">
@@ -360,16 +540,18 @@ export default function AddIncomeModal({ open, onClose }: Props) {
             <div className="w-full flex flex-col sm:flex-row gap-[16px]">
               <button
                 type="button"
-                className="w-full sm:w-1/2 h-[56px] rounded-[16px] bg-[#3447AA] text-white text-[14px] font-medium"
-                onClick={onClose}
+                className="w-full sm:w-1/2 h-[56px] rounded-[16px] bg-[#3447AA] text-white text-[14px] font-medium disabled:opacity-60"
+                onClick={handleSave}
+                disabled={saving || loadingCurrencies}
               >
-                Save Income
+                {saving ? "Saving..." : "Save Income"}
               </button>
 
               <button
                 type="button"
-                className="w-full sm:w-1/2 h-[56px] rounded-[16px] border border-[#3447AA] text-[#3447AA] text-[14px] font-medium"
+                className="w-full sm:w-1/2 h-[56px] rounded-[16px] border border-[#3447AA] text-[#3447AA] text-[14px] font-medium disabled:opacity-60"
                 onClick={onClose}
+                disabled={saving}
               >
                 Cancel
               </button>
@@ -431,10 +613,6 @@ function RecurringOption({
       </span>
     </button>
   );
-}
-
-function capitalize(s: string) {
-  return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
 function formatFigmaDate(iso: string) {

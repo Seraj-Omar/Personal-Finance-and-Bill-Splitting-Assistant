@@ -1,13 +1,42 @@
 "use client";
 
-export default function IncomeBreakdownCard() {
+function n(v: any) {
+  const x = Number(v);
+  return Number.isFinite(x) ? x : 0;
+}
+
+function sumBySource(list: any[], keyword: string) {
+  return list
+    .filter((x) =>
+      String(x?.source || "").toLowerCase().includes(keyword.toLowerCase())
+    )
+    .reduce((acc, x) => acc + n(x?.amount), 0);
+}
+
+export default function IncomeBreakdownCard({
+  incomes = [],
+}: {
+  incomes?: any[];
+}) {
+  const list = Array.isArray(incomes) ? incomes : [];
+
+  const salaryTotal = sumBySource(list, "salary");
+  const freelanceTotal = sumBySource(list, "free");
+  const businessTotal = sumBySource(list, "business");
+
+  const total = salaryTotal + freelanceTotal + businessTotal || 1;
+
+  const pFreelance = Math.round((freelanceTotal / total) * 100);
+  const pSalary = Math.round((salaryTotal / total) * 100);
+  const pBusiness = 100 - pFreelance - pSalary;
+
   const r = 66;
   const stroke = 34;
   const C = 2 * Math.PI * r;
 
-  const red = 0.23 * C;
-  const blue = 0.58 * C;
-  const pink = 0.19 * C;
+  const red = (pFreelance / 100) * C;
+  const blue = (pSalary / 100) * C;
+  const pink = (pBusiness / 100) * C;
 
   const offRed = 0;
   const offBlue = -red;
@@ -20,7 +49,6 @@ export default function IncomeBreakdownCard() {
       <div className="pointer-events-none absolute inset-[-12px] rounded-[32px] bg-[#3447AA] opacity-[0.06] blur-[45px]" />
 
       <div className="relative w-full h-full rounded-[24px] bg-white p-[24px] pt-[18px] flex flex-col min-w-0">
-        {/* Header */}
         <div className="flex items-center justify-between">
           <h3 className="text-[18px] font-medium text-[#1C1A1AEB]">
             Income Breakdown
@@ -28,29 +56,11 @@ export default function IncomeBreakdownCard() {
 
           <div className="flex items-center gap-[8px] text-[14px] text-[#8D9092]">
             Month
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 14 14"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="opacity-90"
-            >
-              <path
-                d="M3.5 5.25L7 8.75L10.5 5.25"
-                stroke="#8D9092"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
           </div>
         </div>
 
-        {/* Donut */}
-        <div className="flex-1 flex items-center justify-center min-w-0">
-<div className="relative w-full max-w-[260px] aspect-square mx-auto">
-
+        <div className="flex-1 flex items-center justify-center">
+          <div className="relative w-full max-w-[260px] aspect-square mx-auto">
             <svg width="100%" height="100%" viewBox="0 0 245 245">
               <g transform={`rotate(${ROTATE_DEG} 122.5 122.5)`}>
                 <circle
@@ -63,6 +73,7 @@ export default function IncomeBreakdownCard() {
                   strokeDasharray={`${red} ${C}`}
                   strokeDashoffset={offRed}
                 />
+
                 <circle
                   cx="122.5"
                   cy="122.5"
@@ -73,6 +84,7 @@ export default function IncomeBreakdownCard() {
                   strokeDasharray={`${blue} ${C}`}
                   strokeDashoffset={offBlue}
                 />
+
                 <circle
                   cx="122.5"
                   cy="122.5"
@@ -84,68 +96,48 @@ export default function IncomeBreakdownCard() {
                   strokeDashoffset={offPink}
                 />
               </g>
+
               <circle cx="122.5" cy="122.5" r="42" fill="#FFFFFF" />
             </svg>
 
-            {/* bubbles */}
-            <div className="absolute left-[28px] top-[8px] sm:left-[34px] sm:top-[12px] w-[54px] h-[54px] sm:w-[60px] sm:h-[60px] rounded-full bg-white shadow-[0px_0.48px_25.96px_0px_#0000001A] flex items-center justify-center">
-              <span className="text-[16px] font-semibold text-[#2C2C2C]">
-                20%
-              </span>
+            <div className="absolute left-[28px] top-[8px] w-[60px] h-[60px] rounded-full bg-white shadow flex items-center justify-center">
+              <span className="text-[16px] font-semibold">{pBusiness}%</span>
             </div>
 
-            <div className="absolute right-[12px] top-[38px] sm:right-[18px] sm:top-[44px] w-[54px] h-[54px] sm:w-[60px] sm:h-[60px] rounded-full bg-white shadow-[0px_0.48px_25.96px_0px_#0000001A] flex items-center justify-center">
-              <span className="text-[16px] font-semibold text-[#2C2C2C]">
-                30%
-              </span>
+            <div className="absolute right-[18px] top-[44px] w-[60px] h-[60px] rounded-full bg-white shadow flex items-center justify-center">
+              <span className="text-[16px] font-semibold">{pFreelance}%</span>
             </div>
 
-            <div className="absolute left-[22px] bottom-[16px] sm:left-[28px] sm:bottom-[22px] w-[54px] h-[54px] sm:w-[60px] sm:h-[60px] rounded-full bg-white shadow-[0px_0.48px_25.96px_0px_#0000001A] flex items-center justify-center">
-              <span className="text-[16px] font-semibold text-[#2C2C2C]">
-                50%
-              </span>
+            <div className="absolute left-[28px] bottom-[22px] w-[60px] h-[60px] rounded-full bg-white shadow flex items-center justify-center">
+              <span className="text-[16px] font-semibold">{pSalary}%</span>
             </div>
           </div>
         </div>
 
-        {/* Legend */}
-        <div className="pt-[6px] flex flex-col gap-[12px] min-w-0">
+        <div className="-mt-[8px] pt-[2px] flex flex-col gap-[8px] leading-tight">
+            
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-[12px]">
-              <span className="w-[10px] h-[10px] rounded-full bg-[#FF9BA1]" />
-              <span className="text-[14px] text-[#707070] opacity-50">
-                Freelance
-              </span>
-            </div>
-            <span className="text-[14px] text-[#1C1A1A] opacity-90">
-              $1,050
+            <span className="text-[13px] text-[#707070]">Freelance</span>
+            <span className="text-[13px] font-medium text-[#1C1A1A]">
+              ${freelanceTotal.toLocaleString()}
             </span>
           </div>
 
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-[12px]">
-              <span className="w-[10px] h-[10px] rounded-full bg-[#3447AA]" />
-              <span className="text-[14px] text-[#707070] opacity-50">
-                Salary
-              </span>
-            </div>
-            <span className="text-[14px] text-[#1C1A1A] opacity-90">
-              $7,250
+            <span className="text-[13px] text-[#707070]">Salary</span>
+            <span className="text-[13px] font-medium text-[#1C1A1A]">
+              ${salaryTotal.toLocaleString()}
             </span>
           </div>
 
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-[12px]">
-              <span className="w-[10px] h-[10px] rounded-full bg-[#FBEAEB]" />
-              <span className="text-[14px] text-[#707070] opacity-50">
-                Business
-              </span>
-            </div>
-            <span className="text-[14px] text-[#1C1A1A] opacity-90">
-              $1,000
+            <span className="text-[13px] text-[#707070]">Business</span>
+            <span className="text-[13px] font-medium text-[#1C1A1A]">
+              ${businessTotal.toLocaleString()}
             </span>
           </div>
         </div>
+    
       </div>
     </div>
   );
