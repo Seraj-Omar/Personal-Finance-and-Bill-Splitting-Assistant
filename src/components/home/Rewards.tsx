@@ -188,7 +188,7 @@ export default function Rewards() {
 
                     <Box className="flex flex-col sm:flex-row justify-between gap-3">
                         <button
-                            onClick={() => router.push('/profile/rewards')}
+                            onClick={() => router.push('/settings/profile/rewards')}
                             className="w-full py-3 rounded-2xl font-medium text-white flex items-center justify-center gap-2 hover:cursor-pointer hover:bg-[#2A3A8C] transition-colors duration-300"
                             style={{backgroundColor: "#3447AA"}}
                         >
