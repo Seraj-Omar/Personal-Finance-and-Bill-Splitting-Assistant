@@ -15,7 +15,7 @@ const categoryMeta: Record<
 > = {
   FOOD: {
     title: "Food",
-    color: "#3447AA",
+    color: "#2F46B8",
     icon: (
       <svg
         className={`${iconClass} text-[#3447AA]`}
@@ -33,19 +33,19 @@ const categoryMeta: Record<
 
   TRANSPORT: {
     title: "Transport",
-    color: "#E8A2AA",
+    color: "#5E74E6",
     icon: <Car className={`${iconClass} text-[#E8A2AA]`} />,
   },
 
   ENTERTAINMENT: {
     title: "Entertainment",
-    color: "#98A5F4",
+    color: "#BFC7EA",
     icon: <Gamepad2 className={`${iconClass} text-[#98A5F4]`} />,
   },
 
   HEALTH: {
     title: "Health",
-    color: "#F6C1C4",
+    color: "#F4B9C2",
     icon: (
       <span className="text-[#F6C1C4]">
         <svg
@@ -65,7 +65,7 @@ const categoryMeta: Record<
 
   HOUSING: {
     title: "Housing",
-    color: "#5C6EDC",
+    color: "#E9A3AD",
     icon: (
       <span className="text-[#5C6EDC]">
         <svg
