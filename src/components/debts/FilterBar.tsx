@@ -49,7 +49,7 @@ export default function FilterBar({ activeFilter, onChange, onAddClick }: Props)
           bg-[#3447AA] text-white
           w-full md:w-auto
           px-4 py-2 rounded-2xl
-          text-xs sm:text-sm font-medium
+          text-xs sm:text-sm font-medium hover:bg-[#3447AA]/90 transition
         "
       >
         Add new debts
