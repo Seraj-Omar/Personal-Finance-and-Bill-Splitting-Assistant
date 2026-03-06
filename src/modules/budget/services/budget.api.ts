@@ -5,6 +5,7 @@ import type {
   Budget,
   BudgetSummary,
   CreateBudgetPayload,
+  EditBudgetPayload,
   GetBudgetsParams,
 } from "../type/types";
 
@@ -117,5 +118,13 @@ export function createBudget(payload: CreateBudgetPayload) {
 export function deleteBudget(id: string) {
   return apiFetch(`/budgets/${id}`, {
     method: "DELETE",
+  });
+}
+
+
+export function editBudget(id: string, payload: EditBudgetPayload) {
+  return apiFetch(`/budgets/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(payload),
   });
 }
