@@ -5,9 +5,10 @@ import Table from "@/src/components/Table";
 import { HiMiniTrash } from "react-icons/hi2";
 import { BiSolidPencil } from "react-icons/bi";
 import TableToolbar from "./TableToolbar";
-import AddBudgetModal from "./AddBudgetModal";
+import AddBudgetModal from "./ModalBudget";
 import { useBudgets } from "@/src/modules/budget/hooks/useBudgets";
 import { useDeleteBudget } from "@/src/modules/budget/hooks/useDeleteBudget";
+import BudgetModal from "./ModalBudget";
 
 type FilterType = "All" | "Paid" | "Unpaid" | "Overdue";
 
@@ -41,12 +42,21 @@ export default function TableBudget() {
   const [activeFilter, setActiveFilter] = useState<FilterType>("All");
   const [openAdd, setOpenAdd] = useState(false);
 
+
+const [editOpen, setEditOpen] = useState(false);
+const [selectedBudget, setSelectedBudget] = useState<any | null>(null);
+
   const { mutate: deleteBudgetMutate, isPending: isDeleting } = useDeleteBudget();
 
   const params = useMemo(() => ({ page: 1, limit: 10 }), []);
   const { data, isLoading, isError } = useBudgets(params);
 
   const apiItems = Array.isArray((data as any)?.data) ? (data as any).data : [];
+
+
+  const budgetMap = useMemo(() => {
+  return new Map(apiItems.map((b: any) => [String(b.id), b]));
+}, [apiItems]);
 
   const paymentsFromApi: Payment[] = useMemo(() => {
     return apiItems.map((b: any) => ({
@@ -65,6 +75,7 @@ export default function TableBudget() {
       ? paymentsFromApi
       : paymentsFromApi.filter((p) => p.status === activeFilter);
   }, [activeFilter, paymentsFromApi]);
+
 
   // ✅ columns جوّا الكمبوننت عشان يشوف deleteBudgetMutate
   const columns: Column<Payment>[] = useMemo(
@@ -122,16 +133,25 @@ export default function TableBudget() {
                 }
               }}
             />
-            <BiSolidPencil
-              className="text-gray-600 cursor-pointer"
-              size={16}
-              onClick={() => console.log("edit", row.id)}
-            />
+            
+
+<BiSolidPencil
+  className="text-gray-600 cursor-pointer"
+  size={16}
+  onClick={() => {
+    const originalBudget = budgetMap.get(row.id);
+    if (!originalBudget) return;
+
+    setSelectedBudget(originalBudget);
+    setEditOpen(true);
+  }}
+/>
+
           </div>
         ),
       },
     ],
-    [deleteBudgetMutate, isDeleting]
+[deleteBudgetMutate, isDeleting, budgetMap]
   );
 
   return (
@@ -142,8 +162,23 @@ export default function TableBudget() {
         onAddNew={() => setOpenAdd(true)}
       />
 
-      <AddBudgetModal open={openAdd} onClose={() => setOpenAdd(false)} />
 
+
+<BudgetModal
+  open={openAdd}
+  onClose={() => setOpenAdd(false)}
+  mode="create"
+/>
+
+<BudgetModal
+  open={editOpen}
+  onClose={() => {
+    setEditOpen(false);
+    setSelectedBudget(null);
+  }}
+  mode="edit"
+  initialData={selectedBudget}
+/>
       <h1 className="text-xl font-semibold text-gray-800">Budget Table.</h1>
 
       {isLoading ? <div>Loading...</div> : null}
