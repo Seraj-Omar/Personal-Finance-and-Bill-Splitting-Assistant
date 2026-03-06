@@ -29,7 +29,7 @@ const CategoryCard = ({
   return (
     <div
       onClick={onClick}
-      className={`w-full rounded-xl border bg-white px-4 py-3 transition cursor-pointer ${
+      className={` rounded-xl border bg-white px-4 py-3 transition cursor-pointer ${
         active ? "border-indigo-600 shadow-lg hover:shadow-blue-500/20" : "border-gray-200"
       }`}
     >
