@@ -56,7 +56,7 @@ const servicesList: Service[] = [
         name: "Bills",
         description:
             "Track of all your bills, due dates, and payment statuses to ensure you never miss a payment.",
-        manage: "Invoices",
+        manage: "Bills",
         icon: FileText,
         iconBg: "bg-[#FFE4E6]",
         iconColor: "text-[#FB7185]",

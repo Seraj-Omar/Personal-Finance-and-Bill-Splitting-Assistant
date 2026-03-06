@@ -11,7 +11,7 @@ import {
 
 const services = [
   {
-    label: "Invoice",
+    label: "Bills",
     href: "/services/bills",
     icon: (
       <svg
