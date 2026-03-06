@@ -11,7 +11,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
          <AuthGateWrapper>
 
     <Header />
-    <PageHero title="Reminder" breadcrumb={["Home", "Reminder"]} />
+       <PageHero
+            title="Reminder"
+            breadcrumb={[
+              { label: "Home", href: "/" },
+              { label: "Reminder" },
+            ]}
+          />
     <Providers>
       {children}
     </Providers>

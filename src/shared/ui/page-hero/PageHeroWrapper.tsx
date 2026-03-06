@@ -3,50 +3,111 @@
 import { usePathname } from "next/navigation";
 import PageHero from "./PageHero";
 
+type BreadcrumbItem = {
+  label: string;
+  href?: string;
+};
+
 const HERO_MAP: Record<
   string,
-  { title: string; breadcrumb: string[]; bgImage?: string }
+  { title: string; breadcrumb: BreadcrumbItem[]; bgImage?: string }
 > = {
-  "/about-us": { title: "About Us", breadcrumb: ["Home", "About Us"] },
+  "/about-us": {
+    title: "About Us",
+    breadcrumb: [
+      { label: "Home", href: "/" },
+      { label: "About Us" },
+    ],
+  },
 
-  // main pages
   "/settings/profile/report": {
     title: "Report",
-    breadcrumb: ["Profile", "Report"],
+    breadcrumb: [
+      { label: "Profile", href: "/settings/profile" },
+      { label: "Report" },
+    ],
   },
-  "/budget": { title: "Budget", breadcrumb: ["Home", "Budget"] },
-  "/reminder": { title: "Reminder", breadcrumb: ["Home", "Reminder"] },
-  "/profile": { title: "Profile", breadcrumb: ["Home", "Profile"] },
 
-  // settings / profile
+  "/budget": {
+    title: "Budget",
+    breadcrumb: [
+      { label: "Home", href: "/" },
+      { label: "Budget" },
+    ],
+  },
+
+  "/reminder": {
+    title: "Reminder",
+    breadcrumb: [
+      { label: "Home", href: "/" },
+      { label: "Reminder" },
+    ],
+  },
+
+  "/profile": {
+    title: "Profile",
+    breadcrumb: [
+      { label: "Home", href: "/" },
+      { label: "Profile" },
+    ],
+  },
+
   "/settings/profile": {
     title: "My Profile",
-    breadcrumb: ["Settings", "My Profile"],
+    breadcrumb: [
+      { label: "Settings", href: "/settings/profile" },
+      { label: "My Profile" },
+    ],
   },
 
-  // services
-  "/services": { title: "Services", breadcrumb: ["Home", "Service"] },
+  "/services/expenses": {
+    title: "Expenses",
+    breadcrumb: [
+      { label: "Home", href: "/" },
+      { label: "Service", href: "" },
+      { label: "Expenses" },
+    ],
+  },
+
+  "/services": {
+    title: "Services",
+    breadcrumb: [
+      { label: "Home", href: "/" },
+      { label: "Service" },
+    ],
+  },
+
   "/services/bills": {
     title: "Bills",
-    breadcrumb: ["Home", "Service", "Bills"],
+    breadcrumb: [
+      { label: "Home", href: "/" },
+      { label: "Service", href: "/services" },
+      { label: "Bills" },
+    ],
   },
+
   "/services/debts": {
     title: "Debts",
-    breadcrumb: ["Home", "Service", "Debts"],
+    breadcrumb: [
+      { label: "Home", href: "/" },
+      { label: "Service", href: "/services" },
+      { label: "Debts" },
+    ],
   },
 
-  // rewards
   "/settings/profile/rewards": {
     title: "Rewards",
-    breadcrumb: ["Profile", "Rewards"],
+    breadcrumb: [
+      { label: "Profile", href: "/settings/profile" },
+      { label: "Rewards" },
+    ],
     bgImage: "/Rewards.png",
   },
-
 };
 
 export default function PageHeroWrapper() {
   const pathname = usePathname();
-
+  console.log(pathname);
   const hero = HERO_MAP[pathname];
 
   if (hero) {
@@ -59,14 +120,41 @@ export default function PageHeroWrapper() {
     );
   }
 
-  // fallback for nested routes
   if (pathname.startsWith("/profile")) {
-    return <PageHero title="Profile" breadcrumb={["Home", "Profile"]} />;
+    return (
+      <PageHero
+        title="Profile"
+        breadcrumb={[
+          { label: "Home", href: "/" },
+          { label: "Profile" },
+        ]}
+      />
+    );
   }
 
-  if (pathname.startsWith("/services")) {
-    return <PageHero title="Services" breadcrumb={["Home", "Service"]} />;
-  }
+  if (pathname.startsWith("/budget")) {
+  return (
+    <PageHero
+      title="Budget"
+      breadcrumb={[
+        { label: "Home", href: "/" },
+        { label: "Budget" },
+      ]}
+    />
+  );
+}
+
+if (pathname.startsWith("/reminder")) {
+  return (
+    <PageHero
+      title="Reminder"
+      breadcrumb={[
+        { label: "Home", href: "/" },
+        { label: "Reminder" },
+      ]}
+    />
+  );
+}
 
   return null;
 }

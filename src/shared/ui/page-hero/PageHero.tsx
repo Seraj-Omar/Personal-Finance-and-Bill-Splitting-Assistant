@@ -1,8 +1,14 @@
 import Image from "next/image";
+import Link from "next/link";
+
+type BreadcrumbItem = {
+  label: string;
+  href?: string;
+};
 
 type PageHeroProps = {
   title: string;
-  breadcrumb?: string[];
+  breadcrumb?: BreadcrumbItem[];
   bgImage?: string;
 };
 
@@ -37,16 +43,21 @@ const PageHero = ({
           <p className="text-base mt-5 font-semibold text-[#5792FF]">
             {breadcrumb.map((item, index) => {
               const isLast = index === breadcrumb.length - 1;
+
+              const className = isLast
+                ? "text-white font-bold"
+                : "text-[#5792FF] transition";
+
               return (
-                <span
-                  key={index}
-                  className={
-                    isLast
-                      ? "text-white font-bold"
-                      : "text-[#5792FF]  transition"
-                  }
-                >
-                  {item}
+                <span key={index}>
+                  {item.href && !isLast ? (
+                    <Link href={item.href} className={className}>
+                      {item.label}
+                    </Link>
+                  ) : (
+                    <span className={className}>{item.label}</span>
+                  )}
+
                   {!isLast && " . "}
                 </span>
               );
