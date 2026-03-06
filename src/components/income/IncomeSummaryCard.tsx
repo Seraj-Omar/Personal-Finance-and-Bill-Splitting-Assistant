@@ -1,7 +1,19 @@
 
 import Image from "next/image";
 
-export default function IncomeSummaryCard() {
+export default function IncomeSummaryCard({ summary }: { summary?: any }) {
+  const percent =
+    summary?.incomeChangePercent ??
+    summary?.changePercent ??
+    summary?.percent ??
+    12;
+
+  const topSource =
+    summary?.topSource ??
+    summary?.mainSource ??
+    summary?.mostSource ??
+    "salary";
+
   return (
     <div className="mt-[10px] w-full min-w-0 h-auto md:h-[135px] rounded-[16px] p-[24px] border border-[0.5px] border-[#1661E02E] bg-[linear-gradient(91.79deg,#FCEDF1_0.42%,#E3E1FC_99.71%)]">
       <div className="flex flex-col md:flex-row md:items-center gap-[16px] md:h-full min-w-0">
@@ -15,18 +27,24 @@ export default function IncomeSummaryCard() {
           </div>
 
           <div className="font-medium text-[18px] leading-[18px] text-[#AEAEAE]">
-            By <span className="text-[#3447AA]">12%</span> compared to last month.
+            By{" "}
+            <span className="text-[#3447AA]">
+              {Number(percent) >= 0 ? "+" : ""}
+              {percent}%
+            </span>{" "}
+            compared to last month.
           </div>
 
           <div className="font-medium text-[18px] leading-[18px] text-[#AEAEAE]">
-            Most of your income comes from salary this month
+            Most of your income comes from {String(topSource)} this month
           </div>
         </div>
 
         <div className="w-full md:w-[75px] h-auto md:h-[87px] flex md:flex-col gap-[8px] md:items-end items-start justify-start shrink-0">
           <div className="h-[30px] rounded-[35px] bg-[#FEFEFE] px-[8px] py-[4px] flex items-center gap-[4px]">
             <span className="font-medium text-[14px] leading-[21.92px] tracking-[-0.33px] text-[#3447AA]">
-              + 12%
+              {Number(percent) >= 0 ? "+" : ""}
+              {percent}%
             </span>
 
             <Image

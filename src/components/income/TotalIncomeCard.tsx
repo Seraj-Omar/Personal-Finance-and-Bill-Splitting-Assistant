@@ -1,6 +1,12 @@
 "use client";
 
-export default function TotalIncomeCard() {
+export default function TotalIncomeCard({ summary }: { summary?: any }) {
+  const total =
+    summary?.totalIncome ??
+    summary?.total ??
+    summary?.amount ??
+    9300;
+
   return (
     <div className="w-full min-w-0 min-h-[432px] rounded-[16px] bg-white p-[24px] shadow-[2px_1px_12.4px_0px_#3A4DE912]">
       {/* Header */}
@@ -10,7 +16,7 @@ export default function TotalIncomeCard() {
             Total Income
           </div>
           <div className="text-[32px] leading-[32px] font-medium text-[#383838]">
-            $9,300
+            ${Number(total).toLocaleString()}
           </div>
         </div>
 
@@ -38,7 +44,7 @@ export default function TotalIncomeCard() {
         </button>
       </div>
 
-      {/* Chart */}
+      {/* Chart (لسا ثابت مثل ما هو) */}
       <div className="mt-[16px]">
         <div className="relative h-[270px] w-full">
           <div className="absolute bottom-[30px] left-0 right-0 flex items-end justify-between">
