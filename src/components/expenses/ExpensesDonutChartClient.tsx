@@ -16,7 +16,7 @@ export default function ExpensesDonutChartClient({ data }: Props) {
       if (!entries[0]) return;
       const width = entries[0].contentRect.width;
 
-      setSize(Math.min(width, 320));
+      setSize(Math.min(width, 257.93));
     });
 
     if (containerRef.current) {

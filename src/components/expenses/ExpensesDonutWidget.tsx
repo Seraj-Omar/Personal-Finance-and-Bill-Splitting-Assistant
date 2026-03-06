@@ -191,7 +191,7 @@ const fetchParams = useMemo(() => {
           onChange={(_, v) => {
             setTab(v);
             // خيار: لما تغيّري tab خلّي المؤشر يرجع لليوم الحالي
-            // setCursor(new Date());
+            setCursor(new Date());
           }}
           centered
           sx={{
@@ -254,10 +254,10 @@ const fetchParams = useMemo(() => {
                   data: chartData,
                   innerRadius,
                   outerRadius,
-                  paddingAngle: 7,
-                  cornerRadius: 14,
-                  startAngle: -90,
-                  endAngle: 270,
+        paddingAngle: 3,
+cornerRadius: 12,
+startAngle: -90,
+endAngle: 270,
                 },
               ]}
               width={chartSize}
