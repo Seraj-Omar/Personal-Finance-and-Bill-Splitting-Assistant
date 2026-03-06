@@ -61,3 +61,10 @@ export type CreateBudgetPayload = {
   endDate: string;         
   description?: string;
 };
+export type EditBudgetPayload = {
+  category: string;
+  allocatedAmount: string;
+  startDate: string;
+  endDate: string;
+  description?: string;
+};
